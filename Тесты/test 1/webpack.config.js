@@ -10,8 +10,8 @@ module.exports = {
     // main: "./src/src1/index1.jsx",
     // app: "./src/src2/index2.js",
   },
-  // devtool: "eval-source-map",
-  devtool: "source-map",
+  devtool: "eval-source-map",
+  // devtool: "source-map",
   output: {
     path: path.resolve(__dirname, "static", "build"),
     filename: "app.js",

@@ -1,11 +1,11 @@
-body{ 
+body {
   background-color: red;
-  margin: 125px;
-}
-.foo{
+  margin: 125px; }
+
+.foo {
   background-color: green;
-  padding: 50px;
-}
+  padding: 50px; }
+
 .foo2 {
   background-color: blue;
   padding: 15px; }
@@ -14,5 +14,3 @@ body{
     background-color: black;
     color: white; }
 
-
-/*# sourceMappingURL=styles.css.map*/
