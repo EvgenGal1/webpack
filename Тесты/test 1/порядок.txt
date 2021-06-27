@@ -78,10 +78,12 @@
     };
     //
   }
-  описание базы {
+  описание базы + команды {
     //
     // подключение пакет пафз через константу. для корректного поиска точки входа
     const path = require("path"); // `путь`=`требует`
+    // для css + mini ... . css в отдельные файлы
+    // const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
     // экспот настроек плагинов объ., из док.(config) 
     module.exports = {
@@ -95,25 +97,39 @@
         // можно указ. входной файл .jsx, чтоб node не искал только js по умолчанию
         main: path.resolve(__dirname, "src", "index.jsx")
       },
-      devtool: "eval-source-map", // как выгружать код/для разработки
-      // eval - мини/строка, source-map - как есть, eval-source-map - рекомендуется
-      // после запуска npm run build(start, ) появится app.js.map (мини версия)
-      // source-map технология позволяет посмотреть в браузере какие файлы были подкл. к выходному файлу 
+      devtool: "eval-source-map", // как выгружать код/для разработки. опцинально
+        пояснения {
+          // eval - мини/строка, source-map - как есть, eval-source-map - рекомендуется
+          // после запуска npm run build(start, ) появится app.js.map (мини версия)
+          // source-map технология позволяет посмотреть в браузере какие файлы были подкл. к выходному файлу 
+        }
       output: { // точка вывода
-        // выгруж. ./static/build/app.js
+        // выгруж. в ./static/build/app.js
         path: path.resolve(__dirname, "static", "build"),
         filename: "app.js",
       },
-      // конфигурация модулей(загрузчиков)
-      module: {
+      module: { // конфигурация модулей(загрузчиков)
         // `правила` для модулей (настройка, параметры парсера и т. д.)
         rules: [
-          // загрузчики для предварительной обработки файлов
-          // babel - превращ.(компилирует) ECMAScript.next код в ECMAScript 5 (конструкторы)
+          // пояснения {
+            // загрузчики для предварительной обработки файлов
+            // test - какое расширение.
+            // exclude - исключения.
+            // указ. webpack какой loader использовать
+          // }
+          // BABEL - компилирует код
           {
-            // test - какое расширение. для js и/или jsx. синтаксис регулярных выражений
+            // превращ. ECMAScript.next код в ECMAScript 5 (конструкторы). заменяет весь новый код на старый
+            // $$ npm install -D babel-loader @babel/core @babel/preset-env // устан. babel 
+              // подроб. {
+                // babel-loader - адаптер м/у webpavk и babel
+                // core - ядро/ ? переводчик
+                // preset - доп. настр. как компил. версии js
+                // babel/plugin-proposal-class-properties - плагин для удобства
+              // }
+            // для js и/или jsx. синтаксис регулярных выражений
             test: /\.jsx?$/i, // есть такой test: /\.(js|jsx)$/,
-            // exclude - исключения. папка node_modules
+            // папка node_modules
             exclude: /(node_modules)/,
             // указ. webpack какой loader использовать
             use: {
@@ -129,8 +145,70 @@
               },
             },
           },
+          // CSS (стили|3 варианта) {
+            // загр. ccs файлы с импортами и возвращает ccs код.
+            // $$ npm i -D css-loader
+            // css + style{ // не удобен - один файл
+              // Грузить вместе со style-loader
+              // $$ npm i -D css-loader style-loader
+                // Подкл. CSS в JS файлах к странице, перед этим превратив их в строку. Сами файлы можно не подкл. Стили в head
+              // +++ import './test1.css'; // подкл. .css в src/.js
+              {
+                test: /\.css$/i,
+                use: ["style-loader", "css-loader"],
+              },
+            // },
+            // css + mini{
+              // для отдельных css файлов
+              // $$ npm i --save-dev mini-css-extract-plugin
+              // +++ const MiniCssExtractPlugin
+              // +++ plugins:[new MiniCssExtractPlugin()]
+              // подкл. .css в src/.js
+              // +++ import './test2.css'; 
+              // +++ <link rel="stylesheet" href="./static/build/styles.css"> // подкл. css в html
+              {
+                test: /\.css$/i,
+                use: [MiniCssExtractPlugin.loader, 'css-loader'],
+              },
+            // },
+            // css + mini + scss{
+              // 2 опции sass(новее++) и node-sass(быстрее++)
+              // $$ npm i -D sass-loader node-sass
+              // подкл. .scss в src/.js
+              // +++ import './test3.scss';
+              {
+                // только sass 
+                //test: /\.s[ac]ss$/i,
+                // css, sass, scss
+                test: /\.(sa|sc|c)ss$/,
+                use: [
+                  // 3. Создает узлы `style` из строк JS
+                  "style-loader",
+                  // 2. Переводит CSS в обычный JS
+                  "css-loader",
+                  // 1. Компилирует Sass в CSS
+                  "sass-loader",
+                ],
+              },
+            // }
+            // !!! https://webpack.js.org/loaders/style-loader/
+            // css разраб/прод{
+              test: /\.(sa|sc|c)ss$/,
+              test: /\.s[ac]ss$/i,
+            // }
+          }
         ]
-      }
+      },
+      plugins: [ // доп. узкие настр.
+        // для css + mini ... {
+          new MiniCssExtractPlugin({
+            // [name] присвоит main, можно пописать имя
+            filename: '[name].css',
+            // для произв. раздел. на отдел. `куски`(асинхр. загр., )
+            // chunkFilename: '[id].css',
+          }),
+        // }
+      ],
     };
     //
   }
@@ -458,6 +536,8 @@
     //
   }
 	// теперь webpack-dev-server будет отслеживать любые изменения в файлах и на лету пересобирать приложение
+
+
 1.8 Чтобы запускать сборку и сервер было проще, можно прописать соответствующие скрипты в package.json.
 	//
 	"scripts": {
@@ -484,39 +564,8 @@
 	//
 	Таким образом, начиная сборку с entry, указанного в webpack.config.js, 
 	webpack следует импортам и собирает все файлы в один единственный app.js.
-1.12 $$ npm install -D babel-loader @babel/core @babel/preset-env // устан. babel 
-  подроб. {
-    // преобразуют(комилирует) исходный код модулей, заменяя весь новый код на старый, для браузеров
-    // babel-loader - адаптер м/у webpavk и babel
-    // core - ядро/ ? переводчик
-    // preset - доп. настр. как компил. версии js
-    // babel/plugin-proposal-class-properties - плагин для удобства
-  }
-1.12.1 настройки webpack.config.js{ 
-  // подроб. 1.4 описание базы
-  //
-  module.exports = {
-    module: {
-      rules: [
-        {
-          test: /\.jsx?$/i,
-          // include: path.resolve(__dirname, "static_src"),
-          exclude: /node_modules/,
-          use: {
-            loader: "babel-loader",
-            options: {
-              presets: ["@babel/preset-env", "@babel/preset-react"],
-              plugins: [
-                ["@babel/plugin-proposal-class-properties", { loose: true }],
-              ],
-            },
-          },
-        },
-      ],
-    },
-  }
-  //
-  }
+
+
 1.13 React.js — это фреймворк для создания интерфейсов. работает по принципу реактивного программирования, 
  	 то есть позволяет создавать динамические страницы с возможностью обновлений состояний
 	установка react

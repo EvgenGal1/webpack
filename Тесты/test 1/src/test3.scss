@@ -1,0 +1,9 @@
+.foo2 {
+  background-color: blue;
+  padding: 15px;
+  & div {
+    margin: 5px;
+    background-color: black;
+    color: white;
+  }
+}

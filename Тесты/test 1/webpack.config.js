@@ -1,4 +1,5 @@
 const path = require("path");
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
 module.exports = {
   mode: "development",
@@ -18,8 +19,9 @@ module.exports = {
   },
   module: {
     rules: [
+      // BABEL
       {
-        test: /\.jsx?$/,
+        test: /\.jsx?$/i,
         // test: /\.(js|jsx)$/,
         // test: /\.m?js$/,
         // include: path.resolve(__dirname, "static_src"),
@@ -35,6 +37,32 @@ module.exports = {
           },
         },
       },
+      // css + style
+      // {
+      //   test: /\.css$/i,
+      //   use: ["style-loader", "css-loader"],
+      // },
+      // css + mini
+      // {
+      //   test: /\.css$/i,
+      //   use: [MiniCssExtractPlugin.loader, "css-loader"],
+      // },
+      // css + mini + scss{
+      {
+        // test: /\.s[ac]ss$/i,
+        test: /\.(sa|sc|c)ss$/,
+        use: [
+          MiniCssExtractPlugin.loader,
+          "css-loader",
+          "sass-loader",
+        ],
+      },
+      // }
     ],
   },
+  plugins: [
+    new MiniCssExtractPlugin({
+      filename: "styles.css",
+    }),
+  ],
 };

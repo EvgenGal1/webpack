@@ -1,0 +1,18 @@
+body{ 
+  background-color: red;
+  margin: 125px;
+}
+.foo{
+  background-color: green;
+  padding: 50px;
+}
+.foo2 {
+  background-color: blue;
+  padding: 15px; }
+  .foo2 div {
+    margin: 5px;
+    background-color: black;
+    color: white; }
+
+
+/*# sourceMappingURL=styles.css.map*/
