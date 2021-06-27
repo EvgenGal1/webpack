@@ -1,0 +1,4 @@
+test 1 - youtube.com/watch?v=GNEyY70Zl30
+test 2 - youtube.com/watch?v=eSaF8NXeNsA
+
+цель создать свой пакет для сборки многостраничника
