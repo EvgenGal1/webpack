@@ -1,3 +1,7 @@
+body{ 
+  background-color: red;
+  margin: 125px;
+}
 .foo{
   background-color: green;
   padding: 50px;
@@ -13,3 +17,11 @@ a{
   background-color: darkred;
   font-size: 16px;
 }
+.foo2 {
+  background-color: blue;
+  padding: 15px; }
+  .foo2 div {
+    margin: 5px;
+    background-color: black;
+    color: white; }
+

@@ -192,9 +192,19 @@
               },
             // }
             // !!! https://webpack.js.org/loaders/style-loader/
+            // !!! https://webpack.js.org/loaders/sass-loader/
             // css разраб/прод{
               test: /\.(sa|sc|c)ss$/,
               test: /\.s[ac]ss$/i,
+              ||
+              const devMode = process.env.NODE_ENV !== "production";
+              use: [ devMode ? "style-loader" : MiniCssExtractPlugin.loader,
+              "css-loader", "postcss-loader","sass-loader",],
+              plugins: [].concat(devMode ? [] : [new MiniCssExtractPlugin()])
+              ||
+              use: [ // возврат к загрузчику стилей в разработке
+              process.env.NODE_ENV !== "production" ? "style-loader" : MiniCssExtractPlugin.loader,
+              "css-loader", "sass-loader", ],
             // }
           }
         ]
@@ -537,6 +547,7 @@
   }
 	// теперь webpack-dev-server будет отслеживать любые изменения в файлах и на лету пересобирать приложение
 
+1.7.1 Установил $$ npm i html-webpack-plugin
 
 1.8 Чтобы запускать сборку и сервер было проще, можно прописать соответствующие скрипты в package.json.
 	//
