@@ -1,17 +1,41 @@
-<!doctype html>
+<!-- ! 2.0.1 -->
+<!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport"
-        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <link rel="icon" href="favicon.ico" type="image/ico">
-  <title>Webpack</title>
-</head>
-<body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"
+    />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <!-- <link rel="icon" href="favicon.ico" type="image/ico"> -->
+    <title>Webpack 2.0</title>
+    <!-- ! 2.0.7 подк. можно в head, т.к. файл не раб с DOM эл. -->
+    <!-- ! 2.0.14 ввели доп. имя -->
+    <!-- ! 2.0.16 после html-plug нет нужны подкл. script -->
+    <!-- <script src="./analytics.bundle.js"></script> -->
+  </head>
+  <body>
+    <!-- <div id="app"></div> -->
 
-  <div id="app"></div>
-  
+    <!-- ! 2.0.2 .container>h1{webpack 2.0} -->
+    <div class="container">
+      <h1>webpack 2.0</h1>
+      <hr />
+      <!-- ! 2.0.22 подкл. картинки -->
+      <div class="logo"></div>
+      <hr />
+      <!-- ! 2.0.27.1 подкл jQuery. В стилях использ эл. на jQ -->
+      <pre></pre>
+    </div>
 
-</body>
+    <!-- ! 2.0.5 без import/export подкл. в правильном порядке. перед </ body> -->
+    <!-- ! сейчас логика приложения 2 скрипта. введём ещё один скрипт(analytics) 2.0.6 -->
+    <!-- ! 2.0.11 отдельные script можно откл. подкл. ток вывод -->
+    <!-- <script src="./models/Post.js"></script>
+    <script src="./index.js"></script> -->
+    <!-- ! 2.0.14 ввели доп. имя -->
+    <!-- ! 2.0.16 после html-plug нет нужны подкл. script -->
+    <!-- <script src="./main.bundle.js"></script> -->
+  </body>
 </html>

@@ -1,21 +1,32 @@
-@import "~normalize.css";
-@import "roboto.css";
+/* ! 2.0.18 созд style.css */
 
+/* ! 2.2.24 
+$$npm i normalize.css 
+нормализует базовый набор стилей под различ браузеры. Устан в prod.
+~ указ что переходим в node_module
+*/
+@import "~normalize.css";
+
+
+/* ! 2.0.23 подкл. шрифты */
+@import "roboto.css";
 body {
   font-family: 'Roboto', sans-serif;
 }
 
+/* ! 2.0.18 стили */
 .container {
   padding-top: 2rem;
   max-width: 1000px;
   margin: 0 auto;
-  padding-bottom: 2rem;
+  /* padding-bottom: 2rem; */
 }
 
 h1 {
   text-align: center;
 }
 
+/* ! 2.0.22 подкл. картинки */
 .logo {
   background-image: url("../assets/webpack-logo.png");
   background-size: cover;
@@ -26,4 +37,4 @@ h1 {
 
 .code {
   color: crimson;
-}
+} 
