@@ -16,7 +16,8 @@ import csv from "./assets/data.csv";
 import WebpackLogo from "@/assets/webpack-logo.png";
 // import React from 'react'
 // import {render} from 'react-dom'
-// import './babel'
+// ! 2.0.37 babel подкл.
+import './babel'
 // ! 2.0.19 подкл стили css
 import "./styles/styles.css";
 // ! 2.0.34.2 для SCSS

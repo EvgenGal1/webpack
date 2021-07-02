@@ -1,8 +1,12 @@
-// async function start() {
-//   return await Promise.resolve('async is working')
-// }
+// ! 2.0.37 babel подкл.
+// асинхр fn start
+async function start() {
+  // возвращ. и ждет пока выполн Promise.resolve
+  return await Promise.resolve('async is working')
+}
 
-// start().then(console.log)
+// вовращ. Promise выводим в консоль
+start().then(console.log)
 
 // const unused = 42
 

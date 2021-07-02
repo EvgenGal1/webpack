@@ -56,8 +56,13 @@
     // webpack-dev-server так же как webpack собирает файлы из вывода, но складывает в опер память. поэтому при server нет доступа к выводной папке, для быстрого обновл
     // "stats": "webpack --json > stats.json && webpack-bundle-analyzer stats.json"
   }
-  "main": "index.js"(webpack.config.js), - основной файл это index.js. е/и не хотим случайно публиковать, пишем private
-  "private":"true", - приватный не публикуемый проект
+  // основной файл это index.js. е/и не хотим случайно публиковать, пишем private
+  "main": "index.js"(webpack.config.js),
+  // приватный не публикуемый проект
+  "private":"true",
+  // оптимизировать для браузеров которые не мертвы и >25%
+  // ??? не раб с dev-server
+  // "browserslist": "> 0.25%, not dead",
   !!! https://habr.com/ru/company/ruvds/blog/423703/ настройки package.json и package-lock.json
 1.4 +++ Создать в корне проекта webpack.config.js - настройка webpack
   мини база {
@@ -186,11 +191,16 @@
           // }
           // BABEL - компилирует код { 
             // превращ. ECMAScript.next код в ECMAScript 5 (конструкторы). заменяет весь новый код на старый
-            // $$ npm install -D babel-loader @babel/core @babel/preset-env // устан. babel 
+            // устан. babel 
+            // $$ npm install -D babel-loader @babel/core @babel/preset-env 
+            // устан. полифил от ошибки "Uncaught ReferenceError: regeneratorRuntime is not defined" в браузере
+            // подкл. в entry: вместе с index.js как отдельн. библ.
+            // entry:{main: ["@babel/polyfill","./index.js"]}
+            // $$ npm i -D @babel/polyfill
               // подроб. {
                 // babel-loader - адаптер м/у webpavk и babel
                 // core - ядро/ ? переводчик
-                // preset - доп. настр. как компил. версии js
+                // preset - доп. настр.(набор плагинов для js) как компил. версии js
                 // babel/plugin-proposal-class-properties - плагин для удобства
               // }
             {

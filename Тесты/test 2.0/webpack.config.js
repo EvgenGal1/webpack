@@ -70,6 +70,7 @@ const cssLoaders = (extra) => {
   return loaders;
 };
 
+// ! 2.0.37
 // const babelOptions = preset => {
 //   const opts = {
 //     presets: [
@@ -139,8 +140,9 @@ module.exports = {
   // entry: "./src/index.js",
   // ! 2.0.12 два ввода
   entry: {
-    main: "./index.js",
-    //     main: ['@babel/polyfill', './index.jsx'],
+    // main: "./index.js",
+    // ! 2.0.37.2 подкл. babel polyfill. от ошибки в юраузер(сбор main и polyfill)
+    main: ["@babel/polyfill","./index.js"], //  ,"@babel/polyfill"
     analytics: "./analytics.js",
   },
   // куда выводить
@@ -176,7 +178,7 @@ module.exports = {
   // ! 2.0.29 подкл dev-server к webpack для живой перезагрузки
   devServer: {
     // указ где искать
-    contentBase: './dist',
+    contentBase: "./dist",
     // порт для запуска
     port: 4200,
     // ! 2.0.32.1 только в разраб
@@ -218,6 +220,7 @@ module.exports = {
       {
         test: /\.css$/,
         // use: ["style-loader", "css-loader"],
+        // use: [MiniCssExtractPlugin.loader, "css-loader"],
         // ! 2.0.36 убираем дубли loader
         use: cssLoaders(),
         // ! 2.0.31 css в отделн файлы
@@ -245,7 +248,7 @@ module.exports = {
       {
         test: /\.s[ac]ss$/,
         // ! 2.0.36 убираем дубли loader
-        use: cssLoaders('sass-loader'),
+        use: cssLoaders("sass-loader"),
         // use: [
         //   // {
         //   //   loader: MiniCssExtractPlugin.loader,
@@ -260,7 +263,7 @@ module.exports = {
       {
         test: /\.less$/,
         // ! 2.0.36 убираем дубли loader
-        use: cssLoaders('less-loader'),
+        use: cssLoaders("less-loader"),
         // use: [
         //   // {
         //   //   loader: MiniCssExtractPlugin.loader,
@@ -291,27 +294,45 @@ module.exports = {
         test: /\.csv$/,
         use: ["csv-loader"],
       },
+      // ! 2.0.37 babel подкл.
+      {
+        // test: /\.jsx?$/i,
+        test: /\.js$/,
+        exclude: /(node_modules)/,
+        // loader: "babel-loader",
+        // ! 2.0.37.1 babel расшир
+        use: {
+          loader: "babel-loader",
+          options: {
+            // набор плагинов для js
+            presets: ["@babel/preset-env"], // , "@babel/preset-react"
+            // plugins: [
+            //   ["@babel/plugin-proposal-class-properties", { loose: true }],
+            // ],
+          },
+        },
+      },
       // {
       //   test: /\.js$/,
       //   exclude: /node_modules/,
       //   use: jsLoaders(),
       // },
-      //       {
-      //         test: /\.ts$/,
-      //         exclude: /node_modules/,
-      //         loader: {
-      //           loader: 'babel-loader',
-      //           options: babelOptions('@babel/preset-typescript')
-      //         }
-      //       },
-      //       {
-      //         test: /\.jsx$/,
-      //         exclude: /node_modules/,
-      //         loader: {
-      //           loader: 'babel-loader',
-      //           options: babelOptions('@babel/preset-react')
-      //         }
-      //       }
+      // {
+      //   test: /\.ts$/,
+      //   exclude: /node_modules/,
+      //   loader: {
+      //     loader: "babel-loader",
+      //     options: babelOptions("@babel/preset-typescript"),
+      //   },
+      // },
+      // {
+      //   test: /\.jsx$/,
+      //   exclude: /node_modules/,
+      //   loader: {
+      //     loader: "babel-loader",
+      //     options: babelOptions("@babel/preset-react"),
+      //   },
+      // },
     ],
   },
   // }

@@ -20,6 +20,10 @@
     "2.0"
   ],
   "devDependencies": {
+    "@babel/core": "^7.14.6",
+    "@babel/polyfill": "^7.12.1",
+    "@babel/preset-env": "^7.14.7",
+    "babel-loader": "^8.2.2",
     "clean-webpack-plugin": "^4.0.0-alpha.0",
     "copy-webpack-plugin": "^9.0.1",
     "cross-env": "^7.0.3",
@@ -46,6 +50,5 @@
   "dependencies": {
     "jquery": "^3.6.0",
     "normalize.css": "^8.0.1"
-  },
-  "main": "webpack.config.js"
+  }
 }
