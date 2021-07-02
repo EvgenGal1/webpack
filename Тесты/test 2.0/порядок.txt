@@ -41,14 +41,20 @@
   // ctrl + с - остановка процесса (watch/server)
   "scripts"{
     // "...": "./node_modules/.bin/webpack" или "webpack" - под сокращ именем ... , запуск. бинарный файл в опред. дериктории(webpack)
-    "dev": "webpack --mode development", - режим разработки (npm run dev)
-    "watch": "webpack --mode development -watch", - реконвертация кода (обновление изменений не выходя из процесса, следит за изменением файлов)
-    "build": "webpack --mode production", - режим производства, мини сборка
-    "start": "webpack server --mode development --open", -локал сервер, в разраб, с открытием страницы
-    // "watch": "cross-env NODE_ENV=development webpack --mode development --watch",
-    // "start": "cross-env NODE_ENV=development webpack-dev-server --mode development --open", 
+    // cross-env пакет опред какая система(windows, ) и корректно задаёт системную переменную(разраб/прод). // $$ npm i -D cross-env
+    // NODE_ENV=development систем. перем. делаем разраб. 
+    // ??? не раб с webpack-dev-server
+    // NODE_ENV=production систем. перем. делаем произв.
+    // режим разработки (npm run dev)
+    "dev": "cross-env NODE_ENV=development webpack --mode development",
+    // реконвертация кода (обновление изменений не выходя из процесса, следит за изменением файлов)
+    "watch": "cross-env NODE_ENV=development webpack --mode development -watch",
+    // локал сервер, в разраб, с открытием страницы
+    "start": "webpack server --mode development --open",
+    // режим производства, мини сборка
+    "build": "cross-env NODE_ENV=production webpack --mode production",
+    // webpack-dev-server так же как webpack собирает файлы из вывода, но складывает в опер память. поэтому при server нет доступа к выводной папке, для быстрого обновл
     // "stats": "webpack --json > stats.json && webpack-bundle-analyzer stats.json"
-    // webpack-dev-server так же как и просто webpack собирает файлы из вывода, но складывает в опер память. поэтому при server нет доступа к выводной папке, для быстрого обновл
   }
   "main": "index.js"(webpack.config.js), - основной файл это index.js. е/и не хотим случайно публиковать, пишем private
   "private":"true", - приватный не публикуемый проект
@@ -90,37 +96,86 @@
     //
     // подключение пакет пафз через константу. для корректного поиска точки входа
     const path = require("path"); // `путь`=`требует`
-    // html. выгр html, подкл стили, js
+    // html выгр, подкл css, js
     const HTMLWebpackPlugin = require("html-webpack-plugin");
-    // css + mini ... . css в отдельные файлы
-    const MiniCssExtractPlugin = require('mini-css-extract-plugin');
     // очистка выводной папки
     const { CleanWebpackPlugin } = require("clean-webpack-plugin");
+    // копир файлов из корня в вывод
+    const CopyWebpackPlugin = require("copy-webpack-plugin");
+    // css + mini... css в отдельные файлы + loader
+    const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+    // cssmini вывод - по документации
+    // ??? не раб - прибавляет очень много веса
+    // const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
+    // cssmini вывод - по видео
+    const OptimizeCssAssetWebpackPlugin = require('optimize-css-assets-webpack-plugin')
+    const TerserWebpackPlugin = require('terser-webpack-plugin')
+
+    // режимы разраб/продукт ч/з систем перем.
+    // $$ npm i -D cross-env - корректно задаёт системную переменную(разраб/прод). прописать в packege.json
+    const isDev = process.env.NODE_ENV === 'development'
+    const isProd = !isDev
+
+    // fn для передачи объ. в optimization с проверкой на Prod
+    const optimization = () => {
+      // объ. конфиг по умолчанию
+      const config = {
+        // выгружать библ(jQuery, ) в один файл из 2х не связаных файлов
+        splitChunks: {
+          chunks: "all",
+        },
+      };
+      // е/и prod(true) в minimize добавл. cssmini
+      if (isProd) {
+        config.minimizer = [
+          // с видео минимиз. css 
+          new OptimizeCssAssetWebpackPlugin(),
+          new TerserWebpackPlugin(),
+          // с webpack документации 
+          // ??? не раб - прибавляет очень много веса, хоть и minimiz
+          // new CssMinimizerPlugin(),
+        ];
+      }
+      // возращ по умолчан
+      return config;
+    };
 
     // экспот настроек плагинов объ., из док.(config) 
     module.exports = {
-      mode: "development", // `режим разработки`
-      entry: { // точка входа, начало сборки
+      // укажем где исходники
+      context: path.resolve(__dirname, "src"),
+      // `режим разработки`
+      mode: "development", 
+      // точка входа, начало сборки
+      entry: { 
         // сборка из .src/index.jsx
         // main`главный`: модуль path`путь` resolve`разрешает` dirname`корневая папк`
         // path.resolve - составл. статический путь из указаных пунктов в скобках
         // делаеться потому что путь в некоторых системах выглядит по другому
         // в существуюших папках ищет нужное
         // можно указ. входной файл .jsx, чтоб node не искал только js по умолчанию
-        main: path.resolve(__dirname, "src", "index.jsx")
+        main: path.resolve(__dirname, "src", "index.js")
+        // неско-ко точек входа
+
       },
-      devtool: "eval-source-map", // как выгружать код/для разработки. опцинально
-        пояснения {
+      // как выгружать код/для разработки. опцинально
+      devtool: "eval-source-map", 
+        // devtool: isDev ? 'source-map' : '',
+        // пояснения {
           // eval - мини/строка, source-map - как есть + копия в мини, eval-source-map - рекомендуется
           // после запуска npm run build(start, ) появится app.js.map (мини версия при source-map)
           // source-map технология позволяет посмотреть в браузере какие файлы были подкл. к выходному файлу 
-        }
-      output: { // точка вывода
+        // }
+      // точка вывода
+      output: { 
         // выгруж. в ./static/build/app.js
         path: path.resolve(__dirname, "static", "build"),
         filename: "app.js",
+        // [name] добав уникальность(патерн). их много
+
       },
-      module: { // конфигурация модулей(загрузчиков)
+      // конфигурация модулей(загрузчиков)
+      module: { 
         // `правила` для модулей (настройка, параметры парсера и т. д.)
         rules: [
           // пояснения {
@@ -159,12 +214,12 @@
             }
           // },
           // CSS (стили|3 варианта) {
-            // загр. ccs файлы с импортами и возвращает ccs код.
+            // обраб. ccs файлы с импортами и возвращает ccs код.
             // $$ npm i -D css-loader
-            // css + style{ // не удобен - грузит стили в head
-              // Грузить вместе со style-loader
+            // css + style{
+              // Грузить стили в head, не файл
               // $$ npm i -D style-loader
-              // Подкл. CSS в JS файлах к странице(html), перед этим превратив их в строку. Сами файлы можно не подкл. Стили в head
+              // Подкл. CSS в JS файлах к странице(html), перед этим превратив их в строку. 
               // +++ import './test1.css'; // подкл. .css в src/.js
               {
                 test: /\.css$/i,
@@ -173,15 +228,32 @@
             // },
             // css + mini{
               // для отдельных css файлов
-              // $$ npm i --save-dev mini-css-extract-plugin
+              // $$ npm i --D mini-css-extract-plugin
               // +++ const MiniCssExtractPlugin
               // +++ plugins:[new MiniCssExtractPlugin()]
               // подкл. .css в src/.js
               // +++ import './test2.css'; 
-              // +++ <link rel="stylesheet" href="./static/build/styles.css"> // подкл. css в html
+              // подкл. css в html. не нежен с html плагин
+              // +++ <link rel="stylesheet" href="./static/build/styles.css">  
               {
                 test: /\.css$/i,
-                use: [MiniCssExtractPlugin.loader, 'css-loader'],
+                use: [
+                  // без опций
+                  // MiniCssExtractPlugin.loader, 'css-loader'
+                  // опции + доп.
+                  {
+                    // прямо указ какой loader
+                    loader: MiniCssExtractPlugin.loader,
+                    options: {
+                      // ??? не раб - https://webpack.js.org/plugins/mini-css-extract-plugin/#root
+                      // `горячий модуль замены` - измен. эл. без перезагрузки страницы
+                      // hmr: true,
+                      // reloadAll: true
+                      // publicPath: "/public/path/to/",
+                    },
+                  },
+                  "css-loader",
+                ],
               },
             // },
             // css + mini + scss{
@@ -195,12 +267,38 @@
                 // css, sass, scss
                 test: /\.(sa|sc|c)ss$/,
                 use: [
-                  // 3. Создает узлы `style` из строк JS
-                  "style-loader",
+                  // 3. Создает узлы `MiniCss` из строк JS в файлы
+                  {
+                    // прямо указ какой loader
+                    loader: MiniCssExtractPlugin.loader,
+                    options: {},
+                  },
                   // 2. Переводит CSS в обычный JS
                   "css-loader",
                   // 1. Компилирует Sass в CSS
                   "sass-loader",
+                ],
+              },
+            // }
+            //use: cssLoaders('less-loader')
+            // css + mini + less{
+              // $$ npm i -D less-loader
+              // подкл. .less в src/.js
+              // +++ import './test3.less';
+              {
+                // только less 
+                test: /\.less$/i,
+                use: [
+                  // 3. Создает узлы `MiniCss` из строк JS в файлы
+                  {
+                    // прямо указ какой loader
+                    loader: MiniCssExtractPlugin.loader,
+                    options: {},
+                  },
+                  // 2. Переводит CSS в обычный JS
+                  "css-loader",
+                  // 1. Компилирует Less в CSS
+                  "less-loader",
                 ],
               },
             // }
@@ -258,24 +356,76 @@
           // },
         ]
       },
-      plugins: [ // доп. узкие настр.
+      // доп. узкие настр.
+      plugins: [ 
         // html плагин {
-          // $$ npm i html-webpack-plugin
+          // $$ npm i -D html-webpack-plugin
           new HTMLWebpackPlugin({
-          template: "./index.html",
+            template: "./index.html",
+            // мини выгрузка в режиме Prod
+            minify: {
+              collapseWhitespace: isProd,
+            },
           }),
         // }
-        // css + mini ... {
+        // css + mini {
           new MiniCssExtractPlugin({
+            // $$ npm i -D mini-css-extract-plugin
             // [name] присвоит main, можно прописать имя
             filename: '[name].css',
             // для произв. раздел. на отдел. `куски`(асинхр. загр., )
             // chunkFilename: '[id].css',
           }),
         // }
-        // очистка выводной папки
-        new CleanWebpackPlugin(),
+        // очистка выводной папки {
+          // $$ npm i -D clean-webpack-plugin
+          new CleanWebpackPlugin(),
+        // }
+        // копир файлов {
+          // копир файлов(папок) из корня(src) в вывод
+          // $$ npm i -D copy-webpack-plugin
+          new CopyWebpackPlugin({
+            patterns: [
+              {
+                // от куда и куда копир(файлы, папки)
+                from: path.resolve(__dirname, "src/favicon.ico"),
+                to: path.resolve(__dirname, "dist"),
+              },
+            ],
+          }),
+        // }
       ],
+      // расшир/сокращ
+      resolve: {
+        // расшир. по умолч. чтоб не узаз. в import/export
+        extensions: [".js", ".json", ".png"],
+        // сокращение указ. на путь
+        alias: {
+          "@models": path.resolve(__dirname, "src/models"),
+          "@": path.resolve(__dirname, "src"),
+        },
+      },
+      // доп настр. знач. можно передать через fn с проверкой на Prod
+      optimization: 
+        // ч/з fn() возращ. сгенерированый объ. {
+          optimization: optimization(),
+        // }
+        // объектом {
+          {
+            // выгружать библ(jQuery, ) в один файл из 2х не связаных файлов
+            splitChunks: {
+              chunks: "all",
+            },
+          }
+        // }
+        },
+      // подкл dev-server к webpack для живой перезагрузки
+      devServer: {
+        // порт для запуска
+        port: 4200,
+        // только в разраб
+        hot: isDev
+      },
     };
     //
   }

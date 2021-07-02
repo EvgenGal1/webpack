@@ -17,10 +17,12 @@ import WebpackLogo from "@/assets/webpack-logo.png";
 // import React from 'react'
 // import {render} from 'react-dom'
 // import './babel'
-// ! 2.0.19 подкл .стили css
+// ! 2.0.19 подкл стили css
 import "./styles/styles.css";
-// import './styles/less.less'
-// import './styles/scss.scss'
+// ! 2.0.34.2 для SCSS
+import './styles/scss.scss'
+// ! 2.0.34.2 для Less
+import './styles/less.less'
 
 // созд. объ. поста (класс доступен т.к. подкл. в html)
 // передаем title
@@ -52,6 +54,6 @@ $('pre').addClass('code').html(post.toString())
 
 // render(<App/>, document.getElementById('app'))
 
-console.log("JSON:", json);
-console.log("XML:", xml);
-console.log("CSV:", csv);
+// console.log("JSON:", json);
+// console.log("XML:", xml);
+// console.log("CSV:", csv);

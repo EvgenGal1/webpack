@@ -11,14 +11,14 @@ function createAnalytics() {
   // fn() увелич counter
   const listener = () => counter++;
   // новое событие click с fn()
-  document.addEventListener("click", listener);
+  // document.addEventListener("click", listener);
   // ! 2.0.28.1 использ jQ
   $(document).on('click',listener);
   // fn()createAnalytics возр. объ. у которого 2 метода
   return {
     // вызов прекращ действ analitics
     destroy() {
-      document.removeEventListener("click", listener);
+      // document.removeEventListener("click", listener);
       // ! 2.0.28.1 использ jQ
       $(document).off("click", listener);
       // при вызове ставим destroyed = true

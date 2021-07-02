@@ -8,12 +8,13 @@
       content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"
     />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <!-- <link rel="icon" href="favicon.ico" type="image/ico"> -->
-    <title>Webpack 2.0</title>
     <!-- ! 2.0.7 подк. можно в head, т.к. файл не раб с DOM эл. -->
     <!-- ! 2.0.14 ввели доп. имя -->
     <!-- ! 2.0.16 после html-plug нет нужны подкл. script -->
     <!-- <script src="./analytics.bundle.js"></script> -->
+    <!-- ! 2.0.30 копир и подкл файл(.ico) -->
+    <link rel="icon" href="./favicon.ico" type="image/ico" />
+    <title>Webpack 2.0</title>
   </head>
   <body>
     <!-- <div id="app"></div> -->
@@ -26,7 +27,19 @@
       <div class="logo"></div>
       <hr />
       <!-- ! 2.0.27.1 подкл jQuery. В стилях использ эл. на jQ -->
+      <!-- div>lorem25 -->
       <pre></pre>
+      <hr />
+      <!-- ! 2.0.34.2 SCSS подкл. -->
+      <div class="card">
+        <h2>SCSS</h2>
+      </div>
+      <!-- ! 2.0.34.2 Less подкл. -->
+      <div class="box">
+        <h2>Less</h2>
+      </div>
+
+      
     </div>
 
     <!-- ! 2.0.5 без import/export подкл. в правильном порядке. перед </ body> -->

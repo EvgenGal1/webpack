@@ -1,56 +1,73 @@
 // ! 2.0.8 созд webpack.config.js
 // подкл path встрен. модуль в node js
 const path = require("path");
-// ! 2.0.15 устан html плагин и пропис его. выгр html, подкл стили, js
+// ! 2.0.15 html плагин и пропис его. выгр html, подкл стили, js
 const HTMLWebpackPlugin = require("html-webpack-plugin");
 // ! 2.0.17 очистка ввыводной папки
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
-// const CopyWebpackPlugin = require('copy-webpack-plugin')
-// const MiniCssExtractPlugin = require('mini-css-extract-plugin')
-// const OptimizeCssAssetWebpackPlugin = require('optimize-css-assets-webpack-plugin')
-// const TerserWebpackPlugin = require('terser-webpack-plugin')
+// ! 2.0.30 копир файлов из корня в вывод
+const CopyWebpackPlugin = require("copy-webpack-plugin");
+// ! 2.0.31 css в отделн файлы + loader
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+// ! 2.0.33.1 cssmini вывод - по документации
+// ??? не раб - прибавляет очень много веса
+// const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
+// ! 2.0.33.2 cssmini вывод - по видео
+const OptimizeCssAssetWebpackPlugin = require("optimize-css-assets-webpack-plugin");
+const TerserWebpackPlugin = require("terser-webpack-plugin");
 // const {BundleAnalyzerPlugin} = require('webpack-bundle-analyzer')
 
-// const isDev = process.env.NODE_ENV === 'development'
-// const isProd = !isDev
+// ! 2.0.32 режимы разраб/продукт (получ. true)
+const isDev = process.env.NODE_ENV === "development";
+const isProd = !isDev;
 
-// const optimization = () => {
-//   const config = {
-//     splitChunks: {
-//       chunks: 'all'
-//     }
-//   }
+// ! 2.0.33.3 export объ. в optimization
+const optimization = () => {
+  // объ. конфиг по умолчанию
+  const config = {
+    splitChunks: {
+      chunks: "all",
+    },
+  };
+  // е/и prod(true) в minimize добавл. cssmini
+  if (isProd) {
+    config.minimizer = [
+      // с видео
+      // ! 2.0.33.2 cssmini вывод
+      new OptimizeCssAssetWebpackPlugin(),
+      new TerserWebpackPlugin(),
+      // с webpack документации
+      // ??? не раб - прибавляет очень много веса, хоть и mini
+      // new CssMinimizerPlugin(),
+    ];
+  }
+  // возращ по умолчан
+  return config;
+};
 
-//   if (isProd) {
-//     config.minimizer = [
-//       new OptimizeCssAssetWebpackPlugin(),
-//       new TerserWebpackPlugin()
-//     ]
-//   }
+// ! 2.0.35 перименовка файлов в зависимости от режима. более сложное для Prod для кэш и
+const filename = (ext) => (isDev ? `[name].${ext}` : `[name].[hash].${ext}`);
 
-//   return config
-// }
-
-// const filename = ext => isDev ? `[name].${ext}` : `[name].[hash].${ext}`
-
-// const cssLoaders = extra => {
+// ! 2.0.36 убираем дубли loader в css, scss, less
+// const cssLoaders = (extra) => {
+//   // массив по умолчанию
 //   const loaders = [
 //     {
 //       loader: MiniCssExtractPlugin.loader,
 //       options: {
 //         hmr: isDev,
-//         reloadAll: true
+//         reloadAll: true,
 //       },
 //     },
-//     'css-loader'
-//   ]
-
+//     "css-loader",
+//   ];
+//   // если есть передаваемый параметр(extra)? добовл. его в конце массива
 //   if (extra) {
-//     loaders.push(extra)
+//     loaders.push(extra);
 //   }
-
-//   return loaders
-// }
+//   // возвращ умолч
+//   return loaders;
+// };
 
 // const babelOptions = preset => {
 //   const opts = {
@@ -127,10 +144,11 @@ module.exports = {
   },
   // куда выводить
   output: {
-    // ! 2.0.13 добав уникальность(патерн)[name]. есть много патернов
-    filename: "[name].bundle.js",
-    // filename: filename('js'),
     path: path.resolve(__dirname, "dist"),
+    // ! 2.0.13 добав уникальность(патерн)[name]. есть много патернов
+    // filename: "[name].bundle.js",
+    // ! 2.0.35 переименовка. в fn() передаём ext(js)
+    filename: filename("js"),
   },
   // ! 2.0.26 расшир/сокращ
   resolve: {
@@ -142,46 +160,116 @@ module.exports = {
       "@": path.resolve(__dirname, "src"),
     },
   },
+  // ! 2.0.28 доп настр
+  // ! 2.0.33.3 ч/з fn() возращ. сгенерированый объ.
+  optimization: optimization(),
+  // {
   // ! 2.0.28 выгружать библ(jQuery, ) в один файл из 2х не связаных файлов
-  optimization: {
-    // optimization(),
-    splitChunks: {
-      chunks: "all",
-    },
-  },
+  // splitChunks: {
+  //   chunks: "all",
+  // },
+  // ! 2.0.33.1 cssmini вывод
+  // ??? прибавляет очень много веса при npm build при такой записи
+  // minimizer: [new CssMinimizerPlugin()],
+  // },
   // ! 2.0.29 подкл dev-server к webpack для живой перезагрузки
   devServer: {
+    // указ где искать
+    contentBase: './dist',
     // порт для запуска
-    // port: 4200,
     port: 4200,
-    // hot: isDev,
+    // ! 2.0.32.1 только в разраб
+    hot: isDev,
   },
-  //   devtool: isDev ? 'source-map' : '',
+  // devtool: isDev ? "source-map" : "eval-source-map",
+  // devtool: "eval-source-map", // ??? прибавляет очень много веса при npm build
   plugins: [
-    // ! 2.0.15 устан html плагин и пропис его
+    //   plugins: plugins(),
+    // ! 2.0.15 html выгруж, подкл css, js
     new HTMLWebpackPlugin({
       template: "./index.html",
+      minify: {
+        collapseWhitespace: isProd,
+      },
     }),
     // ! 2.0.17 очистка ввыводной папки
     new CleanWebpackPlugin(),
+    // ! 2.0.30 копир файлов в вывод
+    new CopyWebpackPlugin({
+      patterns: [
+        {
+          // от куда и куда копир(файлы, папки)
+          from: path.resolve(__dirname, "src/favicon.ico"),
+          to: path.resolve(__dirname, "dist"),
+        },
+      ],
+    }),
+    // ! 2.0.31 css в отдельн файлы
+    new MiniCssExtractPlugin({
+      // filename: "style.[name].bundle.css",
+      // ! 2.0.35  переименовка. в fn() передаём ext(css)
+      filename: filename("css"),
+    }),
   ],
-  //   plugins: plugins(),
   // ! 2.0.20 подкл модули и css
   module: {
     rules: [
       {
         test: /\.css$/,
-        use: ["style-loader", "css-loader"],
-        // use: cssLoaders()
+        // use: ["style-loader", "css-loader"],
+        // ! 2.0.36 убираем дубли loader
+        // use: cssLoaders(),
+        // ! 2.0.31 css в отделн файлы
+        use: [
+          // ! 2.0.31.1 расшир loader
+          // {
+          //   // прямо указ какой loader
+          //   loader: MiniCssExtractPlugin.loader,
+          //   options: {
+          //     // ! 2.0.32.1 только в разраб
+          //     // ??? не раб - https://webpack.js.org/plugins/mini-css-extract-plugin/#root
+          //     // `горячий модуль замены` - измен. эл. без перезагрузки страницы
+          //     // hmr: true,
+          //     // hmr: isDev,
+          //     // reloadAll: true,
+          //     // publicPath: "./dist/css/",
+          //     // publicPath: '/public/path/to/'
+          //   },
+          // },
+          MiniCssExtractPlugin.loader,
+          "css-loader",
+        ],
       },
-      //       {
-      //         test: /\.less$/,
-      //         use: cssLoaders('less-loader')
-      //       },
-      //       {
-      //         test: /\.s[ac]ss$/,
-      //         use: cssLoaders('sass-loader')
-      //       },
+      // ! 2.0.34.1 SCSS подкл.
+      {
+        test: /\.s[ac]ss$/,
+        // ! 2.0.36 убираем дубли loader
+        // use: cssLoaders('sass-loader'),
+        use: [
+          // {
+          //   loader: MiniCssExtractPlugin.loader,
+          //   options: {},
+          // },
+          MiniCssExtractPlugin.loader,
+          "css-loader",
+          "sass-loader",
+        ],
+      },
+      // ! 2.0.34.2 Less подкл.
+      {
+        test: /\.less$/,
+        // ! 2.0.36 убираем дубли loader
+        // use: cssLoaders('less-loader'),
+        use: [
+          // {
+          //   loader: MiniCssExtractPlugin.loader,
+          //   options: {},
+          // },
+          MiniCssExtractPlugin.loader,
+          "css-loader",
+          "less-loader",
+        ],
+      },
       {
         // ! 2.0.22 подкл. картинки $$ npm i -D file-loader
         test: /\.(png|jpg|svg|gif)$/,
