@@ -49,25 +49,26 @@ const optimization = () => {
 const filename = (ext) => (isDev ? `[name].${ext}` : `[name].[hash].${ext}`);
 
 // ! 2.0.36 убираем дубли loader в css, scss, less
-// const cssLoaders = (extra) => {
-//   // массив по умолчанию
-//   const loaders = [
-//     {
-//       loader: MiniCssExtractPlugin.loader,
-//       options: {
-//         hmr: isDev,
-//         reloadAll: true,
-//       },
-//     },
-//     "css-loader",
-//   ];
-//   // если есть передаваемый параметр(extra)? добовл. его в конце массива
-//   if (extra) {
-//     loaders.push(extra);
-//   }
-//   // возвращ умолч
-//   return loaders;
-// };
+const cssLoaders = (extra) => {
+  // массив по умолчанию
+  const loaders = [
+    {
+      loader: MiniCssExtractPlugin.loader,
+      options: {
+        // hmr: isDev,
+        // reloadAll: true,
+      },
+    },
+    // MiniCssExtractPlugin.loader,
+    "css-loader",
+  ];
+  // если есть передаваемый параметр(extra)? добовл. его в конце массива
+  if (extra) {
+    loaders.push(extra);
+  }
+  // возвращ умолч
+  return loaders;
+};
 
 // const babelOptions = preset => {
 //   const opts = {
@@ -218,57 +219,57 @@ module.exports = {
         test: /\.css$/,
         // use: ["style-loader", "css-loader"],
         // ! 2.0.36 убираем дубли loader
-        // use: cssLoaders(),
+        use: cssLoaders(),
         // ! 2.0.31 css в отделн файлы
-        use: [
-          // ! 2.0.31.1 расшир loader
-          // {
-          //   // прямо указ какой loader
-          //   loader: MiniCssExtractPlugin.loader,
-          //   options: {
-          //     // ! 2.0.32.1 только в разраб
-          //     // ??? не раб - https://webpack.js.org/plugins/mini-css-extract-plugin/#root
-          //     // `горячий модуль замены` - измен. эл. без перезагрузки страницы
-          //     // hmr: true,
-          //     // hmr: isDev,
-          //     // reloadAll: true,
-          //     // publicPath: "./dist/css/",
-          //     // publicPath: '/public/path/to/'
-          //   },
-          // },
-          MiniCssExtractPlugin.loader,
-          "css-loader",
-        ],
+        // use: [
+        //   // ! 2.0.31.1 расшир loader
+        //   // {
+        //   //   // прямо указ какой loader
+        //   //   loader: MiniCssExtractPlugin.loader,
+        //   //   options: {
+        //   //     // ! 2.0.32.1 только в разраб
+        //   //     // ??? не раб - https://webpack.js.org/plugins/mini-css-extract-plugin/#root
+        //   //     // `горячий модуль замены` - измен. эл. без перезагрузки страницы
+        //   //     // hmr: true,
+        //   //     // hmr: isDev,
+        //   //     // reloadAll: true,
+        //   //     // publicPath: "./dist/css/",
+        //   //     // publicPath: '/public/path/to/'
+        //   //   },
+        //   // },
+        //   MiniCssExtractPlugin.loader,
+        //   "css-loader",
+        // ],
       },
       // ! 2.0.34.1 SCSS подкл.
       {
         test: /\.s[ac]ss$/,
         // ! 2.0.36 убираем дубли loader
-        // use: cssLoaders('sass-loader'),
-        use: [
-          // {
-          //   loader: MiniCssExtractPlugin.loader,
-          //   options: {},
-          // },
-          MiniCssExtractPlugin.loader,
-          "css-loader",
-          "sass-loader",
-        ],
+        use: cssLoaders('sass-loader'),
+        // use: [
+        //   // {
+        //   //   loader: MiniCssExtractPlugin.loader,
+        //   //   options: {},
+        //   // },
+        //   MiniCssExtractPlugin.loader,
+        //   "css-loader",
+        //   "sass-loader",
+        // ],
       },
       // ! 2.0.34.2 Less подкл.
       {
         test: /\.less$/,
         // ! 2.0.36 убираем дубли loader
-        // use: cssLoaders('less-loader'),
-        use: [
-          // {
-          //   loader: MiniCssExtractPlugin.loader,
-          //   options: {},
-          // },
-          MiniCssExtractPlugin.loader,
-          "css-loader",
-          "less-loader",
-        ],
+        use: cssLoaders('less-loader'),
+        // use: [
+        //   // {
+        //   //   loader: MiniCssExtractPlugin.loader,
+        //   //   options: {},
+        //   // },
+        //   MiniCssExtractPlugin.loader,
+        //   "css-loader",
+        //   "less-loader",
+        // ],
       },
       {
         // ! 2.0.22 подкл. картинки $$ npm i -D file-loader
