@@ -145,6 +145,49 @@
       return config;
     };
 
+    // перименовка файлов в зависимости от режима. более сложное для Prod для кэша
+    const filename = (ext) => (isDev ? `[name].${ext}` : `[name].[hash].${ext}`);
+
+    // убираем дубли loader в css, scss, less
+    const cssLoaders = (extra) => {
+      // массив по умолчанию
+      const loaders = [
+        {
+          loader: MiniCssExtractPlugin.loader,
+          options: {
+            // hmr: isDev,
+            // reloadAll: true,
+          },
+        },
+        // MiniCssExtractPlugin.loader,
+        "css-loader",
+      ];
+      // если есть передаваемый параметр(extra) добовл. его в конце массива
+      if (extra) {
+        loaders.push(extra);
+      }
+      // возвращ умолч
+      return loaders;
+    };
+
+    // убираем дубли babel options в JS, JSX, TS
+    const babelOptions = preset => {
+      const opts = {
+        presets: [
+          '@babel/preset-env'
+        ],
+        plugins: [
+          '@babel/plugin-proposal-class-properties'
+        ]
+      }
+
+      if (preset) {
+        opts.presets.push(preset)
+      }
+
+      return opts
+    }
+
     // экспот настроек плагинов объ., из док.(config) 
     module.exports = {
       // укажем где исходники
@@ -177,7 +220,6 @@
         path: path.resolve(__dirname, "static", "build"),
         filename: "app.js",
         // [name] добав уникальность(патерн). их много
-
       },
       // конфигурация модулей(загрузчиков)
       module: { 
@@ -189,44 +231,103 @@
             // exclude - исключения.
             // указ. webpack какой loader использовать
           // }
-          // BABEL - компилирует код { 
+          // BABEL(JS,JSX,TS) - компилирует код { 
             // превращ. ECMAScript.next код в ECMAScript 5 (конструкторы). заменяет весь новый код на старый
             // устан. babel 
             // $$ npm install -D babel-loader @babel/core @babel/preset-env 
             // устан. полифил от ошибки "Uncaught ReferenceError: regeneratorRuntime is not defined" в браузере
+            // $$ npm i -D @babel/polyfill
             // подкл. в entry: вместе с index.js как отдельн. библ.
             // entry:{main: ["@babel/polyfill","./index.js"]}
-            // $$ npm i -D @babel/polyfill
-              // подроб. {
-                // babel-loader - адаптер м/у webpavk и babel
-                // core - ядро/ ? переводчик
-                // preset - доп. настр.(набор плагинов для js) как компил. версии js
-                // babel/plugin-proposal-class-properties - плагин для удобства
-              // }
-            {
-              // для js и/или jsx. синтаксис регулярных выражений
-              test: /\.jsx?$/i, // есть такой test: /\.(js|jsx)$/,
-              // папка node_modules
-              exclude: /(node_modules)/,
-              // указ. webpack какой loader использовать
-              use: {
-                // загрузчик - babel (собирает jsx файлы)
-                loader: "babel-loader",
-                // в опциях доп. настр.
-                options: {
-                  // указываем плагины babel. их можно указать в файле .babelrc только в формате json, прописано там же
-                  presets: ["@babel/preset-env", "@babel/preset-react"],
-                  plugins: [
-                    ["@babel/plugin-proposal-class-properties", { loose: true }],
-                  ],
+            // устан плагин чтоб не было ошибок в консоли
+            // $$ npm i -D @babel/plugin-proposal-class-properties
+            // подкл. в plugins: []
+            // подроб. {
+              // babel-loader - адаптер м/у webpaсk и babel
+              // core - ядро/ ? переводчик
+              // preset - доп. настр.(набор плагинов для js) как компил. версии js
+              // polyfill - 
+              // proposal-class-properties - плагин для удобства?
+            // }
+            // JS {
+              {
+                // для js. синтаксис регулярных выражений
+                test: /\.js?$/,
+                // исключ. папка node_modules
+                exclude: /(node_modules)/,
+                // указ. webpack какой loader использовать
+                use: {
+                  // загрузчик - babel (собирает js файлы)
+                  loader: "babel-loader",
+                  // в опциях доп. настр.
+                  options:
+                    // без fn()
+                      // {
+                        // указываем плагины babel. их можно указать в файле .babelrc только в формате json, прописано там же
+                        // presets: ["@babel/preset-env"],
+                        // plugins: ["@babel/plugin-proposal-class-properties"], // , { loose: true }
+                      // },
+                    // с fn() babelOptions без дублей
+                      babelOptions()
+                },
+              }
+            // }
+            // JSX {
+              {
+                // устан react и react-dom
+                // $$ npm install react react-dom
+                // подкл в файл .JSX
+                // import React from 'react'
+                // import { render } from 'react-dom'
+                // babel react устан и настр
+                // $$ npm i -D @babel/preset-react
+                // entry: {main3:"./fail3.ts"}
+                // для js и/или jsx. синтаксис регулярных выражений
+                test: /\.jsx?$/i, // есть такой test: /\.(js|jsx)$/,
+                // исключ. папка node_modules
+                exclude: /(node_modules)/,
+                // указ. webpack какой loader использовать
+                use: {
+                  // загрузчик - babel (собирает jsx файлы)
+                  loader: "babel-loader",
+                  // в опциях доп. настр.
+                  options: 
+                  // без fn()
+                    // {
+                      // указываем плагины babel. их можно указать в файле .babelrc только в формате json, прописано там же
+                      // presets: ["@babel/preset-env", "@babel/preset-react"],
+                      // plugins: ["@babel/plugin-proposal-class-properties"], // , { loose: true }
+                    // },
+                  // с fn() babelOptions без дублей
+                    babelOptions("@babel/preset-react")
+                },
+              }
+            // }
+            // TS {     
+              // typescript babel устан и настр
+              // $$ npm i -D @babel/preset-typescript
+              // entry: {main3:"./fail3.ts"}
+              {
+                test: /\.ts$/,
+                exclude: /node_modules/,
+                use: {
+                  loader: "babel-loader",
+                  options: 
+                  // без fn()
+                    // {
+                      // presets: ["@babel/preset-env" , "@babel/preset-typescript"],
+                      // plugins: ["@babel/plugin-proposal-class-properties"],//, { loose: true }
+                    // },
+                  // с fn() babelOptions без дублей
+                    babelOptions("@babel/preset-typescript"),
                 },
               },
-            }
+            // }
           // },
-          // CSS (стили|3 варианта) {
+          // CSS (стили|4 варианта) {
             // обраб. ccs файлы с импортами и возвращает ccs код.
             // $$ npm i -D css-loader
-            // css + style{
+            // CSS + style{
               // Грузить стили в head, не файл
               // $$ npm i -D style-loader
               // Подкл. CSS в JS файлах к странице(html), перед этим превратив их в строку. 
@@ -236,7 +337,7 @@
                 use: ["style-loader", "css-loader"],
               },
             // },
-            // css + mini{
+            // CSS + mini{
               // для отдельных css файлов
               // $$ npm i --D mini-css-extract-plugin
               // +++ const MiniCssExtractPlugin
@@ -249,70 +350,77 @@
                 test: /\.css$/i,
                 use: [
                   // без опций
-                  // MiniCssExtractPlugin.loader, 'css-loader'
+                    // MiniCssExtractPlugin.loader, 'css-loader'
                   // опции + доп.
-                  {
-                    // прямо указ какой loader
-                    loader: MiniCssExtractPlugin.loader,
-                    options: {
-                      // ??? не раб - https://webpack.js.org/plugins/mini-css-extract-plugin/#root
-                      // `горячий модуль замены` - измен. эл. без перезагрузки страницы
-                      // hmr: true,
-                      // reloadAll: true
-                      // publicPath: "/public/path/to/",
-                    },
-                  },
-                  "css-loader",
+                    // {
+                      // прямо указ какой loader
+                      // loader: MiniCssExtractPlugin.loader,
+                      // options: {
+                        // ??? не раб - https://webpack.js.org/plugins/mini-css-extract-plugin/#root
+                        // `горячий модуль замены` - измен. эл. без перезагрузки страницы
+                        // hmr: true,
+                        // reloadAll: true
+                        // publicPath: "/public/path/to/",
+                      // },
+                    // },
+                    // "css-loader",
+                  // с fn() cssLoaders без дублей
+                    use: cssLoaders(),
                 ],
               },
             // },
-            // css + mini + scss{
+            // CSS + mini + SCSS{
               // $$ npm i -D sass-loader node-sass
               // 2 опции sass(новее++) и node-sass(быстрее++)
               // подкл. .scss в src/.js
-              // +++ import './test3.scss';
+              // +++ import './test2.scss';
               {
-                // только sass 
+                // sass/scss 
                 //test: /\.s[ac]ss$/i,
                 // css, sass, scss
                 test: /\.(sa|sc|c)ss$/,
-                use: [
-                  // 3. Создает узлы `MiniCss` из строк JS в файлы
-                  {
-                    // прямо указ какой loader
-                    loader: MiniCssExtractPlugin.loader,
-                    options: {},
-                  },
-                  // 2. Переводит CSS в обычный JS
-                  "css-loader",
-                  // 1. Компилирует Sass в CSS
-                  "sass-loader",
-                ],
+                // без fn()
+                  use: [
+                    // 3. Создает узлы `MiniCss` из строк JS в файлы
+                    {
+                      // прямо указ какой loader
+                      loader: MiniCssExtractPlugin.loader,
+                      options: {},
+                    },
+                    // 2. Переводит CSS в обычный JS
+                    "css-loader",
+                    // 1. Компилирует Sass в CSS
+                    "sass-loader",
+                  ],
+                // с fn() cssLoaders без дублей
+                  use: cssLoaders("sass-loader"),
               },
             // }
-            //use: cssLoaders('less-loader')
-            // css + mini + less{
+            // CSS + mini + Less{
               // $$ npm i -D less-loader
               // подкл. .less в src/.js
               // +++ import './test3.less';
               {
                 // только less 
                 test: /\.less$/i,
-                use: [
-                  // 3. Создает узлы `MiniCss` из строк JS в файлы
-                  {
-                    // прямо указ какой loader
-                    loader: MiniCssExtractPlugin.loader,
-                    options: {},
-                  },
-                  // 2. Переводит CSS в обычный JS
-                  "css-loader",
-                  // 1. Компилирует Less в CSS
-                  "less-loader",
-                ],
+                // без fn()
+                  use: [
+                    // 3. Создает узлы `MiniCss` из строк JS в файлы
+                    {
+                      // прямо указ какой loader
+                      loader: MiniCssExtractPlugin.loader,
+                      options: {},
+                    },
+                    // 2. Переводит CSS в обычный JS
+                    "css-loader",
+                    // 1. Компилирует Less в CSS
+                    "less-loader",
+                  ],
+                // с fn() cssLoaders без дублей
+                  use: cssLoaders("less-loader"),
               },
             // }
-            // css разраб/прод{
+            // CSS разраб/прод{
               // !!! https://webpack.js.org/loaders/style-loader/
               // !!! https://webpack.js.org/loaders/sass-loader/
               test: /\.(sa|sc|c)ss$/,
@@ -328,12 +436,9 @@
               "css-loader", "sass-loader", ],
             // }
           // },
-          // Файлы {
+          // Файлы, изо {
             // возм загр. различ файлы (img, xml, )
-            // npm i -D file-loader
-          // },
-          // Картинки {
-            // возм загр. картинки. устан loader
+            // устан loader
             // $$ npm i -D file-loader
             // подкл в js
             // +++ import Logo from './img/logo.png'
@@ -407,9 +512,9 @@
       ],
       // расшир/сокращ
       resolve: {
-        // расшир. по умолч. чтоб не узаз. в import/export
+        // расшир. по умолч. чтоб не указыв. в import/export
         extensions: [".js", ".json", ".png"],
-        // сокращение указ. на путь
+        // сокращение/пседвоним указ. на путь
         alias: {
           "@models": path.resolve(__dirname, "src/models"),
           "@": path.resolve(__dirname, "src"),
@@ -443,13 +548,12 @@
     https://webpack.js.org/configuration/
   }
 1.5 +++ Создать в корне папку src(любое имя и путь) и файл index.js(любое имя) в ней.
-1.6 $$ npm run build // запуск сборки
+1.6 $$ npm run build // запуск сборки в Prod
 	+++ Появляеться static/build/app.js. // сбор всего JS кода в один файл
   доп. пояснения {
     // Содержимое файла app.js автоматически минимизируется. 
     // Хранит все модули добавл. в сборку(index.jsx), ч/з importы
-    // содерж. каждого файла в отдельной fn()
-    // весь код файла записывается как строка, помещёная в fn() eval
+    // содерж. каждого файла в отдельной fn() eval. записывается как строка, помещёная в fn() eval
     // eval - нативная fn() в JS которая исполняет код из строки. 
     // eval не рекоменд. использ., только для быстрого исполнения браузер. движ.
     // в шапке технический код webpack для эмуляции модулей внутри браузера
@@ -472,6 +576,8 @@
     //
   }
 	// теперь webpack-dev-server будет отслеживать любые изменения в файлах и на лету пересобирать приложение
+
+
 
 1.7.1 Установил $$ npm i html-webpack-plugin
 

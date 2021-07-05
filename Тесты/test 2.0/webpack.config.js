@@ -21,7 +21,7 @@ const TerserWebpackPlugin = require("terser-webpack-plugin");
 const isDev = process.env.NODE_ENV === "development";
 const isProd = !isDev;
 
-// ! 2.0.33.3 export объ. в optimization
+// ! 2.0.33.3 export объ. в optimization в зависимости от Prod
 const optimization = () => {
   // объ. конфиг по умолчанию
   const config = {
@@ -70,23 +70,19 @@ const cssLoaders = (extra) => {
   return loaders;
 };
 
-// ! 2.0.37
-// const babelOptions = preset => {
-//   const opts = {
-//     presets: [
-//       '@babel/preset-env'
-//     ],
-//     plugins: [
-//       '@babel/plugin-proposal-class-properties'
-//     ]
-//   }
+// ! 2.0.39 убираем дубли babel в JS, JSX, TS
+const babelOptions = (preset) => {
+  const opts = {
+    presets: ["@babel/preset-env"],
+    plugins: ["@babel/plugin-proposal-class-properties"],
+  };
 
-//   if (preset) {
-//     opts.presets.push(preset)
-//   }
+  if (preset) {
+    opts.presets.push(preset);
+  }
 
-//   return opts
-// }
+  return opts;
+};
 
 // const jsLoaders = () => {
 //   const loaders = [{
@@ -141,9 +137,13 @@ module.exports = {
   // ! 2.0.12 два ввода
   entry: {
     // main: "./index.js",
-    // ! 2.0.37.2 подкл. babel polyfill. от ошибки в юраузер(сбор main и polyfill)
-    main: ["@babel/polyfill","./index.js"], //  ,"@babel/polyfill"
+    // ! 2.0.37.2 подкл. babel polyfill. от ошибки в браузер(сбор main и polyfill)
+    main: ["@babel/polyfill", "./index.js"],
+    // ! 2.0.40 проба 2 файла html
+    app: ["@babel/polyfill", "./indexReact.jsx"],
     analytics: "./analytics.js",
+    // ! 2.0.38.2 typescript подкл. файл
+    // analyticsTS: "./analytics.ts",
   },
   // куда выводить
   output: {
@@ -194,6 +194,16 @@ module.exports = {
       minify: {
         collapseWhitespace: isProd,
       },
+      chunks:['main','analytics']
+    }),
+    // ! 2.0.40 проба 2 файла html
+    new HTMLWebpackPlugin({
+      filename: "indexReact.html",
+      template: "./indexReact.html",
+      minify: {
+        collapseWhitespace: isProd,
+      },
+      chunks:['app']
     }),
     // ! 2.0.17 очистка ввыводной папки
     new CleanWebpackPlugin(),
@@ -217,14 +227,15 @@ module.exports = {
   // ! 2.0.20 подкл модули и css
   module: {
     rules: [
+      // CSS
       {
         test: /\.css$/,
         // use: ["style-loader", "css-loader"],
         // use: [MiniCssExtractPlugin.loader, "css-loader"],
-        // ! 2.0.36 убираем дубли loader
-        use: cssLoaders(),
         // ! 2.0.31 css в отделн файлы
         // use: [
+        //   MiniCssExtractPlugin.loader,
+        //   "css-loader",
         //   // ! 2.0.31.1 расшир loader
         //   // {
         //   //   // прямо указ какой loader
@@ -240,9 +251,9 @@ module.exports = {
         //   //     // publicPath: '/public/path/to/'
         //   //   },
         //   // },
-        //   MiniCssExtractPlugin.loader,
-        //   "css-loader",
         // ],
+        // ! 2.0.36 убираем дубли loader
+        use: cssLoaders(),
       },
       // ! 2.0.34.1 SCSS подкл.
       {
@@ -274,13 +285,14 @@ module.exports = {
         //   "less-loader",
         // ],
       },
+      // ! 2.0.22 картинки подкл.
       {
-        // ! 2.0.22 подкл. картинки $$ npm i -D file-loader
+        // устан $$ npm i -D file-loader
         test: /\.(png|jpg|svg|gif)$/,
         use: ["file-loader"],
       },
+      // ! 2.☺0.23 шрифты подкл.
       {
-        // ! 2.0.23 подкл. шрифты
         test: /\.(ttf|woff|woff2|eot)$/,
         use: ["file-loader"],
       },
@@ -303,36 +315,52 @@ module.exports = {
         // ! 2.0.37.1 babel расшир
         use: {
           loader: "babel-loader",
-          options: {
-            // набор плагинов для js
-            presets: ["@babel/preset-env"], // , "@babel/preset-react"
-            // plugins: [
-            //   ["@babel/plugin-proposal-class-properties", { loose: true }],
-            // ],
-          },
+          options:
+            // ! 2.0.39 убираем дубли babel options
+            // {
+            //   // набор плагинов для js
+            //   presets: ["@babel/preset-env"], // , "@babel/preset-react"
+            //   // ! 2.0.37.3 плагин устан и подкл.
+            //   plugins: [
+            //     [
+            //       "@babel/plugin-proposal-class-properties",
+            //       // { loose: true }
+            //     ],
+            //   ],
+            // },
+            babelOptions(),
         },
       },
-      // {
-      //   test: /\.js$/,
-      //   exclude: /node_modules/,
-      //   use: jsLoaders(),
-      // },
-      // {
-      //   test: /\.ts$/,
-      //   exclude: /node_modules/,
-      //   loader: {
-      //     loader: "babel-loader",
-      //     options: babelOptions("@babel/preset-typescript"),
-      //   },
-      // },
-      // {
-      //   test: /\.jsx$/,
-      //   exclude: /node_modules/,
-      //   loader: {
-      //     loader: "babel-loader",
-      //     options: babelOptions("@babel/preset-react"),
-      //   },
-      // },
+      // ! 2.0.38.2 typescript устан и настр
+      {
+        // $$ npm i -D @babel/preset-typescript
+        test: /\.ts$/,
+        exclude: /node_modules/,
+        use: {
+          loader: "babel-loader",
+          options:
+            // ! 2.0.39 убираем дубли babel options
+            // {
+            //   presets: ["@babel/preset-env", "@babel/preset-typescript"],
+            //   plugins: [
+            //     "@babel/plugin-proposal-class-properties",
+            //     // { loose: true }
+            //   ],
+            // },
+            babelOptions("@babel/preset-typescript"),
+        },
+      },
+      // ! 2.0.38.1 react устан и настр
+      {
+        // $$ npm install react react-dom
+        // $$ npm i -D @babel/preset-react
+        test: /\.jsx$/,
+        exclude: /node_modules/,
+        use: {
+          loader: "babel-loader",
+          options: babelOptions("@babel/preset-react"),
+        },
+      },
     ],
   },
   // }

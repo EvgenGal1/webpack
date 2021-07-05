@@ -4,7 +4,7 @@
 // ! 2.0.26 поправили путь с alias
 import Post from "@models/Post";
 // ! 2.0.27 подкл jQuery в prod $$ npm i -S jquery. import всего из библ
-import * as $ from 'jquery'
+import * as $ from "jquery";
 // ! 2.0.21 подкл. JSON и вывод console
 import json from "./assets/json.json";
 // ! 2.0.24 подкл. xml и вывод console
@@ -14,16 +14,17 @@ import csv from "./assets/data.csv";
 // ! 2.0.22 подкл. картинки
 // ! 2.0.26 поправили путь с alias
 import WebpackLogo from "@/assets/webpack-logo.png";
+// ! 2.0.38.1 react подкл к файлу
 // import React from 'react'
 // import {render} from 'react-dom'
 // ! 2.0.37 babel подкл.
-import './babel'
+import "./babel";
 // ! 2.0.19 подкл стили css
 import "./styles/styles.css";
 // ! 2.0.34.2 для SCSS
-import './styles/scss.scss'
+import "./styles/scss.scss";
 // ! 2.0.34.2 для Less
-import './styles/less.less'
+import "./styles/less.less";
 
 // созд. объ. поста (класс доступен т.к. подкл. в html)
 // передаем title
@@ -33,7 +34,7 @@ const post = new Post("Webpack Post Title", WebpackLogo);
 console.log("Post to String", post.toString());
 
 // ! 2.0.27.1 подкл jQuery. Эл. pre добав .code и вставить post.toString
-$('pre').addClass('code').html(post.toString())
+$("pre").addClass("code").html(post.toString());
 
 // const App = () => (
 //   <div className="container">

@@ -10,11 +10,13 @@ start().then(console.log)
 
 // const unused = 42
 
-// class Util {
-//   static id = Date.now()
-// }
-
-// console.log('Util Id:', Util.id)
+// ! 2.0.37.3 плагин подкл.
+class Util {
+// ститич. поле
+  static id = Date.now()
+}
+// смотрим в консоли
+console.log('Util Id:', Util.id)
 // console.log(unused)
 
 // import('lodash').then(_ => {

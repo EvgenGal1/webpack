@@ -103,13 +103,13 @@ module.exports = {
       filename: "index.html",
       template: "src/index.html",
       // * "Asrc/a/0a" - принимает имя/путь(из entry) js файла с подкл. стилями
-      chunks: ["index", "Asrc/a/0a" , "Bsrc/b/index", "Bsrc/b"],
+      chunks: ["index", "Asrc/a/0a", "Bsrc/b/index", "Bsrc/b"],
     }),
     new HtmlWebpackPlugin({
       filename: "page1.html",
       template: "src/page1.html",
       // * подкл. CSS и JS из файлов(из entry)("Asrc/a/0a" , "Bsrc/b/index"),
-      chunks: ["page1", "Asrc/a/0a" , "Bsrc/b/index"],
+      chunks: ["page1", "Asrc/a/0a", "Bsrc/b/index"],
     }),
     new HtmlWebpackPlugin({
       filename: "page2.html",
