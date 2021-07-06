@@ -1,0 +1,31 @@
+// ! 2.0.34.1 SCSS подкл.
+$border: 1px solid #ccc;
+
+.card {
+  padding: 1rem;
+  border-radius: 5px;
+  margin-top: 1rem;
+  border: $border;
+
+  h2 {
+    text-align: center;
+    color: darkred;
+    // border: $border;
+  }
+}
+
+.hed {
+  text-align: center;
+  padding: 15px;
+  margin: 10px auto;
+  color: #efff09;
+  background-color: #350101;
+}
+
+a {
+  display: block;
+  text-align: center;
+}
+.logo2{
+  // background-image: url("../../assets/webpack-logo.png");
+}
