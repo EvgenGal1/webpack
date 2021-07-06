@@ -28,7 +28,7 @@ h1 {
 
 /* ! 2.0.22 подкл. картинки */
 .logo {
-  background-image: url("../assets/webpack-logo.png");
+  /* background-image: url("../izo/webpack-logo.png"); */
   background-size: cover;
   height: 200px;
   width: 200px;
@@ -37,5 +37,5 @@ h1 {
 
 .code {
   color: crimson;
-  /* color: green; */
+  color: green;
 } 

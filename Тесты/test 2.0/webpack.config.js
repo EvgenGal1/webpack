@@ -25,8 +25,23 @@ const isProd = !isDev;
 const optimization = () => {
   // объ. конфиг по умолчанию
   const config = {
+    // splitChunks: {
+    //   chunks: "all",
+    // },
+    // ! 2.0.43 CSS пробы - CSS в один файл
     splitChunks: {
-      chunks: "all",
+      cacheGroups: {
+        styles: {
+          // путь/имя
+          name: "css/styles",
+          // убирает доп файл , хз что за js
+          // type: "css/mini-extract",
+          // For webpack@4
+          // test: /\.css$/,
+          chunks: "all",
+          enforce: true,
+        },
+      },
     },
   };
   // е/и prod(true) в minimize добавл. cssmini
@@ -46,7 +61,7 @@ const optimization = () => {
 };
 
 // ! 2.0.35 перименовка файлов в зависимости от режима. более сложное для Prod для кэш и
-const filename = (ext) => (isDev ? `[name].${ext}` : `[name].[hash].${ext}`);
+const filename = (ext) => (isDev ? `[name].${ext}` : `[name].bundl.${ext}`); // [hash]
 
 // ! 2.0.36 убираем дубли loader в css, scss, less
 const cssLoaders = (extra) => {
@@ -129,7 +144,8 @@ const babelOptions = (preset) => {
 // ! 2.0.8 js компил на этапе сборки, раб на платф node js(доступны эл. из него). как правило export объ. который явл. объ. конфигурации для webpack
 module.exports = {
   // ! 2.0.18 укажем где исходники
-  context: path.resolve(__dirname, "src"),
+  // ! 2.0.42 проба вернуть server
+  // context: path.resolve(__dirname, "src"),
   // сбор в режиме разработки
   mode: "development",
   // указ входной файл
@@ -138,12 +154,21 @@ module.exports = {
   entry: {
     // main: "./index.js",
     // ! 2.0.37.2 подкл. babel polyfill. от ошибки в браузер(сбор main и polyfill)
-    main: ["@babel/polyfill", "./index.js"],
+    // main: ["@babel/polyfill", "./index.js"],
     // ! 2.0.40 проба 2 файла html
-    app: ["@babel/polyfill", "./indexReact.jsx"],
-    analytics: "./analytics.js",
-    // ! 2.0.38.2 typescript подкл. файл
-    // analyticsTS: "./analytics.ts",
+    // ! 2.0.42 проба вернуть server
+    // ??? не раб - добавл много веса при build  // "@babel/polyfill",
+    // "js/appic": ["@babel/polyfill", "./src/js/indexReact.jsx"], // "@babel/polyfill",
+    // analytics: "./src/js/analytic/analytics.js",
+    // // ! 2.0.38.2 typescript подкл. файл
+    // // analyticsTS: "./analytics.ts",
+    // // ! 2.0.41 новые пути
+    // // 1 имя(выход): 2 путь к исходнику
+    // "js/main": ["@babel/polyfill", "./src/js/index.js"], // "@babel/polyfill",
+    // // "noReact/noReact": "./src/js/index.js",
+    // ! 2.0.42 проба вернуть server
+    main: ["./src/js/index.js"],
+    appic: ["@babel/polyfill","./src/js/indexReact.jsx"], // "@babel/polyfill",
   },
   // куда выводить
   output: {
@@ -151,59 +176,84 @@ module.exports = {
     // ! 2.0.13 добав уникальность(патерн)[name]. есть много патернов
     // filename: "[name].bundle.js",
     // ! 2.0.35 переименовка. в fn() передаём ext(js)
-    filename: filename("js"),
+    // filename: filename("js"),
+    // ! 2.0.41 новые пути
+    filename: "[name].js",
+    // ! 2.0.42 проба вернуть server
+    // filename: filename("js"),
   },
-  // ! 2.0.26 расшир/сокращ
-  resolve: {
-    // расшир по умолч. теперь в import/export можно не указ расширение
-    extensions: [".js", ".json", ".png"],
-    // сокращ указ на путь
-    alias: {
-      "@models": path.resolve(__dirname, "src/models"),
-      "@": path.resolve(__dirname, "src"),
-    },
-  },
-  // ! 2.0.28 доп настр
-  // ! 2.0.33.3 ч/з fn() возращ. сгенерированый объ.
-  optimization: optimization(),
-  // {
-  // ! 2.0.28 выгружать библ(jQuery, ) в один файл из 2х не связаных файлов
-  // splitChunks: {
-  //   chunks: "all",
-  // },
-  // ! 2.0.33.1 cssmini вывод
-  // ??? прибавляет очень много веса при npm build при такой записи
-  // minimizer: [new CssMinimizerPlugin()],
-  // },
-  // ! 2.0.29 подкл dev-server к webpack для живой перезагрузки
-  devServer: {
-    // указ где искать
-    contentBase: "./dist",
-    // порт для запуска
-    port: 4200,
-    // ! 2.0.32.1 только в разраб
-    hot: isDev,
-  },
-  // devtool: isDev ? "source-map" : "eval-source-map",
-  // devtool: "eval-source-map", // ??? прибавляет очень много веса при npm build
   plugins: [
     //   plugins: plugins(),
     // ! 2.0.15 html выгруж, подкл css, js
     new HTMLWebpackPlugin({
-      template: "./index.html",
+      // ! 2.0.42 проба вернуть server
+      filename: "index.html",
+      // template: "./src/html/NoReact/indexNoReact.html",
+      // ! 2.0.42 проба вернуть server
+      template: "./src/index.html",
       minify: {
         collapseWhitespace: isProd,
       },
-      chunks:['main','analytics']
+      // ! 2.0.42 проба вернуть server
+      // chunks: ["js/main", "analytics", main],
+      // ! 2.0.41 новые пути
+      // chunks: ["noReact/noReact", "analytics"],
+      // ! 2.0.42 проба вернуть server
+      // chunks: ["js/noReact", "analytics"],
     }),
+    new HTMLWebpackPlugin({
+      // ! 2.0.42 проба вернуть server
+      filename: "./html/NoReact/indexNoReact.html",
+      template: "./src/html/NoReact/indexNoReact.html",
+      // ! 2.0.42 проба вернуть server
+      // template: "./index.html",
+      minify: {
+        collapseWhitespace: isProd,
+      },
+      // ! 2.0.42 проба вернуть server
+      // chunks:['js/main','analytics']
+      // ! 2.0.41 новые пути
+      // chunks: ["noReact/noReact", "analytics"],
+      // ! 2.0.42 проба вернуть server
+      // chunks: ["js/noReact", "analytics", main],
+    }),
+    // ! 2.0.42 проба вернуть server
     // ! 2.0.40 проба 2 файла html
     new HTMLWebpackPlugin({
-      filename: "indexReact.html",
-      template: "./indexReact.html",
+      filename: "./html/indexReact.html",
+      template: "./src/html/indexReact.html",
+      // ??? не раб так путь
+      // template: "./er/indexReact.html",
       minify: {
         collapseWhitespace: isProd,
       },
-      chunks:['app']
+      chunks: ["appic"],
+    }),
+    // ! 2.0.41 проба 3 файла html
+    new HTMLWebpackPlugin({
+      filename: "./html/point/indexPoint.html",
+      template: "./src/html/point/indexPoint.html",
+      minify: {
+        collapseWhitespace: isProd,
+      },
+      chunks: ["js/noReact", "js/app"],
+    }),
+    // ! 2.0.42 проба вернуть server
+    // ! 2.0.31 css в отдельн файлы
+    new MiniCssExtractPlugin({
+      // filename: "style.[name].bundle.css",
+      // ! 2.0.35  переименовка. в fn() передаём ext(css)
+      // filename: filename("css"),
+      // ! 2.0.41 новые пути
+      // filename: "styles/[name].css", // styles/путь из entry/имя из entry.css
+      // filename: "styles.[name].css",// styles.путь из entry/имя из entry.css
+      // filename: "filename.css" // ??? не раб - неск. созд. инфу с одинак. именами filename.css (фрагм. прилож. и js / noReact)
+      // filename: "styles.css" // ??? не раб - несколько отправ. инфу в одно имя файла styles.css (фрагм. прилож. и js / noReact)
+      // filename: filename("css"), // путь из entry/имя из entry.css - вместе с js
+      // filename: "styles/.css", // ??? не раб - несколько перед. инфу в файлы с одинак стилями / .css (фрагм. прилож. и js / noReact)
+      // ! 2.0.43 CSS пробы с док webpack
+      // filename: ({ chunk }) => `${chunk.name.replace("/js/", "styles/css/")}.css`, // ??? не видно изменений
+      filename: "[name].css",
     }),
     // ! 2.0.17 очистка ввыводной папки
     new CleanWebpackPlugin(),
@@ -212,16 +262,15 @@ module.exports = {
       patterns: [
         {
           // от куда и куда копир(файлы, папки)
-          from: path.resolve(__dirname, "src/favicon.ico"),
+          from: path.resolve(__dirname, "./src/favicon.ico"),
           to: path.resolve(__dirname, "dist"),
         },
+        // {
+        //   // от куда и куда копир(файлы, папки)
+        //   from: path.resolve(__dirname, "./src/izo/webpack-logo.png"),
+        //   to: path.resolve(__dirname, "dist/izo"),
+        // },
       ],
-    }),
-    // ! 2.0.31 css в отдельн файлы
-    new MiniCssExtractPlugin({
-      // filename: "style.[name].bundle.css",
-      // ! 2.0.35  переименовка. в fn() передаём ext(css)
-      filename: filename("css"),
     }),
   ],
   // ! 2.0.20 подкл модули и css
@@ -363,5 +412,55 @@ module.exports = {
       },
     ],
   },
+  // ! 2.0.26 расшир/сокращ
+  resolve: {
+    // расшир по умолч. теперь в import/export можно не указ расширение
+    extensions: [".js", ".json", ".png"],
+    // сокращ указ на путь
+    alias: {
+      "@models": path.resolve(__dirname, "src/models"),
+      "@": path.resolve(__dirname, "src"),
+    },
+  },
+  // ! 2.0.28 доп настр
+  // ! 2.0.33.3 ч/з fn() возращ. сгенерированый объ.
+  optimization: optimization(),
+  // ! 2.0.43 CSS пробы - один файл css
+  // optimization: {
+  //   splitChunks: {
+  //     cacheGroups: {
+  //       styles: {
+  //         name: "styles",
+  //         type: "css/mini-extract",
+  //         // For webpack@4
+  //         // test: /\.css$/,
+  //         chunks: "all",
+  //         enforce: true,
+  //       },
+  //     },
+  //   },
+  // },
+  // {
+  // ! 2.0.28 выгружать библ(jQuery, ) в один файл из 2х не связаных файлов
+  // splitChunks: {
+  //   chunks: "all",
+  // },
+  // ! 2.0.33.1 cssmini вывод
+  // ??? прибавляет очень много веса при npm build при такой записи
+  // minimizer: [new CssMinimizerPlugin()],
+  // },
+  // ! 2.0.29 подкл dev-server к webpack для живой перезагрузки
+  devServer: {
+    // указ где искать
+    contentBase: "./dist",
+    // порт для запуска
+    port: 4200,
+    // port: 8080,
+    // ! 2.0.32.1 только в разраб
+    hot: isDev,
+  },
+  // в консоле показ исходный код при разраб(isDev)
+  // devtool: isDev ? "source-map" : "",
+  // devtool: "eval-source-map", // ??? прибавляет очень много веса при npm build
   // }
 };

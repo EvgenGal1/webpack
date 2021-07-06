@@ -206,9 +206,9 @@
         // неско-ко точек входа
 
       },
-      // как выгружать код/для разработки. опцинально
-      devtool: "eval-source-map", 
-        // devtool: isDev ? 'source-map' : '',
+      // показ. исходный код из самих файлов в консоле при разраб (idDev)
+      // devtool: isDev ? 'source-map' : '',
+        // devtool: "eval-source-map", 
         // пояснения {
           // eval - мини/строка, source-map - как есть + копия в мини, eval-source-map - рекомендуется
           // после запуска npm run build(start, ) появится app.js.map (мини версия при source-map)
