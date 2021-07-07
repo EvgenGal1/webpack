@@ -10,6 +10,10 @@ $border: 1px solid #ccc;
   h2 {
     text-align: center;
     color: darkred;
-    // border: $border;
+    border: $border;
+    background-color: #ff0;
   }
+}
+.rtv{
+  background-color: rgb(77, 12, 15);
 }

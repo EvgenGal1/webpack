@@ -17,18 +17,6 @@ const OptimizeCssAssetWebpackPlugin = require("optimize-css-assets-webpack-plugi
 const TerserWebpackPlugin = require("terser-webpack-plugin");
 // const {BundleAnalyzerPlugin} = require('webpack-bundle-analyzer')
 
-// ! 2.0.41 пути в константу(QF3EcxymIcc)(для удобной смены во всем сразу)
-const PATHS = {
-  src: path.join(__dirname, "./src/"),
-  dist: path.join(__dirname, "./dist/"),
-  // src: path.resolve(__dirname, "src"),
-  // dist: path.resolve(__dirname, "dist"),
-  // path: path.resolve(__dirname, "dist"),
-  static: "static/",
-};
-// получить доступ к константе PATHS из других кофигов (е/и их несколько - для Prod и Dev)
-// module.exports = { externals: { path: PATHS } }; // ярлык: к чему
-
 // ! 2.0.32 режимы разраб/продукт (получ. true)
 const isDev = process.env.NODE_ENV === "development";
 const isProd = !isDev;
@@ -37,16 +25,15 @@ const isProd = !isDev;
 const optimization = () => {
   // объ. конфиг по умолчанию
   const config = {
-    splitChunks: {
-      chunks: "all", // async
-    },
+    // splitChunks: {
+    //   chunks: "all",
+    // },
     // ! 2.0.43 CSS пробы - CSS в один файл
-    // ??? не раб - пока 2 файла грузит с предупреждением + созд. styles.js
     splitChunks: {
       cacheGroups: {
         styles: {
           // путь/имя
-          name: "styles",
+          name: "css/styles",
           // убирает доп файл , хз что за js
           // type: "css/mini-extract",
           // For webpack@4
@@ -74,10 +61,7 @@ const optimization = () => {
 };
 
 // ! 2.0.35 перименовка файлов в зависимости от режима. более сложное для Prod для кэш и
-// const filename = (ext) => (isDev ? `[name].${ext}` : `[name].[hash].${ext}`);
-// переписал чтоб передаваемый ext создавал парку с таким же именем
-const filename = (ext) =>
-  isDev ? `${ext}/[name].${ext}` : `${ext}/[name].[hash].${ext}`;
+const filename = (ext) => (isDev ? `[name].${ext}` : `[name].bundl.${ext}`); // [hash]
 
 // ! 2.0.36 убираем дубли loader в css, scss, less
 const cssLoaders = (extra) => {
@@ -160,6 +144,7 @@ const babelOptions = (preset) => {
 // ! 2.0.8 js компил на этапе сборки, раб на платф node js(доступны эл. из него). как правило export объ. который явл. объ. конфигурации для webpack
 module.exports = {
   // ! 2.0.18 укажем где исходники
+  // ! 2.0.42 проба вернуть server
   // context: path.resolve(__dirname, "src"),
   // сбор в режиме разработки
   mode: "development",
@@ -170,66 +155,105 @@ module.exports = {
     // main: "./index.js",
     // ! 2.0.37.2 подкл. babel polyfill. от ошибки в браузер(сбор main и polyfill)
     // main: ["@babel/polyfill", "./index.js"],
-    // analytics: "./analytics.js",
-    // ! 2.0.38.2 typescript подкл. файл
-    // analyticsTS: "./analytics.ts",
     // ! 2.0.40 проба 2 файла html
-    // app: ["@babel/polyfill", "./indexReact.jsx"],
-    // ! 2.0.41 пути в константу
-    // можно не пропис index.js. указав src webpack поймёт что нужно. поэтому можем прописать путь с помошью констант
-    main: PATHS.src,
-    // app: PATHS.src,
-    app: `${PATHS.src}js/indexReact.jsx`,
+    // ! 2.0.42 проба вернуть server
+    // ??? не раб - добавл много веса при build  // "@babel/polyfill",
+    // "js/appic": ["@babel/polyfill", "./src/js/indexReact.jsx"], // "@babel/polyfill",
+    // analytics: "./src/js/analytic/analytics.js",
+    // // ! 2.0.38.2 typescript подкл. файл
+    // // analyticsTS: "./analytics.ts",
+    // // ! 2.0.41 новые пути
+    // // 1 имя(выход): 2 путь к исходнику
+    // "js/main": ["@babel/polyfill", "./src/js/index.js"], // "@babel/polyfill",
+    // // "noReact/noReact": "./src/js/index.js",
+    // ! 2.0.42 проба вернуть server
+    main: ["./src/js/index.js"],
+    appic: ["@babel/polyfill","./src/js/indexReact.jsx"], // "@babel/polyfill",
   },
   // куда выводить
   output: {
-    // path: path.resolve(__dirname, "dist"),
+    path: path.resolve(__dirname, "dist"),
     // ! 2.0.13 добав уникальность(патерн)[name]. есть много патернов
     // filename: "[name].bundle.js",
     // ! 2.0.35 переименовка. в fn() передаём ext(js)
-    filename: filename("js"),
-    // ! 2.0.41 пути в константу
-    path: PATHS.dist,
-    // склад в static/js/[name].js синтакс ES6
-    // filename: `${PATHS.static}js/[name].js`,
-    // в видео (QF3EcxymIcc) ~23:00 есть про publicPath(публичн) и contentBase(где откр webpack - dist)
+    // filename: filename("js"),
+    // ! 2.0.41 новые пути
+    filename: "[name].js",
+    // ! 2.0.42 проба вернуть server
+    // filename: filename("js"),
   },
   plugins: [
     //   plugins: plugins(),
     // ! 2.0.15 html выгруж, подкл css, js
     new HTMLWebpackPlugin({
-      // template: "./src/index.html",
+      // ! 2.0.42 проба вернуть server
+      filename: "index.html",
+      // template: "./src/html/NoReact/indexNoReact.html",
+      // ! 2.0.42 проба вернуть server
+      template: "./src/index.html",
       minify: {
         collapseWhitespace: isProd,
       },
-      chunks: ["main"],
-      // ! 2.0.41 пути в константу
-      filename: `${PATHS.dist}index.html`,
-      template: `${PATHS.src}index.html`,
+      // ! 2.0.42 проба вернуть server
+      // chunks: ["js/main", "analytics", main],
+      // ! 2.0.41 новые пути
+      // chunks: ["noReact/noReact", "analytics"],
+      // ! 2.0.42 проба вернуть server
+      // chunks: ["js/noReact", "analytics"],
     }),
+    new HTMLWebpackPlugin({
+      // ! 2.0.42 проба вернуть server
+      filename: "./html/NoReact/indexNoReact.html",
+      template: "./src/html/NoReact/indexNoReact.html",
+      // ! 2.0.42 проба вернуть server
+      // template: "./index.html",
+      minify: {
+        collapseWhitespace: isProd,
+      },
+      // ! 2.0.42 проба вернуть server
+      // chunks:['js/main','analytics']
+      // ! 2.0.41 новые пути
+      // chunks: ["noReact/noReact", "analytics"],
+      // ! 2.0.42 проба вернуть server
+      // chunks: ["js/noReact", "analytics", main],
+    }),
+    // ! 2.0.42 проба вернуть server
     // ! 2.0.40 проба 2 файла html
     new HTMLWebpackPlugin({
-      // filename: "indexReact.html",
-      // template: "./src/indexReact.html",
+      filename: "./html/indexReact.html",
+      template: "./src/html/indexReact.html",
+      // ??? не раб так путь
+      // template: "./er/indexReact.html",
       minify: {
         collapseWhitespace: isProd,
       },
-      chunks: ["app"],
-      // ! 2.0.41 пути в константу
-      // filename: `${PATHS.static}html/indexReact.html`,
-      filename: `${PATHS.dist}html/indexReact.html`,
-      template: `${PATHS.src}html/indexReact.html`,
+      chunks: ["appic"],
     }),
+    // ! 2.0.41 проба 3 файла html
+    new HTMLWebpackPlugin({
+      filename: "./html/point/indexPoint.html",
+      template: "./src/html/point/indexPoint.html",
+      minify: {
+        collapseWhitespace: isProd,
+      },
+      chunks: ["js/noReact", "js/app"],
+    }),
+    // ! 2.0.42 проба вернуть server
     // ! 2.0.31 css в отдельн файлы
     new MiniCssExtractPlugin({
       // filename: "style.[name].bundle.css",
       // ! 2.0.35  переименовка. в fn() передаём ext(css)
-      filename: filename("css"),
-      // ! 2.0.41 пути в константу
-      // filename: `${PATHS}css/[name].css`,
-      // filename: `${PATHS.dist}css/[name].css`,
-      // filename: `${PATHS.dist}/css/[name].css`,
-      // filename: `${PATHS.dist}css/React.css`,
+      // filename: filename("css"),
+      // ! 2.0.41 новые пути
+      // filename: "styles/[name].css", // styles/путь из entry/имя из entry.css
+      // filename: "styles.[name].css",// styles.путь из entry/имя из entry.css
+      // filename: "filename.css" // ??? не раб - неск. созд. инфу с одинак. именами filename.css (фрагм. прилож. и js / noReact)
+      // filename: "styles.css" // ??? не раб - несколько отправ. инфу в одно имя файла styles.css (фрагм. прилож. и js / noReact)
+      // filename: filename("css"), // путь из entry/имя из entry.css - вместе с js
+      // filename: "styles/.css", // ??? не раб - несколько перед. инфу в файлы с одинак стилями / .css (фрагм. прилож. и js / noReact)
+      // ! 2.0.43 CSS пробы с док webpack
+      // filename: ({ chunk }) => `${chunk.name.replace("/js/", "styles/css/")}.css`, // ??? не видно изменений
+      filename: "[name].css",
     }),
     // ! 2.0.17 очистка ввыводной папки
     new CleanWebpackPlugin(),
@@ -238,20 +262,14 @@ module.exports = {
       patterns: [
         {
           // от куда и куда копир(файлы, папки)
-          from: path.resolve(__dirname, "src/favicon.ico"),
+          from: path.resolve(__dirname, "./src/favicon.ico"),
           to: path.resolve(__dirname, "dist"),
         },
-        // ! 2.0.42 копир img
-        // ??? не раб - зачем е/и в rules.options можно указ путь
-        // ??? оробовать https://webpack.js.org/guides/asset-modules/#root
-        {
-          from: `${PATHS.src}img`,
-          to: `${PATHS.dist}img`,
-        },
-        {
-          from: `${PATHS.src}fonts`,
-          to: `${PATHS.dist}fonts`,
-        },
+        // {
+        //   // от куда и куда копир(файлы, папки)
+        //   from: path.resolve(__dirname, "./src/izo/webpack-logo.png"),
+        //   to: path.resolve(__dirname, "dist/izo"),
+        // },
       ],
     }),
   ],
@@ -319,25 +337,8 @@ module.exports = {
       // ! 2.0.22 картинки подкл.
       {
         // устан $$ npm i -D file-loader
-        test: /\.(jpe?g|png|gif|svg)$/i,
-        // use: ["file-loader"],
-        // ! 2.0.42 картинки выгр по др(QF3EcxymIcc)
-        // use не раб с option
-        loader: "file-loader",
-        // задаём имя
-        // ??? не раб - раб. только имя ../ раб, однако созд папку с файлом за dist
-        // такой же файл как из copy, но при уник имени созд ещё один
-        // ??? оробовать https://webpack.js.org/guides/asset-modules/#root
-        options: {
-          // без ничего только hash.png
-          // name: '[name].[ext]', // файл в dist
-          // name: '../[name].[ext]', // файл за dist
-          name: "img/[name][hash].[ext]", // файл в img/ с hash. созд отдельный файл от копир.
-          // name: '/img/[name].[ext]', // файл в img/
-          // name: './img/[name].[ext]', // файл в img/
-          // name: '../img/[name].[ext]', // парка с файлом за dist
-          // name:`${PATHS.dist}img/[name].[ext]` // не раб - созд. двойной путь до папки от корня
-        },
+        test: /\.(png|jpg|svg|gif)$/,
+        use: ["file-loader"],
       },
       // ! 2.☺0.23 шрифты подкл.
       {
@@ -424,6 +425,21 @@ module.exports = {
   // ! 2.0.28 доп настр
   // ! 2.0.33.3 ч/з fn() возращ. сгенерированый объ.
   optimization: optimization(),
+  // ! 2.0.43 CSS пробы - один файл css
+  // optimization: {
+  //   splitChunks: {
+  //     cacheGroups: {
+  //       styles: {
+  //         name: "styles",
+  //         type: "css/mini-extract",
+  //         // For webpack@4
+  //         // test: /\.css$/,
+  //         chunks: "all",
+  //         enforce: true,
+  //       },
+  //     },
+  //   },
+  // },
   // {
   // ! 2.0.28 выгружать библ(jQuery, ) в один файл из 2х не связаных файлов
   // splitChunks: {
@@ -438,13 +454,13 @@ module.exports = {
     // указ где искать
     contentBase: "./dist",
     // порт для запуска
-    port: 8081, // 8080 // 4200,
+    port: 4200,
+    // port: 8080,
     // ! 2.0.32.1 только в разраб
     hot: isDev,
   },
-  // показ в консоле исходный код файла. для разраб(isDev)
-  // ??? не раб - при npm build прибавляет очень много веса объед. файлу js
-  // ??? проверить https://webpack.js.org/configuration/devtool/#root
-  devtool: isDev ? "source-map" : "eval",
-  // devtool: "eval-source-map", 
+  // в консоле показ исходный код при разраб(isDev)
+  // devtool: isDev ? "source-map" : "",
+  // devtool: "eval-source-map", // ??? прибавляет очень много веса при npm build
+  // }
 };

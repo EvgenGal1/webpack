@@ -116,6 +116,14 @@
     const OptimizeCssAssetWebpackPlugin = require('optimize-css-assets-webpack-plugin')
     const TerserWebpackPlugin = require('terser-webpack-plugin')
 
+    // пути в константу(QF3EcxymIcc)(для удобной смены во всем сразу)
+    // PATHS.src(dist) - ярлык. './src/'(./dist/) - изменяемая переменая
+    const PATHS = {
+      src: path.join(__dirname, "./src/"),
+      dist: path.join(__dirname, "./dist/"),
+      static: "static/",
+    };
+
     // режимы разраб/продукт ч/з систем перем.
     // $$ npm i -D cross-env - корректно задаёт системную переменную(разраб/прод). прописать в packege.json
     const isDev = process.env.NODE_ENV === 'development'
@@ -128,6 +136,22 @@
         // выгружать библ(jQuery, ) в один файл из 2х не связаных файлов
         splitChunks: {
           chunks: "all",
+        },
+        // CSS в один файл. 
+        // ??? не раб - пока 2 файла грузит с предупрездением + созд. styles.js
+        splitChunks: {
+          cacheGroups: {
+            styles: {
+              // путь/имя
+              name: "css/styles",
+              // убирает доп файл , хз что за js
+              // type: "css/mini-extract",
+              // For webpack@4
+              // test: /\.css$/,
+              chunks: "all",
+              enforce: true,
+            },
+          },
         },
       };
       // е/и prod(true) в minimize добавл. cssmini
@@ -146,7 +170,9 @@
     };
 
     // перименовка файлов в зависимости от режима. более сложное для Prod для кэша
-    const filename = (ext) => (isDev ? `[name].${ext}` : `[name].[hash].${ext}`);
+    // const filename = (ext) => (isDev ? `[name].${ext}` : `[name].[hash].${ext}`);
+    // дополнил. при передаче ext, созд. идентич. папку и формат. ЛУЧШЕЕ для css, js
+    isDev ? `${ext}/[name].${ext}` : `${ext}/[name].[hash].${ext}`;
 
     // убираем дубли loader в css, scss, less
     const cssLoaders = (extra) => {
@@ -188,39 +214,131 @@
       return opts
     }
 
-    // экспот настроек плагинов объ., из док.(config) 
+    // экспорт настроек плагинов объ., из док.(config) 
     module.exports = {
-      // укажем где исходники
-      context: path.resolve(__dirname, "src"),
+      // укажем где исходники. путает в fn(), PATHS, наборе имени
+      // context: path.resolve(__dirname, "src"),
       // `режим разработки`
       mode: "development", 
       // точка входа, начало сборки
       entry: { 
-        // сборка из .src/index.jsx
-        // main`главный`: модуль path`путь` resolve`разрешает` dirname`корневая папк`
+        // сборка из .src/
+        // main`главный(ярлык)`: модуль path`путь` resolve`разрешает` dirname`корневая папк`
+        // главный/имя/путь/ярлык - влияет на имя файлов при [name]
         // path.resolve - составл. статический путь из указаных пунктов в скобках
         // делаеться потому что путь в некоторых системах выглядит по другому
         // в существуюших папках ищет нужное
         // можно указ. входной файл .jsx, чтоб node не искал только js по умолчанию
-        main: path.resolve(__dirname, "src", "index.js")
-        // неско-ко точек входа
-
+        // одна точка входа.
+          // имя при выходе(ярлык) main: ... путь(корн.папка, src/index.js)
+          // main: path.resolve(__dirname, "src", "index.js")
+        // точка входа + путь в ярлыке
+          // имя/путь(на выходе запишется в js/main.js)
+          // "js/main": "./src/js/index.js"
+        // неско-ко точек входа.
+          // имя на выходе: путь до входного файла
+          // main: "./src/js/index.js",
+          // в [] пердаем доп. библ.(polyfil, lodash, )
+          // appic: ["@babel/polyfill","./src/js/indexReact.jsx"],
+        // неско-ко точек входа + PATHS. ЛУЧШЕЕ!!!
+          // ярлык main: найти в корн.папки/src. js найдёт сам
+          main: PATHS.src,
+          // найдёт в src/js/indexReact.jsx. синтаксис ES6
+          app: `${PATHS.src}js/indexReact.jsx`,
       },
-      // как выгружать код/для разработки. опцинально
-      devtool: "eval-source-map", 
-        // devtool: isDev ? 'source-map' : '',
-        // пояснения {
-          // eval - мини/строка, source-map - как есть + копия в мини, eval-source-map - рекомендуется
-          // после запуска npm run build(start, ) появится app.js.map (мини версия при source-map)
-          // source-map технология позволяет посмотреть в браузере какие файлы были подкл. к выходному файлу 
-        // }
       // точка вывода
       output: { 
-        // выгруж. в ./static/build/app.js
-        path: path.resolve(__dirname, "static", "build"),
-        filename: "app.js",
-        // [name] добав уникальность(патерн). их много
+        // стандарт
+          // выгруж. в ./static/build/app.js
+          // path: path.resolve(__dirname, "static", "build"),
+          // filename: "app.js",
+          // [name] добав уникальность(патерн). их много
+        fn() + PATHS. ЛУЧШЕЕ!!!
+          // с fn() создаст js/[name].js
+          filename: filename("js"),
+          // созд. в корн.папке/dist
+          path: PATHS.dist,
       },
+      // доп. узкие настр.
+      plugins: [ 
+        // html плагин {
+          // $$ npm i -D html-webpack-plugin
+          new HTMLWebpackPlugin({
+            // стандарт
+              // загрузка из src
+              // template: "./src/index.html",
+              // выгрузка по умолч. в корн.папку(dist)
+            // с PATHS. ЛУЧШЕЕ!!!
+              // выгрузка - dist/index.html
+              filename: `${PATHS.dist}index.html`,
+              // загрузка - src/index.html
+              template: `${PATHS.src}index.html`,
+            // добавл. `куски` кода js, css из entry
+            chunks: ['main'],
+            // мини выгрузка в режиме Prod
+            minify: {
+              collapseWhitespace: isProd,
+            },
+          }),
+          new HTMLWebpackPlugin({
+            // стандарт
+              // загрузка из src/html/
+              // template: "./src/html/indexReact.html",
+              // выгрузка /html/NoReact/
+              // filename: "./html/React/indexReact.html",
+            // с PATHS. ЛУЧШЕЕ!!!
+              // выгрузка - dist/html/indexReact.html
+              filename: `${PATHS.dist}html/indexReact.html`,
+              // загрузка - src/html/indexReact.html
+              template: `${PATHS.src}html/indexReact.html`,
+            // добавл. `куски` кода js, css из entry
+            chunks: ['app', 'analytics'],
+            // мини выгрузка в режиме Prod
+            minify: {
+              collapseWhitespace: isProd,
+            },
+          }),
+        // }
+        // css + mini {
+          new MiniCssExtractPlugin({
+            // $$ npm i -D mini-css-extract-plugin
+            // [name] присвоит имя из entry, можно прописать имя
+            // filename: '[name].css',
+            // с fn() создаст css/[name].css ЛУЧШЕЕ!!
+            filename: filename("css"),
+            // для произв. раздел. на отдел. `куски`(асинхр. загр., )
+            // chunkFilename: '[id].css',
+          }),
+        // }
+        // очистка выводной папки {
+          // $$ npm i -D clean-webpack-plugin
+          new CleanWebpackPlugin(),
+        // }
+        // копир файлов {
+          // копир файлов(папок) из корня(src) в вывод
+          // $$ npm i -D copy-webpack-plugin
+          new CopyWebpackPlugin({
+            patterns: [
+              {
+                // от куда и куда копир(файлы, папки)
+                // стандарт
+                  from: path.resolve(__dirname, "src/favicon.ico"),
+                  to: path.resolve(__dirname, "dist"),
+                // копир с PATHS
+                  // всё из src/img в dist/img
+                  {
+                    from: `${PATHS.src}img`,
+                    to: `${PATHS.dist}img`,
+                  },
+                  {
+                    from: `${PATHS.src}fonts`,
+                    to: `${PATHS.dist}fonts`,
+                  },
+              },
+            ],
+          }),
+        // }
+      ],
       // конфигурация модулей(загрузчиков)
       module: { 
         // `правила` для модулей (настройка, параметры парсера и т. д.)
@@ -249,7 +367,7 @@
               // polyfill - 
               // proposal-class-properties - плагин для удобства?
             // }
-            // JS {
+            // JS 
               {
                 // для js. синтаксис регулярных выражений
                 test: /\.js?$/,
@@ -262,17 +380,14 @@
                   // в опциях доп. настр.
                   options:
                     // без fn()
-                      // {
                         // указываем плагины babel. их можно указать в файле .babelrc только в формате json, прописано там же
                         // presets: ["@babel/preset-env"],
                         // plugins: ["@babel/plugin-proposal-class-properties"], // , { loose: true }
-                      // },
-                    // с fn() babelOptions без дублей
+                    // с fn() babelOptions без дублей. ЛУЧШЕЕ!!!
                       babelOptions()
                 },
               }
-            // }
-            // JSX {
+            // JSX 
               {
                 // устан react и react-dom
                 // $$ npm install react react-dom
@@ -281,7 +396,7 @@
                 // import { render } from 'react-dom'
                 // babel react устан и настр
                 // $$ npm i -D @babel/preset-react
-                // entry: {main3:"./fail3.ts"}
+                // entry: {main3:"./fail3.jsx"}
                 // для js и/или jsx. синтаксис регулярных выражений
                 test: /\.jsx?$/i, // есть такой test: /\.(js|jsx)$/,
                 // исключ. папка node_modules
@@ -293,17 +408,14 @@
                   // в опциях доп. настр.
                   options: 
                   // без fn()
-                    // {
                       // указываем плагины babel. их можно указать в файле .babelrc только в формате json, прописано там же
                       // presets: ["@babel/preset-env", "@babel/preset-react"],
                       // plugins: ["@babel/plugin-proposal-class-properties"], // , { loose: true }
-                    // },
-                  // с fn() babelOptions без дублей
+                  // с fn() babelOptions без дублей. ЛУЧШЕЕ!!!
                     babelOptions("@babel/preset-react")
                 },
               }
-            // }
-            // TS {     
+            // TS      
               // typescript babel устан и настр
               // $$ npm i -D @babel/preset-typescript
               // entry: {main3:"./fail3.ts"}
@@ -322,7 +434,6 @@
                     babelOptions("@babel/preset-typescript"),
                 },
               },
-            // }
           // },
           // CSS (стили|4 варианта) {
             // обраб. ccs файлы с импортами и возвращает ccs код.
@@ -348,25 +459,26 @@
               // +++ <link rel="stylesheet" href="./static/build/styles.css">  
               {
                 test: /\.css$/i,
-                use: [
-                  // без опций
-                    // MiniCssExtractPlugin.loader, 'css-loader'
-                  // опции + доп.
-                    // {
-                      // прямо указ какой loader
-                      // loader: MiniCssExtractPlugin.loader,
-                      // options: {
-                        // ??? не раб - https://webpack.js.org/plugins/mini-css-extract-plugin/#root
-                        // `горячий модуль замены` - измен. эл. без перезагрузки страницы
-                        // hmr: true,
-                        // reloadAll: true
-                        // publicPath: "/public/path/to/",
+                // с fn() cssLoaders без дублей. ЛУЧШЕЕ!!!
+                  use: cssLoaders(),
+                // стандарт
+                  // use: [
+                    // без опций
+                      // MiniCssExtractPlugin.loader, 'css-loader'
+                    // опции + доп.
+                      // {
+                        // прямо указ какой loader
+                        // loader: MiniCssExtractPlugin.loader,
+                        // options: {
+                          // ??? не раб - https://webpack.js.org/plugins/mini-css-extract-plugin/#root
+                          // `горячий модуль замены` - измен. эл. без перезагрузки страницы
+                          // hmr: true,
+                          // reloadAll: true
+                          // publicPath: "/public/path/to/",
+                        // },
                       // },
-                    // },
-                    // "css-loader",
-                  // с fn() cssLoaders без дублей
-                    use: cssLoaders(),
-                ],
+                      // "css-loader",
+                  // ],
               },
             // },
             // CSS + mini + SCSS{
@@ -380,20 +492,20 @@
                 // css, sass, scss
                 test: /\.(sa|sc|c)ss$/,
                 // без fn()
-                  use: [
+                  // с fn() cssLoaders без дублей. ЛУЧШЕЕ!!!
+                    use: cssLoaders("sass-loader"),
+                  // use: [
                     // 3. Создает узлы `MiniCss` из строк JS в файлы
-                    {
+                    // {
                       // прямо указ какой loader
-                      loader: MiniCssExtractPlugin.loader,
-                      options: {},
-                    },
+                      // loader: MiniCssExtractPlugin.loader,
+                     //  options: {},
+                    // },
                     // 2. Переводит CSS в обычный JS
-                    "css-loader",
+                    // "css-loader",
                     // 1. Компилирует Sass в CSS
-                    "sass-loader",
-                  ],
-                // с fn() cssLoaders без дублей
-                  use: cssLoaders("sass-loader"),
+                    // "sass-loader",
+                  // ],
               },
             // }
             // CSS + mini + Less{
@@ -423,17 +535,17 @@
             // CSS разраб/прод{
               // !!! https://webpack.js.org/loaders/style-loader/
               // !!! https://webpack.js.org/loaders/sass-loader/
-              test: /\.(sa|sc|c)ss$/,
-              test: /\.s[ac]ss$/i,
+              // test: /\.(sa|sc|c)ss$/,
+              // test: /\.s[ac]ss$/i,
               // ||
-              const devMode = process.env.NODE_ENV !== "production";
-              use: [ devMode ? "style-loader" : MiniCssExtractPlugin.loader,
-              "css-loader", "postcss-loader","sass-loader",],
-              plugins: [].concat(devMode ? [] : [new MiniCssExtractPlugin()])
+              // const devMode = process.env.NODE_ENV !== "production";
+              // use: [ devMode ? "style-loader" : MiniCssExtractPlugin.loader,
+              // "css-loader", "postcss-loader","sass-loader",],
+              // plugins: [].concat(devMode ? [] : [new MiniCssExtractPlugin()])
               // ||
-              use: [ // возврат к загрузчику стилей в разработке
-              process.env.NODE_ENV !== "production" ? "style-loader" : MiniCssExtractPlugin.loader,
-              "css-loader", "sass-loader", ],
+              // use: [ // возврат к загрузчику стилей в разработке
+              // process.env.NODE_ENV !== "production" ? "style-loader" : MiniCssExtractPlugin.loader,
+              // "css-loader", "sass-loader", ],
             // }
           // },
           // Файлы, изо {
@@ -447,8 +559,23 @@
             // добав в css 
             // +++ background-image: url("../img/logo.png");
             {
-              test: /\.(png|jpg|svg|gif)$/,
-              use: ["file-loader"],
+              test: /\.(jpe?g|png|gif|svg)$/i,
+              // use: ["file-loader"],
+              // use не раб с options
+              loader: "file-loader",
+              // задаём имя
+              // ??? не раб - только имя ../ работает, однако созд папку с файлом за dist
+              // такой же файл как из CopyWebPlug., но при уник. имени созд ещё один
+              options: {
+                // без ничего только hash.png
+                // name: '[name].[ext]', // файл в dist
+                // name: '../[name].[ext]', // файл за dist
+                name: "img/[name][hash].[ext]", // файл в img/ с hash. созд отдельный файл от копир.
+                // name: '/img/[name].[ext]', // файл в img/
+                // name: './img/[name].[ext]', // файл в img/
+                // name: '../img/[name].[ext]', // парка с файлом за dist
+                // name:`${PATHS.dist}img/[name].[ext]` // не раб - созд. двойной путь до папки от корня
+              },
             }
           // },
           // xml {
@@ -471,45 +598,6 @@
           // },
         ]
       },
-      // доп. узкие настр.
-      plugins: [ 
-        // html плагин {
-          // $$ npm i -D html-webpack-plugin
-          new HTMLWebpackPlugin({
-            template: "./index.html",
-            // мини выгрузка в режиме Prod
-            minify: {
-              collapseWhitespace: isProd,
-            },
-          }),
-        // }
-        // css + mini {
-          new MiniCssExtractPlugin({
-            // $$ npm i -D mini-css-extract-plugin
-            // [name] присвоит main, можно прописать имя
-            filename: '[name].css',
-            // для произв. раздел. на отдел. `куски`(асинхр. загр., )
-            // chunkFilename: '[id].css',
-          }),
-        // }
-        // очистка выводной папки {
-          // $$ npm i -D clean-webpack-plugin
-          new CleanWebpackPlugin(),
-        // }
-        // копир файлов {
-          // копир файлов(папок) из корня(src) в вывод
-          // $$ npm i -D copy-webpack-plugin
-          new CopyWebpackPlugin({
-            patterns: [
-              {
-                // от куда и куда копир(файлы, папки)
-                from: path.resolve(__dirname, "src/favicon.ico"),
-                to: path.resolve(__dirname, "dist"),
-              },
-            ],
-          }),
-        // }
-      ],
       // расшир/сокращ
       resolve: {
         // расшир. по умолч. чтоб не указыв. в import/export
@@ -522,25 +610,33 @@
       },
       // доп настр. знач. можно передать через fn с проверкой на Prod
       optimization: 
-        // ч/з fn() возращ. сгенерированый объ. {
+        // ч/з fn() возращ. сгенерированый объ. ЛУЧШЕЕ!!!
           optimization: optimization(),
-        // }
-        // объектом {
-          {
+        // объектом
+          // {
             // выгружать библ(jQuery, ) в один файл из 2х не связаных файлов
-            splitChunks: {
-              chunks: "all",
-            },
-          }
-        // }
-        },
+              // splitChunks: {
+              // chunks: "all",
+            // },
+          // }
+        //
       // подкл dev-server к webpack для живой перезагрузки
       devServer: {
-        // порт для запуска
-        port: 4200,
+        // порт для запуска. рекоменд 8081, реже 8080
+        port: 8081, // 8080 // 4200,
         // только в разраб
         hot: isDev
       },
+      // показ в консоле исходный код файла. для разраб(isDev)
+      // ??? не раб - при npm build прибавляет очень много веса объед. файлу js
+      // devtool: isDev ? 'source-map' : 'eval',
+        // или 
+        // devtool: "eval-source-map", 
+        // пояснения {
+          // eval - мини/строка, source-map - как есть + копия в мини, eval-source-map - рекомендуется
+          // после запуска npm run build(start, ) появится app.js.map (мини версия при source-map)
+          // source-map технология позволяет посмотреть в браузере какие файлы были подкл. к выходному файлу 
+        // }
     };
     //
   }
