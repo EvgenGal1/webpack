@@ -1,10 +1,12 @@
 1.Урок........................................................................................
 
-1.0 $$ node -v и $$ npm -v - Проверить есть ли на компьютере node.js и npm.
+1.0 $$ node -v и $$ npm -v - Проверить есть ли на компьютере node.js и npm. Yarn альтернатива NPM(от Травника)
 	$$ - вызов команды в терминале
-	// Yarn альтернатива NPM(от Травника)
-1.1 $$ npm init (npm init -y) - инициализация. +++ настр. в команд строке + 1 файл
-  настр. в ком.стр. {
+  // - комментарий(напротив)
+  ## - код(между)(можно копир сразу)
+  ++ - содать/прописать(файл, папку) или автомат добавит
+1.1 $$ npm init (npm init -y) - инициализация. ++ настр. в команд строке + 1 файл
+  ++ настр. в ком.стр.
     // имя приложения/пакета (от назв. папки)
     name: webpack  
     version: 1.0.0
@@ -17,7 +19,6 @@
     keywords: 
     author: EvGen Gal
     license: (ISC)
-	}
 	+++ создаёться файл package.json - описание проекта(конфиг,пакет,отдельная прога) и все установленные зависимости(др. пакеты)
 1.2 $$ npm install webpack ($$ npm i -D webpack webpack-cli webpack-dev-server) - сборка проекта + 2 файла
   объясн. команд {
@@ -33,7 +34,7 @@
   }
 	+++ создаётся папка node_modules - пакеты, установленные вручную, и их зависимости.
   +++ создаётся файл package-lock.json
-1.2 +++ настр. файла пакетных зависимостей package.json
+1.3 ++ настр. файла пакетных зависимостей package.json
   // ^ - значок автоматически обновляет версию. Могут быть конфликты из-за разных версий webpack, webpack-cli и webpack-dev-server. В прошлый раз помог Травник - переустановили их без ^. Перед этим полностью удалили node_modules
   // dependencies — npm-пакеты, `зависимости` приложения для production
   // devDependencies — npm-пакеты, для разработке проекта, но не при его реальной работе
@@ -64,595 +65,644 @@
   // ??? не раб с dev-server
   // "browserslist": "> 0.25%, not dead",
   !!! https://habr.com/ru/company/ruvds/blog/423703/ настройки package.json и package-lock.json
-1.4 +++ Создать в корне проекта webpack.config.js - настройка webpack
-  мини база {
-    //
-    const path = require("path");
+1.4 ++ Создать в корне проекта webpack.config.js - настройка webpack
+  мини база
+    ##
+      const path = require("path");
 
-    module.exports = {
-      mode: "development",
-      entry: {
-        main: path.resolve(__dirname, "src", "index.jsx")
-      }, 
-      output: {
-        path: path.resolve(__dirname, "static", "build"),
-        filename: "app.js",
-      },
-    };
-    //
-  }
-  стандарт база {
-    //
-    const path = require("path");
-
-    module.exports = {
-      mode: "development",
-      entry: {
-        main: path.resolve(__dirname, "src", "index.jsx")
-      }, 
-      output: {
-        path: path.resolve(__dirname, "static", "build"),
-        filename: "app.js",
-      },
-    };
-    //
-  }
-  описание базы + команды {
-    //
-    // подключение пакет пафз через константу. для корректного поиска точки входа
-    const path = require("path"); // `путь`=`требует`
-    // html выгр, подкл css, js
-    const HTMLWebpackPlugin = require("html-webpack-plugin");
-    // очистка выводной папки
-    const { CleanWebpackPlugin } = require("clean-webpack-plugin");
-    // копир файлов из корня в вывод
-    const CopyWebpackPlugin = require("copy-webpack-plugin");
-    // css + mini... css в отдельные файлы + loader
-    const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-    // cssmini вывод - по документации
-    // ??? не раб - прибавляет очень много веса
-    // const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
-    // cssmini вывод - по видео
-    const OptimizeCssAssetWebpackPlugin = require('optimize-css-assets-webpack-plugin')
-    const TerserWebpackPlugin = require('terser-webpack-plugin')
-
-    // пути в константу(QF3EcxymIcc)(для удобной смены во всем сразу)
-    // PATHS.src(dist) - ярлык. './src/'(./dist/) - изменяемая переменая
-    const PATHS = {
-      src: path.join(__dirname, "./src/"),
-      dist: path.join(__dirname, "./dist/"),
-      static: "static/",
-    };
-
-    // режимы разраб/продукт ч/з систем перем.
-    // $$ npm i -D cross-env - корректно задаёт системную переменную(разраб/прод). прописать в packege.json
-    const isDev = process.env.NODE_ENV === 'development'
-    const isProd = !isDev
-
-    // перименовка файлов в зависимости от режима. более сложное для Prod для кэша
-    // const filename = (ext) => (isDev ? `[name].${ext}` : `[name].[hash].${ext}`);
-    // дополнил. при передаче ext, созд. идентич. папку и формат. ЛУЧШЕЕ для css, js
-    isDev ? `${ext}/[name].${ext}` : `${ext}/[name].[hash].${ext}`;
-
-    // fn для передачи объ. в optimization с проверкой на Prod
-    const optimization = () => {
-      // объ. конфиг по умолчанию
-      const config = {
-        splitChunks: {
-          // объедин/разъедин доп библ js (jQ, React). в один файл из 2х не связаных файлов
-          chunks: "all", // async
+      module.exports = {
+        mode: "development",
+        entry: {
+          main: path.resolve(__dirname, "src", "index.jsx")
+        }, 
+        output: {
+          path: path.resolve(__dirname, "static", "build"),
+          filename: "app.js",
         },
       };
-      // е/и prod(true) в minimize добавл. cssmini а css объединяет в один файл
-      if (isProd) {
-        (config.minimizer = [
-          // с видео
-          // cssmini вывод
-          new OptimizeCssAssetWebpackPlugin(),
-          new TerserWebpackPlugin(),
-          // с webpack документации
-          // ??? не раб - прибавляет очень много веса, хоть и mini
-          // new CssMinimizerPlugin(),
-        ]),
-        // CSS в один файл
-        // ??? не раб - пока 2 файла грузит с предупреждением + созд. styles.js
-        (config.splitChunks = {
-          // объедин/разъедин доп библ js (jQ, React)
-          chunks: "all", // async
-          cacheGroups: {
-            styles: {
-              // путь/имя
-              name: "styles",
-              // убирает доп файл , хз что за js
-              type: "css/mini-extract",
-              // For webpack@4
-              // test: /\.css$/,
-              chunks: "all",
-              enforce: true,
-            },
-          },
-        });
-      }
-      // возращ по умолчан
-      return config;
-    };
+    ##
+  стандарт база
+    ##
+      const path = require("path");
 
-    // убираем дубли loader в css, scss, less
-    const cssLoaders = (extra) => {
-      // массив по умолчанию
-      const loaders = [
-        {
-          loader: MiniCssExtractPlugin.loader,
-          options: {
-            // hmr: isDev,
-            // reloadAll: true,
-          },
+      module.exports = {
+        mode: "development",
+        entry: {
+          main: path.resolve(__dirname, "src", "index.jsx")
+        }, 
+        output: {
+          path: path.resolve(__dirname, "static", "build"),
+          filename: "app.js",
         },
-        // MiniCssExtractPlugin.loader,
-        "css-loader",
-      ];
-      // если есть передаваемый параметр(extra) добовл. его в конце массива
-      if (extra) {
-        loaders.push(extra);
-      }
-      // возвращ умолч
-      return loaders;
-    };
+      };
+    ##
+  описание базы + команды
+    ##
+      // подключение пакет пафз через константу. для корректного поиска точки входа
+      const path = require("path"); // `путь`=`требует`
+      // html выгр, подкл css, js
+      const HTMLWebpackPlugin = require("html-webpack-plugin");
+      // очистка выводной папки
+      const { CleanWebpackPlugin } = require("clean-webpack-plugin");
+      // копир файлов из корня в вывод
+      const CopyWebpackPlugin = require("copy-webpack-plugin");
+      // css + mini... css в отдельные файлы + loader
+      const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+      // cssmini вывод - по документации
+      // ??? не раб - прибавляет очень много веса
+      // const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
+      // cssmini вывод - по видео
+      const OptimizeCssAssetWebpackPlugin = require('optimize-css-assets-webpack-plugin')
+      const TerserWebpackPlugin = require('terser-webpack-plugin')
 
-    // убираем дубли babel options в JS, JSX, TS
-    const babelOptions = preset => {
-      const opts = {
-        presets: [
-          '@babel/preset-env'
-        ],
-        plugins: [
-          '@babel/plugin-proposal-class-properties'
-        ]
-      }
+      // пути в константу(QF3EcxymIcc)(для удобной смены во всем сразу)
+      // PATHS.src(dist) - ярлык. './src/'(./dist/) - изменяемая переменая
+      const PATHS = {
+        src: path.join(__dirname, "./src/"),
+        dist: path.join(__dirname, "./dist/"),
+        static: "static/",
+      };
 
-      if (preset) {
-        opts.presets.push(preset)
-      }
+      // режимы разраб/продукт ч/з систем перем.
+      // $$ npm i -D cross-env - корректно задаёт системную переменную(разраб/прод). прописать в packege.json
+      const isDev = process.env.NODE_ENV === 'development'
+      const isProd = !isDev
 
-      return opts
-    }
+      // перименовка файлов в зависимости от режима. более сложное для Prod для кэша
+      // const filename = (ext) => (isDev ? `[name].${ext}` : `[name].[hash].${ext}`);
+      // дополнил. при передаче ext, созд. идентич. папку и формат. ЛУЧШЕЕ для css, js
+      isDev ? `${ext}/[name].${ext}` : `${ext}/[name].[hash].${ext}`;
 
-    // экспорт настроек плагинов объ., из док.(config) 
-    module.exports = {
-      // укажем где исходники. путает в fn(), PATHS, наборе имени
-      // context: path.resolve(__dirname, "src"),
-      // `режим разработки`
-      mode: "development", 
-      // точка входа, начало сборки
-      entry: { 
-        // сборка из .src/
-        // main`главный(ярлык)`: модуль path`путь` resolve`разрешает` dirname`корневая папк`
-        // главный/имя/путь/ярлык - влияет на имя файлов при [name]
-        // path.resolve - составл. статический путь из указаных пунктов в скобках
-        // делаеться потому что путь в некоторых системах выглядит по другому
-        // в существуюших папках ищет нужное
-        // можно указ. входной файл .jsx, чтоб node не искал только js по умолчанию
-        // одна точка входа.
-          // имя при выходе(ярлык) main: ... путь(корн.папка, src/index.js)
-          // main: path.resolve(__dirname, "src", "index.js")
-        // точка входа + путь в ярлыке
-          // имя/путь(на выходе запишется в js/main.js)
-          // "js/main": "./src/js/index.js"
-        // неско-ко точек входа.
-          // имя на выходе: путь до входного файла
-          // main: "./src/js/index.js",
-          // в [] пердаем доп. библ.(polyfil, lodash, )
-          // appic: ["@babel/polyfill","./src/js/indexReact.jsx"],
-        // неско-ко точек входа + PATHS. ЛУЧШЕЕ!!!
-          // ярлык main: найти в корн.папки/src. js найдёт сам
-          main: PATHS.src,
-          // найдёт в src/js/indexReact.jsx. синтаксис ES6
-          app: `${PATHS.src}js/indexReact.jsx`,
-      },
-      // точка вывода
-      output: { 
-        // стандарт
-          // выгруж. в ./static/build/app.js
-          // path: path.resolve(__dirname, "static", "build"),
-          // filename: "app.js",
-          // [name] добав уникальность(патерн). их много
-        fn() + PATHS. ЛУЧШЕЕ!!!
-          // с fn() создаст js/[name].js
-          filename: filename("js"),
-          // склад в static/js/[name].js синтакс ES6
-          // filename: `${PATHS.static}js/[name].js`,
-          // созд. в корн.папке/dist
-          path: PATHS.dist,
-      },
-      // доп. узкие настр.
-      plugins: [ 
-        // html плагин {
-          // $$ npm i -D html-webpack-plugin
-          new HTMLWebpackPlugin({
-            // стандарт
-              // загрузка из src
-              // template: "./src/index.html",
-              // выгрузка по умолч. в корн.папку(dist)
-            // с PATHS. ЛУЧШЕЕ!!!
-              // выгрузка - dist/index.html
-              filename: `${PATHS.dist}index.html`,
-              // загрузка - src/index.html
-              template: `${PATHS.src}index.html`,
-            // добавл. `куски` кода js, css из entry
-            chunks: ['main'],
-            // мини выгрузка в режиме Prod
-            minify: {
-              collapseWhitespace: isProd,
-            },
-          }),
-          // второй файл html
-          new HTMLWebpackPlugin({
-            // стандарт
-              // загрузка из src/html/
-              // template: "./src/html/indexReact.html",
-              // выгрузка /html/NoReact/
-              // filename: "./html/React/indexReact.html",
-            // с PATHS. ЛУЧШЕЕ!!!
-              // выгрузка - dist/html/indexReact.html
-              filename: `${PATHS.dist}html/indexReact.html`,
-              // загрузка - src/html/indexReact.html
-              template: `${PATHS.src}html/indexReact.html`,
-            // добавл. `куски` кода js, css из entry
-            chunks: ['app', 'analytics'],
-            // мини выгрузка в режиме Prod
-            minify: {
-              collapseWhitespace: isProd,
-            },
-          }),
-        // }
-        // css + mini {
-          new MiniCssExtractPlugin({
-            // $$ npm i -D mini-css-extract-plugin
-            // [name] присвоит имя из entry, можно прописать имя
-            // filename: '[name].css',
-            // с fn() создаст css/[name].css ЛУЧШЕЕ!!
-            filename: filename("css"),
-            // для произв. раздел. на отдел. `куски`(асинхр. загр., )
-            // chunkFilename: '[id].css',
-          }),
-        // }
-        // очистка выводной папки {
-          // $$ npm i -D clean-webpack-plugin
-          new CleanWebpackPlugin(),
-        // }
-        // копир файлов {
-          // копир файлов(папок) из корня(src) в вывод
-          // $$ npm i -D copy-webpack-plugin
-          new CopyWebpackPlugin({
-            patterns: [
-              {
-                // от куда и куда копир(файлы, папки)
-                // стандарт
-                  // from: path.resolve(__dirname, "src/favicon.ico"),
-                  // to: path.resolve(__dirname, "dist"),
-                // копир с PATHS
-                  // всё из src/img в dist/img
-                  {
-                    from: `${PATHS.src}img`,
-                    to: `${PATHS.dist}img`,
-                  },
-                  {
-                    from: `${PATHS.src}fonts`,
-                    to: `${PATHS.dist}fonts`,
-                  },
+      // fn для передачи объ. в optimization с проверкой на Prod
+      const optimization = () => {
+        // объ. конфиг по умолчанию
+        const config = {
+          splitChunks: {
+            // объедин/разъедин доп библ js (jQ, React). в один файл из 2х не связаных файлов
+            chunks: "all", // async
+          },
+        };
+        // е/и prod(true) в minimize добавл. cssmini а css объединяет в один файл
+        if (isProd) {
+          (config.minimizer = [
+            // с видео
+            // cssmini вывод
+            new OptimizeCssAssetWebpackPlugin(),
+            new TerserWebpackPlugin(),
+            // с webpack документации
+            // ??? не раб - прибавляет очень много веса, хоть и mini
+            // new CssMinimizerPlugin(),
+          ]),
+          // CSS в один файл
+          (config.splitChunks = {
+            // объедин/разъедин доп библ js (jQ, React)
+            chunks: "all", // async
+            cacheGroups: {
+              styles: {
+                // путь/имя
+                name: "styles",
+                // убирает доп файл , хз что за js
+                type: "css/mini-extract",
+                // For webpack@4
+                // test: /\.css$/,
+                chunks: "all",
+                enforce: true,
               },
-            ],
-          }),
-        // }
-      ],
-      // конфигурация модулей(загрузчиков)
-      module: { 
-        // `правила` для модулей (настройка, параметры парсера и т. д.)
-        rules: [
-          // пояснения {
-            // загрузчики для предварительной обработки файлов
-            // test - какое расширение.
-            // exclude - исключения.
-            // указ. webpack какой loader использовать
+            },
+          });
+        }
+        // возращ по умолчан
+        return config;
+      };
+
+      // убираем дубли loader в css, scss, less
+      const cssLoaders = (extra) => {
+        // массив по умолчанию
+        const loaders = [
+          {
+            loader: MiniCssExtractPlugin.loader,
+            options: {
+              // hmr: isDev,
+              // reloadAll: true,
+            },
+          },
+          // MiniCssExtractPlugin.loader,
+          "css-loader",
+        ];
+        // если есть передаваемый параметр(extra) добовл. его в конце массива
+        if (extra) {
+          loaders.push(extra);
+        }
+        // возвращ умолч
+        return loaders;
+      };
+
+      // убираем дубли babel options в JS, JSX, TS
+      const babelOptions = preset => {
+        const opts = {
+          presets: [
+            '@babel/preset-env'
+          ],
+          plugins: [
+            '@babel/plugin-proposal-class-properties'
+          ]
+        }
+        if (preset) {
+          opts.presets.push(preset)
+        }
+        return opts
+      }
+
+      // eslint(анализ проблем в js коде) счас только для rules:js
+      const jsLoaders = () => {
+        // по умолчанию. возращ массив
+        // const loader = [
+        const user = [
+          {
+            loader: "babel-loader",
+            options: babelOptions(),
+          },
+        ];
+        // е/и раработка, то добавл eslint
+        if (isDev) {
+          user.push("eslint-loader");
+        }
+        // возвращ
+        return user;
+      };
+
+      // экспорт настроек плагинов объ., из док.(config) 
+      module.exports = {
+        // укажем где исходники. путает в fn(), PATHS, наборе имени
+        // context: path.resolve(__dirname, "src"),
+        // `режим разработки`
+        mode: "development", 
+        // точка входа, начало сборки
+        entry: { 
+          // сборка из .src/
+          // main`главный(ярлык)`: модуль path`путь` resolve`разрешает` dirname`корневая папк`
+          // главный/имя/путь/ярлык - влияет на имя файлов при [name]
+          // path.resolve - составл. статический путь из указаных пунктов в скобках
+          // делаеться потому что путь в некоторых системах выглядит по другому
+          // в существуюших папках ищет нужное
+          // можно указ. входной файл .jsx, чтоб node не искал только js по умолчанию
+          // одна точка входа.
+            // имя при выходе(ярлык) main: ... путь(корн.папка, src/index.js)
+            // main: path.resolve(__dirname, "src", "index.js")
+          // точка входа + путь в ярлыке
+            // имя/путь(на выходе запишется в js/main.js)
+            // "js/main": "./src/js/index.js"
+          // неско-ко точек входа.
+            // имя на выходе: путь до входного файла
+            // main: "./src/js/index.js",
+            // в [] пердаем доп. библ.(polyfil, lodash, )
+            // appic: ["@babel/polyfill","./src/js/indexReact.jsx"],
+          // неско-ко точек входа + PATHS. ЛУЧШЕЕ!!!
+            // ярлык main: найти в корн.папки/src. js найдёт сам
+            main: PATHS.src,
+            // найдёт в src/js/indexReact.jsx. синтаксис ES6
+            app: `${PATHS.src}js/indexReact.jsx`,
+        },
+        // точка вывода
+        output: { 
+          // стандарт
+            // выгруж. в ./static/build/app.js
+            // path: path.resolve(__dirname, "static", "build"),
+            // filename: "app.js",
+            // [name] добав уникальность(патерн). их много
+          fn() + PATHS. ЛУЧШЕЕ!!!
+            // с fn() создаст js/[name].js
+            filename: filename("js"),
+            // склад в static/js/[name].js синтакс ES6
+            // filename: `${PATHS.static}js/[name].js`,
+            // созд. в корн.папке/dist
+            path: PATHS.dist,
+        },
+        // доп. узкие настр.
+        plugins: [ 
+          // html плагин {
+            // $$ npm i -D html-webpack-plugin
+            new HTMLWebpackPlugin({
+              // стандарт
+                // загрузка из src
+                // template: "./src/index.html",
+                // выгрузка по умолч. в корн.папку(dist)
+              // с PATHS. ЛУЧШЕЕ!!!
+                // выгрузка - dist/index.html
+                filename: `${PATHS.dist}index.html`,
+                // загрузка - src/index.html
+                template: `${PATHS.src}index.html`,
+              // добавл. `куски` кода js, css из entry
+              chunks: ['main'],
+              // мини выгрузка в режиме Prod
+              minify: {
+                collapseWhitespace: isProd,
+              },
+            }),
+            // второй файл html
+            new HTMLWebpackPlugin({
+              // стандарт
+                // загрузка из src/html/
+                // template: "./src/html/indexReact.html",
+                // выгрузка /html/NoReact/
+                // filename: "./html/React/indexReact.html",
+              // с PATHS. ЛУЧШЕЕ!!!
+                // выгрузка - dist/html/indexReact.html
+                filename: `${PATHS.dist}html/indexReact.html`,
+                // загрузка - src/html/indexReact.html
+                template: `${PATHS.src}html/indexReact.html`,
+              // добавл. `куски` кода js, css из entry
+              chunks: ['app', 'analytics'],
+              // мини выгрузка в режиме Prod
+              minify: {
+                collapseWhitespace: isProd,
+              },
+            }),
           // }
-          // BABEL(JS,JSX,TS) - компилирует код { 
-            // превращ. ECMAScript.next код в ECMAScript 5 (конструкторы). заменяет весь новый код на старый
-            // устан. babel 
-            // $$ npm install -D babel-loader @babel/core @babel/preset-env 
-            // устан. полифил от ошибки "Uncaught ReferenceError: regeneratorRuntime is not defined" в браузере
-            // $$ npm i -D @babel/polyfill
-            // подкл. в entry: вместе с index.js как отдельн. библ.
-            // entry:{main: ["@babel/polyfill","./index.js"]}
-            // устан плагин чтоб не было ошибок в консоли
-            // $$ npm i -D @babel/plugin-proposal-class-properties
-            // подкл. в plugins: []
-            // подроб. {
-              // babel-loader - адаптер м/у webpaсk и babel
-              // core - ядро/ ? переводчик
-              // preset - доп. настр.(набор плагинов для js) как компил. версии js
-              // polyfill - 
-              // proposal-class-properties - плагин для удобства?
+          // css + mini {
+            new MiniCssExtractPlugin({
+              // $$ npm i -D mini-css-extract-plugin
+              // [name] присвоит имя из entry, можно прописать имя
+              // filename: '[name].css',
+              // с fn() создаст css/[name].css ЛУЧШЕЕ!!
+              filename: filename("css"),
+              // для произв. раздел. на отдел. `куски`(асинхр. загр., )
+              // chunkFilename: '[id].css',
+            }),
+          // }
+          // очистка выводной папки {
+            // $$ npm i -D clean-webpack-plugin
+            new CleanWebpackPlugin(),
+          // }
+          // копир файлов {
+            // копир файлов(папок) из корня(src) в вывод
+            // $$ npm i -D copy-webpack-plugin
+            new CopyWebpackPlugin({
+              patterns: [
+                {
+                  // от куда и куда копир(файлы, папки)
+                  // стандарт
+                    // from: path.resolve(__dirname, "src/favicon.ico"),
+                    // to: path.resolve(__dirname, "dist"),
+                  // копир с PATHS
+                    // всё из src/img в dist/img
+                    {
+                      from: `${PATHS.src}img`,
+                      to: `${PATHS.dist}img`,
+                    },
+                    {
+                      from: `${PATHS.src}fonts`,
+                      to: `${PATHS.dist}fonts`,
+                    },
+                },
+              ],
+            }),
+          // }
+        ],
+        // конфигурация модулей(загрузчиков)
+        module: { 
+          // `правила` для модулей (настройка, параметры парсера и т. д.)
+          rules: [
+            // пояснения {
+              // загрузчики для предварительной обработки файлов
+              // test - какое расширение.
+              // exclude - исключения.
+              // указ. webpack какой loader использовать
             // }
-            // JS 
-              {
-                // для js. синтаксис регулярных выражений
-                test: /\.js?$/,
-                // исключ. папка node_modules
-                exclude: /(node_modules)/,
-                // указ. webpack какой loader использовать
-                use: {
-                  // загрузчик - babel (собирает js файлы)
-                  loader: "babel-loader",
-                  // в опциях доп. настр.
-                  options:
+            // BABEL(JS,JSX,TS) - компилирует код { 
+              // превращ. ECMAScript.next код в ECMAScript 5 (конструкторы). заменяет весь новый код на старый
+              // устан. babel 
+              // $$ npm install -D babel-loader @babel/core @babel/preset-env 
+              // устан. полифил от ошибки "Uncaught ReferenceError: regeneratorRuntime is not defined" в браузере
+              // $$ npm i -D @babel/polyfill
+              // подкл. в entry: вместе с index.js как отдельн. библ.
+              // entry:{main: ["@babel/polyfill","./index.js"]}
+              // устан плагин чтоб не было ошибок в консоли
+              // $$ npm i -D @babel/plugin-proposal-class-properties
+              // подкл. в plugins: []
+              // подроб. {
+                // babel-loader - адаптер м/у webpaсk и babel
+                // core - ядро/ ? переводчик
+                // preset - доп. настр.(набор плагинов для js) как компил. версии js
+                // polyfill - 
+                // proposal-class-properties - плагин для удобства?
+              // }
+              // JS 
+                {
+                  // для js. синтаксис регулярных выражений
+                  test: /\.js?$/,
+                  // исключ. папка node_modules
+                  exclude: /(node_modules)/,
+                  // указ. webpack какой loader использовать
+                  // станд + option + с fn()/без
+                    // use: {
+                      // загрузчик - babel (собирает js файлы)
+                      // loader: "babel-loader",
+                      // в опциях доп. настр.
+                      // options:
+                        // без fn()
+                            // указываем плагины babel. их можно указать в файле .babelrc только в формате json, прописано там же
+                            // presets: ["@babel/preset-env"],
+                            // plugins: ["@babel/plugin-proposal-class-properties"], // , { loose: true }
+                        // с fn() babelOptions без дублей. ЛУЧШЕЕ!!!
+                          // babelOptions()
+                    }
+                  // eslint. ЛУЧШЕЕ!!!
+                    // анализ проблем в js коде
+                    // Инструмент статического анализа кода для выявления проблемных паттернов, обнаруженных в коде JavaScript.
+                    // мождно добавл желаемым. файлам js
+                    // ошибки в коде при сборке выдают предупр/ошибку. ? в файлах подсвечиватся
+                    // устан. пакет, loader и babel
+                    // $$ npm i -D eslint eslint-loader babel-eslint
+                    // ++ созд. и настр. файл .eslintrc
+                    // настройку файлы вырез/копир и раскомитеть
+                      ## 
+                        // {
+                        //   // явно указыв с чем работаем(babel-eslint)
+                        //   "parser": "babel-eslint",
+                        //   // правила
+                        //   "rules": {
+                        //     // вкл прав. как предупрежд., чтоб проек собирался. error - не даст собратся
+                        //     "no-unused-vars": "warn"
+                        //   },
+                        //   // указ где работаем
+                        //   "env": {
+                        //     // чтоб понимал промисы
+                        //     "es6": true,
+                        //     // чтоб понимал консоли
+                        //     "browser": true
+                        //   },
+                        //   // расширение
+                        //   "extends": [
+                        //     // наследуемся: рекондуется
+                        //     "eslint:recommended"
+                        //   ]
+                        // }
+                      ##
+                    // пример только для js
+                    ##
+                      // loader для объ.? use для массивов? через fn()
+                      use: jsLoaders(),
+                    ##
+                }
+              // JSX 
+                {
+                  // устан react и react-dom
+                  // $$ npm install react react-dom
+                  // подкл в файл .JSX
+                  // import React from 'react'
+                  // import { render } from 'react-dom'
+                  // babel react устан и настр
+                  // $$ npm i -D @babel/preset-react
+                  // entry: {main3:"./fail3.jsx"}
+                  // для js и/или jsx. синтаксис регулярных выражений
+                  test: /\.jsx?$/i, // есть такой test: /\.(js|jsx)$/,
+                  // исключ. папка node_modules
+                  exclude: /(node_modules)/,
+                  // указ. webpack какой loader использовать
+                  use: {
+                    // загрузчик - babel (собирает jsx файлы)
+                    loader: "babel-loader",
+                    // в опциях доп. настр.
+                    options: 
                     // без fn()
                         // указываем плагины babel. их можно указать в файле .babelrc только в формате json, прописано там же
-                        // presets: ["@babel/preset-env"],
+                        // presets: ["@babel/preset-env", "@babel/preset-react"],
                         // plugins: ["@babel/plugin-proposal-class-properties"], // , { loose: true }
                     // с fn() babelOptions без дублей. ЛУЧШЕЕ!!!
-                      babelOptions()
+                      babelOptions("@babel/preset-react")
+                  },
+                }
+              // TS      
+                // typescript babel устан и настр
+                // $$ npm i -D @babel/preset-typescript
+                // entry: {main3:"./fail3.ts"}
+                {
+                  test: /\.ts$/,
+                  exclude: /node_modules/,
+                  use: {
+                    loader: "babel-loader",
+                    options: 
+                    // без fn()
+                      // {
+                        // presets: ["@babel/preset-env" , "@babel/preset-typescript"],
+                        // plugins: ["@babel/plugin-proposal-class-properties"],//, { loose: true }
+                      // },
+                    // с fn() babelOptions без дублей
+                      babelOptions("@babel/preset-typescript"),
+                  },
                 },
-              }
-            // JSX 
-              {
-                // устан react и react-dom
-                // $$ npm install react react-dom
-                // подкл в файл .JSX
-                // import React from 'react'
-                // import { render } from 'react-dom'
-                // babel react устан и настр
-                // $$ npm i -D @babel/preset-react
-                // entry: {main3:"./fail3.jsx"}
-                // для js и/или jsx. синтаксис регулярных выражений
-                test: /\.jsx?$/i, // есть такой test: /\.(js|jsx)$/,
-                // исключ. папка node_modules
-                exclude: /(node_modules)/,
-                // указ. webpack какой loader использовать
-                use: {
-                  // загрузчик - babel (собирает jsx файлы)
-                  loader: "babel-loader",
-                  // в опциях доп. настр.
-                  options: 
-                  // без fn()
-                      // указываем плагины babel. их можно указать в файле .babelrc только в формате json, прописано там же
-                      // presets: ["@babel/preset-env", "@babel/preset-react"],
-                      // plugins: ["@babel/plugin-proposal-class-properties"], // , { loose: true }
-                  // с fn() babelOptions без дублей. ЛУЧШЕЕ!!!
-                    babelOptions("@babel/preset-react")
-                },
-              }
-            // TS      
-              // typescript babel устан и настр
-              // $$ npm i -D @babel/preset-typescript
-              // entry: {main3:"./fail3.ts"}
-              {
-                test: /\.ts$/,
-                exclude: /node_modules/,
-                use: {
-                  loader: "babel-loader",
-                  options: 
-                  // без fn()
-                    // {
-                      // presets: ["@babel/preset-env" , "@babel/preset-typescript"],
-                      // plugins: ["@babel/plugin-proposal-class-properties"],//, { loose: true }
-                    // },
-                  // с fn() babelOptions без дублей
-                    babelOptions("@babel/preset-typescript"),
-                },
-              },
-          // },
-          // CSS (стили|4 варианта) {
-            // обраб. ccs файлы с импортами и возвращает ccs код.
-            // $$ npm i -D css-loader
-            // CSS + style{
-              // Грузить стили в head, не файл
-              // $$ npm i -D style-loader
-              // Подкл. CSS в JS файлах к странице(html), перед этим превратив их в строку. 
-              // +++ import './test1.css'; // подкл. .css в src/.js
-              {
-                test: /\.css$/i,
-                use: ["style-loader", "css-loader"],
-              },
             // },
-            // CSS + mini{
-              // для отдельных css файлов
-              // $$ npm i --D mini-css-extract-plugin
-              // +++ const MiniCssExtractPlugin
-              // +++ plugins:[new MiniCssExtractPlugin()]
-              // подкл. .css в src/.js
-              // +++ import './test2.css'; 
-              // подкл. css в html. не нежен с html плагин
-              // +++ <link rel="stylesheet" href="./static/build/styles.css">  
-              {
-                test: /\.css$/i,
-                // с fn() cssLoaders без дублей. ЛУЧШЕЕ!!!
-                  use: cssLoaders(),
-                // стандарт
-                  // use: [
-                    // без опций
-                      // MiniCssExtractPlugin.loader, 'css-loader'
-                    // опции + доп.
+            // CSS (стили|4 варианта) {
+              // обраб. ccs файлы с импортами и возвращает ccs код.
+              // $$ npm i -D css-loader
+              // CSS + style{
+                // Грузить стили в head, не файл
+                // $$ npm i -D style-loader
+                // Подкл. CSS в JS файлах к странице(html), перед этим превратив их в строку. 
+                // +++ import './test1.css'; // подкл. .css в src/.js
+                {
+                  test: /\.css$/i,
+                  use: ["style-loader", "css-loader"],
+                },
+              // },
+              // CSS + mini{
+                // для отдельных css файлов
+                // $$ npm i --D mini-css-extract-plugin
+                // +++ const MiniCssExtractPlugin
+                // +++ plugins:[new MiniCssExtractPlugin()]
+                // подкл. .css в src/.js
+                // +++ import './test2.css'; 
+                // подкл. css в html. не нежен с html плагин
+                // +++ <link rel="stylesheet" href="./static/build/styles.css">  
+                {
+                  test: /\.css$/i,
+                  // с fn() cssLoaders без дублей. ЛУЧШЕЕ!!!
+                    use: cssLoaders(),
+                  // стандарт
+                    // use: [
+                      // без опций
+                        // MiniCssExtractPlugin.loader, 'css-loader'
+                      // опции + доп.
+                        // {
+                          // прямо указ какой loader
+                          // loader: MiniCssExtractPlugin.loader,
+                          // options: {
+                            // ??? не раб - https://webpack.js.org/plugins/mini-css-extract-plugin/#root
+                            // `горячий модуль замены` - измен. эл. без перезагрузки страницы
+                            // hmr: true,
+                            // reloadAll: true
+                            // publicPath: "/public/path/to/",
+                          // },
+                        // },
+                        // "css-loader",
+                    // ],
+                },
+              // },
+              // CSS + mini + SCSS{
+                // $$ npm i -D sass-loader node-sass
+                // 2 опции sass(новее++) и node-sass(быстрее++)
+                // подкл. .scss в src/.js
+                // +++ import './test2.scss';
+                {
+                  // sass/scss 
+                  //test: /\.s[ac]ss$/i,
+                  // css, sass, scss
+                  test: /\.(sa|sc|c)ss$/,
+                  // с fn() cssLoaders без дублей. ЛУЧШЕЕ!!!
+                    use: cssLoaders("sass-loader"),
+                  // без fn()
+                    // use: [
+                      // 3. Создает узлы `MiniCss` из строк JS в файлы
                       // {
                         // прямо указ какой loader
                         // loader: MiniCssExtractPlugin.loader,
-                        // options: {
-                          // ??? не раб - https://webpack.js.org/plugins/mini-css-extract-plugin/#root
-                          // `горячий модуль замены` - измен. эл. без перезагрузки страницы
-                          // hmr: true,
-                          // reloadAll: true
-                          // publicPath: "/public/path/to/",
-                        // },
+                      //  options: {},
                       // },
+                      // 2. Переводит CSS в обычный JS
                       // "css-loader",
-                  // ],
-              },
+                      // 1. Компилирует Sass в CSS
+                      // "sass-loader",
+                    // ],
+                },
+              // }
+              // CSS + mini + Less{
+                // $$ npm i -D less-loader
+                // подкл. .less в src/.js
+                // +++ import './test3.less';
+                {
+                  // только less 
+                  test: /\.less$/i,
+                  // с fn() cssLoaders без дублей
+                    use: cssLoaders("less-loader"),
+                  // без fn()
+                    // use: [
+                      // 3. Создает узлы `MiniCss` из строк JS в файлы
+                      // {
+                        // прямо указ какой loader
+                        // loader: MiniCssExtractPlugin.loader,
+                        // options: {},
+                      // },
+                      // 2. Переводит CSS в обычный JS
+                      // "css-loader",
+                      // 1. Компилирует Less в CSS
+                      // "less-loader",
+                    // ],
+                },
+              // }
+              // CSS разраб/прод{
+                // !!! https://webpack.js.org/loaders/style-loader/
+                // !!! https://webpack.js.org/loaders/sass-loader/
+                // test: /\.(sa|sc|c)ss$/,
+                // test: /\.s[ac]ss$/i,
+                // ||
+                // const devMode = process.env.NODE_ENV !== "production";
+                // use: [ devMode ? "style-loader" : MiniCssExtractPlugin.loader,
+                // "css-loader", "postcss-loader","sass-loader",],
+                // plugins: [].concat(devMode ? [] : [new MiniCssExtractPlugin()])
+                // ||
+                // use: [ // возврат к загрузчику стилей в разработке
+                // process.env.NODE_ENV !== "production" ? "style-loader" : MiniCssExtractPlugin.loader,
+                // "css-loader", "sass-loader", ],
+              // }
             // },
-            // CSS + mini + SCSS{
-              // $$ npm i -D sass-loader node-sass
-              // 2 опции sass(новее++) и node-sass(быстрее++)
-              // подкл. .scss в src/.js
-              // +++ import './test2.scss';
+            // Файлы, изо {
+              // возм загр. различ файлы (img, xml, )
+              // устан loader
+              // $$ npm i -D file-loader
+              // подкл в js
+              // +++ import Logo from './img/logo.png'
+              // добав img в js
+              // +++ const vrt = new Vrt(logo)||constructor(img){this.img = img;}
+              // добав в css 
+              // +++ background-image: url("../img/logo.png");
               {
-                // sass/scss 
-                //test: /\.s[ac]ss$/i,
-                // css, sass, scss
-                test: /\.(sa|sc|c)ss$/,
-                // с fn() cssLoaders без дублей. ЛУЧШЕЕ!!!
-                  use: cssLoaders("sass-loader"),
-                // без fn()
-                  // use: [
-                    // 3. Создает узлы `MiniCss` из строк JS в файлы
-                    // {
-                      // прямо указ какой loader
-                      // loader: MiniCssExtractPlugin.loader,
-                     //  options: {},
-                    // },
-                    // 2. Переводит CSS в обычный JS
-                    // "css-loader",
-                    // 1. Компилирует Sass в CSS
-                    // "sass-loader",
-                  // ],
-              },
-            // }
-            // CSS + mini + Less{
-              // $$ npm i -D less-loader
-              // подкл. .less в src/.js
-              // +++ import './test3.less';
+                test: /\.(jpe?g|png|gif|svg)$/i,
+                // use: ["file-loader"],
+                // use не раб с options
+                loader: "file-loader",
+                // задаём имя
+                // ??? не раб - только имя ../ работает, однако созд папку с файлом за dist
+                // такой же файл как из CopyWebPlug., но при уник. имени созд ещё один
+                options: {
+                  // без ничего только hash.png
+                  // name: '[name].[ext]', // файл в dist
+                  // name: '../[name].[ext]', // файл за dist
+                  name: "img/[name][hash].[ext]", // файл в img/ с hash. созд отдельный файл от копир.
+                  // name: '/img/[name].[ext]', // файл в img/
+                  // name: './img/[name].[ext]', // файл в img/
+                  // name: '../img/[name].[ext]', // парка с файлом за dist
+                  // name:`${PATHS.dist}img/[name].[ext]` // не раб - созд. двойной путь до папки от корня
+                },
+              }
+            // },
+            // xml {
+              // устан. $$, подкл в js, добавл в файл 
+              // $$ npm i -D xml-loader
               {
-                // только less 
-                test: /\.less$/i,
-                // с fn() cssLoaders без дублей
-                  use: cssLoaders("less-loader"),
-                // без fn()
-                  // use: [
-                    // 3. Создает узлы `MiniCss` из строк JS в файлы
-                    // {
-                      // прямо указ какой loader
-                      // loader: MiniCssExtractPlugin.loader,
-                      // options: {},
-                    // },
-                    // 2. Переводит CSS в обычный JS
-                    // "css-loader",
-                    // 1. Компилирует Less в CSS
-                    // "less-loader",
-                  // ],
-              },
-            // }
-            // CSS разраб/прод{
-              // !!! https://webpack.js.org/loaders/style-loader/
-              // !!! https://webpack.js.org/loaders/sass-loader/
-              // test: /\.(sa|sc|c)ss$/,
-              // test: /\.s[ac]ss$/i,
-              // ||
-              // const devMode = process.env.NODE_ENV !== "production";
-              // use: [ devMode ? "style-loader" : MiniCssExtractPlugin.loader,
-              // "css-loader", "postcss-loader","sass-loader",],
-              // plugins: [].concat(devMode ? [] : [new MiniCssExtractPlugin()])
-              // ||
-              // use: [ // возврат к загрузчику стилей в разработке
-              // process.env.NODE_ENV !== "production" ? "style-loader" : MiniCssExtractPlugin.loader,
-              // "css-loader", "sass-loader", ],
-            // }
-          // },
-          // Файлы, изо {
-            // возм загр. различ файлы (img, xml, )
-            // устан loader
-            // $$ npm i -D file-loader
-            // подкл в js
-            // +++ import Logo from './img/logo.png'
-            // добав img в js
-            // +++ const vrt = new Vrt(logo)||constructor(img){this.img = img;}
-            // добав в css 
-            // +++ background-image: url("../img/logo.png");
-            {
-              test: /\.(jpe?g|png|gif|svg)$/i,
-              // use: ["file-loader"],
-              // use не раб с options
-              loader: "file-loader",
-              // задаём имя
-              // ??? не раб - только имя ../ работает, однако созд папку с файлом за dist
-              // такой же файл как из CopyWebPlug., но при уник. имени созд ещё один
-              options: {
-                // без ничего только hash.png
-                // name: '[name].[ext]', // файл в dist
-                // name: '../[name].[ext]', // файл за dist
-                name: "img/[name][hash].[ext]", // файл в img/ с hash. созд отдельный файл от копир.
-                // name: '/img/[name].[ext]', // файл в img/
-                // name: './img/[name].[ext]', // файл в img/
-                // name: '../img/[name].[ext]', // парка с файлом за dist
-                // name:`${PATHS.dist}img/[name].[ext]` // не раб - созд. двойной путь до папки от корня
-              },
-            }
-          // },
-          // xml {
-            // устан. $$, подкл в js, добавл в файл 
-            // $$ npm i -D xml-loader
-            {
-              test: /\.xml$/,
-              use: ["xml-loader"],
-            }
-          // },
-          // подкл. csv {
-            // устан. $$, подкл в js, добавл в файл
-            // $$ npm i -D csv-loader
-            // зависит от пакета papaparse который парсит csv в js 
-            // $$ npm i -D papaparse
-            {
-              test: /\.csv$/,
-              use: ["csv-loader"],
-            }
-          // },
-        ]
-      },
-      // расшир/сокращ
-      resolve: {
-        // расшир. по умолч. чтоб не указыв. в import/export
-        extensions: [".js", ".json", ".png"],
-        // сокращение/пседвоним указ. на путь
-        alias: {
-          "@models": path.resolve(__dirname, "src/models"),
-          "@": path.resolve(__dirname, "src"),
+                test: /\.xml$/,
+                use: ["xml-loader"],
+              }
+            // },
+            // подкл. csv {
+              // устан. $$, подкл в js, добавл в файл
+              // $$ npm i -D csv-loader
+              // зависит от пакета papaparse который парсит csv в js 
+              // $$ npm i -D papaparse
+              {
+                test: /\.csv$/,
+                use: ["csv-loader"],
+              }
+            // },
+          ]
         },
-      },
-      // доп настр. знач. можно передать через fn с проверкой на Prod
-      optimization: 
-        // ч/з fn() возращ. сгенерированый объ. ЛУЧШЕЕ!!!
-          optimization: optimization(),
-        // объектом
-          // {
-            // выгружать библ(jQuery, ) в один файл из 2х не связаных файлов
-              // splitChunks: {
-              // chunks: "all",
-            // },
+        // расшир/сокращ
+        resolve: {
+          // расшир. по умолч. чтоб не указыв. в import/export
+          extensions: [".js", ".json", ".png"],
+          // сокращение/пседвоним указ. на путь
+          alias: {
+            "@models": path.resolve(__dirname, "src/models"),
+            "@": path.resolve(__dirname, "src"),
+          },
+        },
+        // доп настр. знач. можно передать через fn с проверкой на Prod
+        optimization: 
+          // ч/з fn() возращ. сгенерированый объ. ЛУЧШЕЕ!!!
+            optimization: optimization(),
+          // объектом
+            // {
+              // выгружать библ(jQuery, ) в один файл из 2х не связаных файлов
+                // splitChunks: {
+                // chunks: "all",
+              // },
+            // }
+        // подкл dev-server к webpack для живой перезагрузки
+        devServer: {
+          // порт для запуска. рекоменд 8081, реже 8080
+          port: 8081, // 8080 // 4200,
+          // только в разраб
+          hot: isDev
+        },
+        // показ в консоле исходный код файла. для разраб(isDev)
+        // ??? не раб - при npm build прибавляет очень много веса объед. файлу js
+        // devtool: isDev ? 'source-map' : 'eval',
+          // или 
+          // devtool: "eval-source-map", 
+          // пояснения {
+            // eval - мини/строка, source-map - как есть + копия в мини, eval-source-map - рекомендуется
+            // после запуска npm run build(start, ) появится app.js.map (мини версия при source-map)
+            // source-map технология позволяет посмотреть в браузере какие файлы были подкл. к выходному файлу 
           // }
-        //
-      // подкл dev-server к webpack для живой перезагрузки
-      devServer: {
-        // порт для запуска. рекоменд 8081, реже 8080
-        port: 8081, // 8080 // 4200,
-        // только в разраб
-        hot: isDev
-      },
-      // показ в консоле исходный код файла. для разраб(isDev)
-      // ??? не раб - при npm build прибавляет очень много веса объед. файлу js
-      // devtool: isDev ? 'source-map' : 'eval',
-        // или 
-        // devtool: "eval-source-map", 
-        // пояснения {
-          // eval - мини/строка, source-map - как есть + копия в мини, eval-source-map - рекомендуется
-          // после запуска npm run build(start, ) появится app.js.map (мини версия при source-map)
-          // source-map технология позволяет посмотреть в браузере какие файлы были подкл. к выходному файлу 
-        // }
-    };
-    //
-  }
+      };
+    ##
   ориг. дог. {
-    https://webpack.js.org/configuration/
+    !!! https://webpack.js.org/configuration/
   }
-1.5 +++ Создать в корне папку src(любое имя и путь) и файл index.js(любое имя) в ней.
+1.5 ++ Создать в корне папку src(любое имя и путь) и файл index.js(любое имя) в ней.
 1.6 $$ npm run build // запуск сборки в Prod
-	+++ Появляеться static/build/app.js. // сбор всего JS кода в один файл
-  доп. пояснения {
+	++ Появляеться static/build/app.js. - сбор всего JS кода в один файл
+  доп. пояснения
     // Содержимое файла app.js автоматически минимизируется. 
     // Хранит все модули добавл. в сборку(index.jsx), ч/з importы
     // содерж. каждого файла в отдельной fn() eval. записывается как строка, помещёная в fn() eval
@@ -661,22 +711,20 @@
     // в шапке технический код webpack для эмуляции модулей внутри браузера
     // модуль - изолир. часть системы со своими перемен., классами, fn(), и т.д.
     // каждый файл - модуль, и никаких конфликтов м/у ними не будет
-  }
-1.7 +++ Создать в корне файл index.html и подкл. app.js
-  код html {
-    //
-    <!DOCTYPE html>
-    <html lang="ru">
-    <head>
-      <meta charset="UTF-8">
-      <title>React</title>
-    </head>
-    <body>
-      <script src="/static/build/app.js"></script>
-    </body>
-    </html>
-    //
-  }
+1.7 ++ Создать в корне файл index.html и подкл. app.js
+  код html
+    ##
+      <!DOCTYPE html>
+      <html lang="ru">
+      <head>
+        <meta charset="UTF-8">
+        <title>React</title>
+      </head>
+      <body>
+        <script src="/static/build/app.js"></script>
+      </body>
+      </html>
+    ##
 	// теперь webpack-dev-server будет отслеживать любые изменения в файлах и на лету пересобирать приложение
 
 
@@ -684,29 +732,29 @@
 1.7.1 Установил $$ npm i html-webpack-plugin
 
 1.8 Чтобы запускать сборку и сервер было проще, можно прописать соответствующие скрипты в package.json.
-	//
+	##
 	"scripts": {
 		"start": "webpack --mode development",
 		"server": "webpack-dev-server"
 	},
-	//
+	##
 	$$ npm run start
 	$$ npm run server
 	// Теперь app.js не мини сборка, изза ключа --mode development
 1.11 Импорт JS-файлов друг в друга 
 	Создадим новый файл: static_src/script.js
 	пропишем:
-	//
+	##
 	export function script() {
 		console.log('Это файл script.js');
 	}
-	//
+	##
 	в static_src/index.js пропишем:
-	//
+	##
 	import { script } from './script';
 	script();
 	console.log('А это index.js');
-	//
+	##
 	Таким образом, начиная сборку с entry, указанного в webpack.config.js, 
 	webpack следует импортам и собирает все файлы в один единственный app.js.
 
@@ -717,7 +765,7 @@
 	$$ npm install react react-dom
 1.13.1  Простейшее приложение на React
 	в файле index.js напишем простейший код на React
-	//
+	##
 	import React from 'react';
 	import ReactDOM from 'react-dom';
 	const element = React.createElement(
@@ -730,26 +778,26 @@
 		element,
 		document.getElementById('root'),
 	);
-	//
+	##
 	Здесь создается элемент <h1 class="element">. Кажется, мы подключили React</h1>, 
 	который потом вставляется в элемент с id="root". Добавим такой элемент в index.html.
-	//
+	##
 	<div id="root"></div>
-	//
+	##
 	Запускаем
 	$$ npm run start
 	$$ npm run server
 1.14 JSX - синтаксический сахар для функции React.createElement(component, props, ...children). 
 	 Это позволяет писать верстку в html-формате внутри JS-файлов.
 	заменяем на
-	//
+	##
 	const element = <h1 className="element">Кажется, мы подключили React</h1>;
-	//
+	##
 1.15 Чтоб не получить ошибку: ERROR in ./index.js Module build failed(ошибка сборки модуля)..., 
 	 изза того что JavaScript не знает синтаксиса html, установим пресет для React, чтобы с помошью babel смогли переделать JSX во что-то понятное обычному JavaScript.
 	$$ npm install @babel/preset-react
 	добавить в webpack.config.js
-	//
+	##
 	module: {
 			rules: [
 				{
@@ -760,14 +808,14 @@
 			],
 		},
 	}
-	//
+	##
 	так не сработало.
 	рабочий
-	//
+	##
 	options: {
           presets: ["@babel/env", "@babel/react"],
       		}
-	//
+	##
 1.16 Тип элемента со строчной буквы - встроенный компонент(<div> или <span>), 
 	 передается в виде строки 'div' или 'span' в функцию React.createElement. 
 	 Типы с прописной буквы(<Foo />), компилируются как React.createElement(Foo), ссылаются на компонент, 
@@ -775,20 +823,20 @@
 1.17 Функциональные компоненты позволяют отделить верстку от содержимого. 
 	 В отличие от обычных элементов, которые объявляются как переменные, 
 	 функциональные компоненты нужно объявлять в виде функций. static_src/index.js:
-	//
+	##
 	const content = 'Кажется, мы всё ещё подключаем React';
 	const Component = (props) => <h1 className="element">{props.content}</h1>;
 	ReactDOM.render(
 		<Component content={ content } />,
 		document.getElementById('root_2'),
 	);
-	//
+	##
 	Передаём текст в качестве аргумента, что позволит переиспользовать функциональный компонент 
 	(определяется с большой буквы). Вызывается с помощью синтаксиса JSX, а переменные, которые передаются в него, 
 	попадают в словарь props.
 1.18 Реализация, компонентов сообщений в рамках мессенджера.
 	static_src/index.js:
-	//
+	##
 	let messages = ['Привет', 'Как дела?'];
 	const MessageComponent = (props) => <div>{props.text}</div>;
 	const MessageField = (props) => {
@@ -798,7 +846,7 @@
 		<MessageField messages={ messages } />,
 		document.getElementById('root'),
 	);
-	//
+	##
 1.19 Переименуем файл index.js в index.jsx. Впоследствии будем ко всем файлам, использующим синтаксис JSX, 
 	 применять это расширение.
 1.20 Перед заливкой удалять (?dist?) node_modules(исполнительные файлы тех модулей которые мы устанавливаем).
@@ -822,7 +870,7 @@
 	В классе компонента обязательно должна быть реализована функция render(). 
 	То, что возвращает эта функция, как раз и выводится на экран.
 	Создаём /static_src/components/App.jsx
-	//
+	##
 	import React from 'react' ;
 	export default class App extends React. Component {
 		render () {
@@ -831,29 +879,29 @@
 			)
 		}
 	}
-	//
+	##
 	добавляем его в index.jsx
-	//
+	##
 	import App from './components/App.jsx' ;
 		ReactDOM. render (
 		<App /> ,
 		document.getElementById('root'),
 	);	
-	//
+	##
 2.3 Добавим state в компонент App и будем использовать его в рендере компонента: 
 	static_src/components/App.jsx, после .... React.Component {
-	//
+	##
 	state = {
 		text : 'Наш первый React-компонент'
 	} ;
-	//
-	//
+	##
+	##
 	<h1>{this.state.text}</h1>
-	//
+	##
 2.4 $$ npm install @babel/plugin-proposal-class-propertiesnpm install @babel/plugin-proposal-class-properties
 	Ещё один babel, для обработки синтаксиса, пока не доступтного JS
 	Пропишем его и в webpack.config.json
-	//
+	##
 	plugins : [
 		[
 			"@babel/plugin-proposal-class-properties" ,
@@ -862,7 +910,7 @@
 			}
 		]
 	]
-	//
+	##
 2.5 обновим state через секунду после первой отрисовки компонента. 
 	Делается это вызовом функции this.setState()
 	В static_src/components/App.jsx в render(){ перед return
@@ -879,7 +927,7 @@
 	componentDidUpdate - функция вызывается при обновлениях после перерисовки
 	componentWillUnmoun - функция, которая вызывается при далении компонента со страницы.
 	В static_src/components/App.jsx
-	//
+	##
 	componentWillMount() {
 		console.log('componentWillMount');
 	}
@@ -891,7 +939,7 @@
 	componentDidUpdate() {
 		console.log('componentDidUpdate');
 	}
-	//
+	##
 	state переносим из render в componentDidMount
 	##  -  Браузер. Консоль разработчика.
 	##
@@ -905,7 +953,7 @@
 	Второй вызов render и последующий componentDidUpdate были осуществлены после обновления state через секунду после отрисовки компонента.
 2.8 Вложенность компонентов, props и propTypes
 	Создаём static_src/components/Child.jsx с таким же жизненным циклом.
-	//
+	##
 	import React from 'react' ;
 	export default class Child extends React. Component {
 		componentWillMount() {
@@ -924,11 +972,11 @@
 			)
 		}
 	}
-	//
+	##
 2.9	Вложим Child.jsx в App.jsx. 
 	Передадим счетчик в качестве props, добавим кнопку, для увеличения счетчика на единицу.
 	В static_src/components/App.jsx
-	//
+	##
 	import Child from './Child.jsx';
 	state = {
 		text: 'Наш первый React-компонент' ,
@@ -948,11 +996,11 @@
 			</div>
 		)
 	}
-	//
+	##
 	handleClick - стрелочная ф-я, благодаря этому используется контекст компонента App для переменной this внутри нее. Обычная ф-я внутри компонента, «теряется» контекст. Его нужно будет привязать в конструкторе командой this.handleClick.bind(this).
 	Компонент Child получает counter в качестве props, который будет увеличиваться на 1 при каждом нажатии на кнопку. Обернули все в <div>, так как render возвращает либо один элемент, либо массив элементов.
 2.10 Можно импортировать jsx-файлы без расширения - import Child from './Child'. Добавим в webpack.config.js следующую настройку:
-	//
+	##
 	const webpack = require( 'webpack' ) ;
 	module.exports = {
 		.....
@@ -961,14 +1009,14 @@
 			extensions: ['.js', '.jsx'],
 		},
 	};
-	//
+	##
 2.11 Получим переданный props :
 	static_src/components/Child.jsx
-	//
+	##
 	return (
 			<h1>Это компонент Child, counter: { this.props.counter}</h1>
 		)
-	//
+	##
 2.11.1 Браузер. Консоль разработчика.
 	##
 	componentWillMount
@@ -1000,7 +1048,7 @@
 2.12 Для контроля типов передаваемых в компонент propsов можно использовать стороннюю библиотеку PropTypes.
 	$$ npm install prop-types
 	В static_src/components/Child.JSX
-	//
+	##
 	import PropTypes from 'prop-types';
 	export default class Child extends React.Component {
 		static propTypes = {
@@ -1008,7 +1056,7 @@
 		};
 	.....
 	}	
-	//
+	##
 2.12.1 ???НЕПОНЯТНО???
 	если counter окажется строкой, увидим ошибку в панели разработчика
 	isRequired означает, что counter обязательно должен быть передан в Child. Если мы забудем передать его, то опять увидим ошибку:
@@ -1016,7 +1064,7 @@
 	Но если какой-то props не обязательно передавать в компонент, то можно задать значение по умолчанию ( isRequired в таком случае нужно убрать):
 	см. pdf - D:\Про\Курсы-ДЗ\Geekbrains\Frond end разраб\React\2. компоненты(Mes,Mese,ChaIn)\Методичка 2.pdf
 	static_src/components/Child.jsx
-	//
+	##
 	import React from 'react' ;
 	import PropTypes from 'prop-types' ;
 	export default class Child extends React. Component {
@@ -1028,11 +1076,11 @@
 		};
 	.....
 	}
-	//
+	##
 2.13 Начало разработки мессенджера
 	Разработаем интерфейс для мессенджера. Реализация отправки сообщения с одним и тем же текстом по нажатию кнопки.
 	Необходим компонент сообщения static_src/components/Message.jsx:
-	//
+	##
 	import React from 'react';
 	import PropTypes from 'prop-types';
 	export default class Message extends React.Component {
@@ -1043,11 +1091,11 @@
 			return <div> {this.props.text} </div>
 		}
 	}
-	//
+	##
 2.13.1 Компонент с кнопкой отправки сообщения, и сообщениями в качестве дочерних компонентов.
 	В методичке забыли вписать sender={message.sender}
 	static_src/components/MessageField.jsx
-	//
+	##
 	import React from 'react' ;
 	import Message from './Message' ;
 	export default class MessageField extends React. Component {
@@ -1066,16 +1114,16 @@
 			</div>
 		}
 	}
-	//
+	##
 2.13.2 В state MessageField храним тексты сообщений в массиве. 
 	При отрисовке в функции render получаем по этому массиву строк массив компонентов Message, который и отрисовываем внутри MessageField. А при нажатии кнопки «Отправить сообщение» мы просто добавляем новое сообщение справа к текущему массиву в state .
 2.13.3 Заменяем импорт App на импорт MessageField в index.jsx.
 	static_src/components/index.jsx
-	//
+	##
 	import App from './components/App' 
 	---> 
 	import App from './components/MessageField';
-	//
+	##
 	##
 	Привет!
 	Как дела?
@@ -1086,7 +1134,7 @@
 2.14 Реализация ответа от робота.
 	Оживим мессенджер — реализуем ответ от робота на каждое наше сообщение с небольшой задержкой. Для этого будем использовать функцию componentDidUpdate. Но при реализации «в лоб» получится зацикливание:
 	static_src/components/MessageField.jsx
-	//
+	##
 	import React from 'react' ;
 	import Message from './Message' ;
 	export default class MessageField extends React. Component {
@@ -1099,7 +1147,7 @@
 		}
 		.....
 	}
-	//
+	##
 	##
 	Привет!
 	Как дела?
@@ -1113,7 +1161,7 @@
 	Ответ на каждое смс с задердкой в 1 секунду
 2.14.1 Происходит ответ на каждое сообщение. Чтобы этого избежать, нужно различать сообщения пользователя и робота. Самым быстрым, но не очень надежным решением будет ответ только на нечетные сообщения.
 	static_src/components/MessageField.jsx
-	//
+	##
 	componentDidUpdate() {
 		// 14.1
 		if (this.state.messages.length % 2 === 1) { // Остаток от деления на 2
@@ -1124,7 +1172,7 @@
 				1000);
 		}
 	}	
-	//
+	##
 	##
 	Привет!
 	Как дела?
@@ -1157,7 +1205,7 @@
 	Virtual DOM — это техника и набор библиотек / алгоритмов, которые позволяют улучшить производительность на клиентской стороне. Мы избегаем прямой работы с DOM, взаимодействуя с JavaScript-объектами, имитирующими DOM-дерево. И это одна из основных вещей под капотом React, обеспечивающих его высокую производительность.
 3.1 Хранение автора сообщения. Для реализации начнём хранить в массиве messages, словари вместо строк. Теперь возможно реализовать ответ от робота не по косвенному признаку четности/нечетности сообщений, а по автору.
 	static_src/components/MessageField.jsx
-	//
+	##
 	state = {
 		messages: [
 			{ text: "Привет!", sender: 'bot' },
@@ -1187,16 +1235,16 @@
 			<button onClick={this.handleClick}>Отправить сообщение</button>
 		</div>
 	}
-	//
+	##
 3.2 Стилизация React-компонентов. В React стилизация происходит так же, как в обычном HTML: либо при помощи классов/id, либо inline. Опробуем оба метода, чтобы визуально отличить наши сообщения от отправленных роботом.
 3.2.1 Свойством className задается класс элемента, id используется чтобы задать id. Обратите внимание, что в React нужно применять именно className , атрибут class работать не будет
 	static_src/components/MessageField.jsx
-	//
+	##
 	return <div id='main' className='message-field' >
 			{messageElements}
 			<button onClick={this.handleClick}>Отправить сообщение</button>
 		</div>
-	//
+	##
 	##
 	<div id="main" class="message-field">
 		<div>Привет!</div>
@@ -1209,20 +1257,20 @@
 	В описанном случае подключение происходит при помощи import:
 	Создадим css-файл в отдельной папке styles.
 	static_src/styles/styles.css
-	//
+	##
 	.message-field {
 		background-color: lightblue;
 	}
-	//
+	##
 	И подключим его в MessageField.jsx:
 	static_src/components/MessageField.jsx
-	//
+	##
 	import '../styles/styles.css';
-	//
+	##
 3.3.1 Чтоб не получить ошибку призапуске, подключим CSS loader’ы, которые позволят обрабатывать CSS-файлы при сборке.
 	$$ npm install css-loader style-loader
 	Добавим в webpack.config.js
-	//
+	##
 	rules: [
 		.....
 		{
@@ -1230,7 +1278,7 @@
 			loader : 'style-loader!css-loader',
 		},
 	]
-	//
+	##
 	@@  -  внешний вид
 	@@
 	Теперь есть заливка смс цветом. Причем её можно отследить по структуре документа в панели разработчика. Стили подключены при помощи тега <style> в шапке документа.
@@ -1247,13 +1295,13 @@
 	##
 3.4 Inline style(`встроенный стиль`). Этого же можно добится передав встроенным компонентам (<div>, <span> и т. д.) объект со стилями в качестве параметра style:
 	static_src/components/MessageField.jsx
-	//
+	##
 	return <div style = { { backgroundColor: 'lightblue' } } >
-	//
+	##
 	В этом случае все делается так же, как в HTML, только все дефисы в названиях свойств (kebab-case) исправляются на camelCase ( background-color —backgroundColor). Значения свойств должны быть либо числами, либо строками.
 3.5 Стилизуем сообщения. Комбинируя эти два подхода, стилизуем сообщения так, чтобы было отчетливо видно, какое из них принадлежит пользователю, а какое — роботу.
 	static_src/styles/styles.css
-	//
+	##
 	.message-field {
 		display: flex;
 		flex-direction: column;
@@ -1283,16 +1331,16 @@
 		color: gray;
 		font-size: 14px;
 	}
-	//
+	##
 3.5.1	В static_src/components/MessageField.jsx
-	//
+	##
 	return <div className ="layout" >
 		<div className ="message-field" >
 			{ messageElements }
 		</div>
-	//
+	##
 3.5.2	В static_src/components/Message.jsx
-	//
+	##
 	static propTypes = {
 		text: PropTypes.string.isRequired,
 		sender: PropTypes.string.isRequired,
@@ -1304,12 +1352,12 @@
 			<div>{this.props.text}</div>
 			<div className="message-sender">{this.props.sender}</div>
 		</div>
-	//
+	##
 3.5.2	В index.html
-	//
+	##
 	<body style="height: 100%; margin: 0">
 	<div style="height: 100%" id="root"></div>
-	//
+	##
 	@@
 	Привет!
 	bot
@@ -1324,15 +1372,15 @@
 	React стандартизирует все браузерные события при помощи SyntheticEvent, что позволяет событиям работать одинаково во всех браузерах. Для обработки событий нужно передать атрибут в JSX-тег в camelCase-стиле по шаблону: onИмяСобытия (например, onClick), — и передать в него функцию-обработчик.
 	Важно! Обработчики событий работают только для базовых компонентов React(div, button и т.д.).Для созданных нами компонентов они работать не будут.
 3.6.1 onClick(`по щелчку`). Этот обработчик мы уже используем для отправки сообщений
-	//
+	##
 	<button onClick = {this.handleClick} >Отправить сообщение</button>
 	.....
 	handleClick = () => {
 		this.setState ({ messages: [... this.state.messages, {text: 'Нормально', sender: 'me'}]});
 	};
-	//
+	##
 	Чтобы передавать сообщение в качестве аргумента функции handleClick, то нужно будет сделать промежуточную стрелочную функцию. Иначе handleClick вызовется, не дожидаясь самого клика.
-	//
+	##
 	<button onClick={() => this.handleClick('Нормально')}>Отправить сообщение</button>
 	.....
 	handleClick = (message) => {
@@ -1340,15 +1388,15 @@
 			messages: [... this.state.messages, { text: message, sender: 'me' }]
 		});
 	};
-	//
+	##
 3.6.2 onChange(`по изменению`). Для ввода сообщения необходимо текстовое поле. Любое изменение в текстовом поле, будь то написание нового символа или удаление уже написанного, генерирует событие, которое можно обработать при помощи onChange:
-	//
+	##
 	<input onChange = {this.handleChange} />
 	.....
 	handleChange = (event) => {
 		console.log(event.target.value);
 	};
-	//
+	##
 	???Пока ничего не записывал в код и не выводил???
 	Обратите внимание, что аргумент event по умолчанию попадает в функцию. В результате можно
 	увидеть следующее:
@@ -1361,7 +1409,7 @@
 	.....
 	##
 3.6.3 onKeyUp(`на клавиатуре`). Чтобы отправлять сообщения с клавиатуры (Enter), с помощью обработчика onKeyUp, который будет вызываться при поднятии кнопки после нажатия на нее.
-	//
+	##
 	<input onChange = {this.handleChange} onKeyUp = {(event) => this.handleKeyUp(event,'Нормально')} />
 	.....
 	handleKeyUp = (event, message) => {
@@ -1371,7 +1419,7 @@
 			});
 		}
 	};
-	//
+	##
 	Внимание на следующие моменты
 	1. event.keyCode позволяет получить уникальный код клавиши на клавиатуре, которую нажал пользователь. Узнать код любой клавиши можно https://keycode.info/
 	2. Так как обработчик onKeyUp «висит» на <input>, то обрабатываться нажатия кнопок будут только при фокусе на этом input’е.
@@ -1382,7 +1430,7 @@
 	1. Добавим state-переменную input и будем сохранять в нее текст, введенный пользователем, используя обработчик события onChange.
 	2. Переменную input будем передавать в качестве аргумента в handler’ы для onClick и onKeyUp.
 	static_src/components/MessageField.jsx
-	//
+	##
 	state = {
 		.....
 		input: '',
@@ -1405,7 +1453,7 @@
 		});
 	};
 	.....
-	//
+	##
 	@@
 	Привет!
 	bot
@@ -1422,7 +1470,7 @@
 	@@
 3.5 Хотелось бы еще очищать поле ввода после отправки сообщения. Для этого нужно не только читать то, что пользователь пишет в <input> при помощи onChange, но и самим контролировать, что там написано. А для этого — передавать переменную input из state в качестве параметра value и очищать эту переменную при отправке сообщения:
 	static_src/components/MessageField.jsx
-	//
+	##
 	sendMessage = (message) => {
 		.....
 		input : '' ,
@@ -1430,22 +1478,22 @@
 	} ;
 	.....
 	value={this.state.input}
-	//
+	##
 3.5.1 Если в вашем интерфейсе будет несколько полей ввода (например, в форме регистрации), их можно обрабатывать одной и той же функцией. Для этого используют параметр name, который в JavaScript попадает в event. Нужно, чтобы переменная из state совпадала с name связанного с этой переменной input’а. Тогда можно применять name в качестве ключа в setState:
-	//
+	##
 	handleChange = (event) => {
 		this.setState({ [event.target.name]: event.target.value });
 	.....
 	<input
 		name ="input"
-	//
+	##
 3.6 Неуправляемые компоненты. Наша реализация обработки событий основана на управляемых компонентах, то есть данные формы обрабатываются React-компонентом. В большинстве случаев при работе с формами используют
 именно их.
 	В качестве альтернативы можно использовать неуправляемые компоненты. Они хранят данные формы прямо в DOM. Вместо того чтобы писать обработчик события для каждого обновления состояния, можно использовать неуправляемый компонент и читать значения из DOM через ref.
 	Рассмотрим работу ref’ов на примере реализации автофокуса на поле ввода. То есть при открытии приложения пользователь сразу же сможет начать вводить сообщение, не кликая предварительно мышью по полю.
 	Ref’ы создаются с помощью React.createRef() и прикрепляются к React-элементам через ref-атрибут.
 	теория
-	//
+	##
 	class MyComponent extends React.Component {
 		constructor(props) {
 			super(props);
@@ -1455,14 +1503,14 @@
 			return <div ref={this.myRef} />;
 		}
 	}
-	//
+	##
 	Когда ref передается элементу в методе render, ссылка на данный узел становится доступна через свойство ref’а current.
-	//
+	##
 	const node = this .myRef. current ;
-	//
+	##
 3.6.1 Используя эту информацию, реализуем автофокус.
 	static_src/components/MessageField.jsx
-	//
+	##
 	constructor(props) {
 		super(props);
 		// создадим ref в поле `textInput` для хранения DOM-элемента
@@ -1475,7 +1523,7 @@
 	}
 	.....
 	ref={this.textInput}
-	//
+	##
 3.7 ???Не работает???
 	Подключение и использование Material-UI. Чтобы не верстать все компоненты с нуля, можно использовать библиотеки готовых компонентов. Существует несколько популярных UI-библиотек от разных компаний.
 	Material UI(https://material-ui.com/ru/) — библиотека от Google, которая позволяет создавать приложения в стиле Google Material Design с использованием компонентов React.
@@ -1487,7 +1535,7 @@
 	$$ npm install material-ui
 	Чтобы библиотека заработала, нужно в самом верху нашего приложения разместить <MuiThemeProvider>
 	Добавим в static_src/index.jsx
-	//
+	##
 	import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider' ;
 	ReactDOM.render (
 		<MuiThemeProvider>
@@ -1495,12 +1543,12 @@
 		</MuiThemeProvider>,
 		document.getElementById ('root'),
 	);
-	//
+	##
 	Это необходимо, чтобы библиотека Material могла контролировать тему всех своих компонентов. Под капотом это делается пробрасыванием props вниз. Именно поэтому компонент провайдера темы должен быть расположен вверху. Как это устроено, мы увидим в следующих уроках, когда будем работать с Redux.
 	Полный список компонентов можно посмотреть https://v0.material-ui.com/#/components/app-bar. 
 3.7.2 Мы будем использовать TextField, FloatingActionButton и иконку для верстки поля ввода и кнопки отправки:
 	Добавим в static_src/components/MessageField.jsx
-	//
+	##
 	import { TextField, FloatingActionButton } from 'material-ui';
 	import SendIcon from 'material-ui/svg-icons/content/send';
 	.....
@@ -1520,7 +1568,7 @@
 			<SendIcon />
 		</FloatingActionButton>
 	</div>
-	//
+	##
 	Обратите внимание, что кастомизация компонентов происходит путем передачи в них props’ов (fullWidth, hintText в примере выше). Полный список props для каждого компонента можно посмотреть в https://v0.material-ui.com/#/components/app-bar
 	В результате
 	@@

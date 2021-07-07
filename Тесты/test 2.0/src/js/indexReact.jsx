@@ -31,21 +31,21 @@ function prePost() {
 
 const App = () => (
   <div className="container">
-    <div class="imgBox">
+    <div className="imgBox">
       <div>
         <h3>html вёрстка</h3>
-        <div class="logo"><img src="../img/webpack-logo.png" alt="" /></div>
+        <div className="logo"><img src="../img/webpack-logo.png" alt="" /></div>
       </div>
       <div>
         <h3>css вёрстка</h3>
-        <div class="logo2"></div>
+        <div className="logo2"></div>
       </div>
     </div>
     <hr />
     {/* <pre />
     <hr /> */}
     <pre>1</pre>
-    <span class="rtv">2</span>
+    <span className="rtv">2</span>
     <hr />
     <a href="../index.html">переход на INDEX</a>
     {/* <a href="./NoReact/indexNoReact.html">переход на NO React NO</a>

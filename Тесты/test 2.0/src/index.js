@@ -22,7 +22,7 @@ import WebpackLogo from "./img/webpack-logo.png";
 // import React from 'react'
 // import {render} from 'react-dom'
 // ! 2.0.37 babel подкл.
-// import "./babel";
+import "./js/babel";
 // ! 2.0.19 подкл стили css
 import "./css/styles.css";
 // ! 2.0.34.2 для SCSS

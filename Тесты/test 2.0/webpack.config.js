@@ -53,23 +53,23 @@ const optimization = () => {
       // ??? не раб - прибавляет очень много веса, хоть и mini
       // new CssMinimizerPlugin(),
     ]),
-    // ! 2.0.43 CSS в один файл
-    (config.splitChunks = {
-      // объедин/разъедин доп библ js (jQ, React)
-      chunks: "all", // async
-      cacheGroups: {
-        styles: {
-          // путь/имя
-          name: "styles",
-          // убирает доп файл , хз что за js
-          type: "css/mini-extract",
-          // For webpack@4
-          // test: /\.css$/,
-          chunks: "all",
-          enforce: true,
+      // ! 2.0.43 CSS в один файл
+      (config.splitChunks = {
+        // объедин/разъедин доп библ js (jQ, React)
+        chunks: "all", // async
+        cacheGroups: {
+          styles: {
+            // путь/имя
+            name: "styles",
+            // убирает доп файл , хз что за js
+            type: "css/mini-extract",
+            // For webpack@4
+            // test: /\.css$/,
+            chunks: "all",
+            enforce: true,
+          },
         },
-      },
-    });
+      });
   }
   // возращ по умолчан
   return config;
@@ -117,47 +117,55 @@ const babelOptions = (preset) => {
   return opts;
 };
 
-// const jsLoaders = () => {
-//   const loaders = [{
-//     loader: 'babel-loader',
-//     options: babelOptions()
-//   }]
+// ! 2.0.44 eslint(анализ проблем в js коде) счас только для js
+const jsLoaders = () => {
+  // по умолчанию. возращ массив
+  // const loader = [
+  const user = [
+    {
+      loader: "babel-loader",
+      options: babelOptions(),
+    },
+  ];
 
-//   if (isDev) {
-//     loaders.push('eslint-loader')
-//   }
+  // е/и раработка, то добавл eslint
+  if (isDev) {
+    user.push("eslint-loader");
+  }
 
-//   return loaders
-// }
+  // возвращ
+  // return loader;
+  return user;
+};
 
 // const plugins = () => {
 //   const base = [
 //     new HTMLWebpackPlugin({
-//       template: './index.html',
+//       template: "./index.html",
 //       minify: {
-//         collapseWhitespace: isProd
-//       }
+//         collapseWhitespace: isProd,
+//       },
 //     }),
 //     new CleanWebpackPlugin(),
 //     new CopyWebpackPlugin({
 //       patterns: [
 //         {
-//           from: path.resolve(__dirname, 'src/favicon.ico'),
-//           to: path.resolve(__dirname, 'dist')
-//         }
-//       ]
+//           from: path.resolve(__dirname, "src/favicon.ico"),
+//           to: path.resolve(__dirname, "dist"),
+//         },
+//       ],
 //     }),
 //     new MiniCssExtractPlugin({
-//       filename: filename('css')
-//     })
-//   ]
+//       filename: filename("css"),
+//     }),
+//   ];
 
 //   if (isProd) {
-//     base.push(new BundleAnalyzerPlugin())
+//     base.push(new BundleAnalyzerPlugin());
 //   }
 
-//   return base
-// }
+//   return base;
+// };
 
 // ! 2.0.8 js компил на этапе сборки, раб на платф node js(доступны эл. из него). как правило export объ. который явл. объ. конфигурации для webpack
 module.exports = {
@@ -397,40 +405,45 @@ module.exports = {
         test: /\.csv$/,
         use: ["csv-loader"],
       },
-      // ! 2.0.37 babel подкл.
+      // ! 2.0.37 для js подкл. babel
       {
         // test: /\.jsx?$/i,
         test: /\.js$/,
         exclude: /(node_modules)/,
         // loader: "babel-loader",
         // ! 2.0.37.1 babel расшир
-        use: {
-          loader: "babel-loader",
-          options:
-            // {
-            //   // набор плагинов для js
-            //   presets: ["@babel/preset-env"], // , "@babel/preset-react"
-            //   // ! 2.0.37.3 плагин устан и подкл.
-            //   plugins: [
-            //     [
-            //       "@babel/plugin-proposal-class-properties",
-            //       // { loose: true }
-            //     ],
-            //   ],
-            // },
-            // ! 2.0.39 убираем дубли babel options ч/з fn()
-            babelOptions(),
-        },
+        // loader:
+        // {
+        //   // набор плагинов для js
+        //   presets: ["@babel/preset-env"], // , "@babel/preset-react"
+        //   // ! 2.0.37.3 плагин устан и подкл.
+        //   plugins: [
+        //     [
+        //       "@babel/plugin-proposal-class-properties",
+        //       // { loose: true }
+        //     ],
+        //   ],
+        // },
+        // }
+        // ! 2.0.39 убираем дубли babel options ч/з fn() babelOptions
+        // use: {
+        //   loader: "babel-loader",
+        //   options: babelOptions(),
+        // },
+        // ! 2.0.44 eslint(анализ проблем в js коде) ч/з fn()
+        // используем use заместо loader чтоб был массив
+        use: jsLoaders(),
+        // loader: jsLoaders()
       },
       // ! 2.0.38.2 typescript устан и настр
       {
         // $$ npm i -D @babel/preset-typescript
         test: /\.ts$/,
         exclude: /node_modules/,
+        // loader или use
         use: {
           loader: "babel-loader",
           options:
-            // ! 2.0.39 убираем дубли babel options
             // {
             //   presets: ["@babel/preset-env", "@babel/preset-typescript"],
             //   plugins: [
@@ -438,6 +451,7 @@ module.exports = {
             //     // { loose: true }
             //   ],
             // },
+            // ! 2.0.39 убираем дубли babel options
             babelOptions("@babel/preset-typescript"),
         },
       },
