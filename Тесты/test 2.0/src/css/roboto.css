@@ -1,0 +1,5 @@
+/* ! 2.0.23 подкл. шрифты в отд файле*/
+@font-face {
+  font-family: 'Roboto';
+  src: url("../fonts/Roboto-Regular.ttf") format('truetype');
+}
