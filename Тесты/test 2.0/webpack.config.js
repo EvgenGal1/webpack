@@ -42,8 +42,6 @@ const optimization = () => {
     // },
     // ! 2.0.43 CSS пробы - CSS в один файл
     splitChunks: {
-<<<<<<< HEAD
-<<<<<<< HEAD
       chunks: "all", // async
     },
     // ! 2.0.43 CSS пробы - CSS в один файл
@@ -53,17 +51,10 @@ const optimization = () => {
         styles: {
           // путь/имя
           name: "styles",
-=======
-=======
->>>>>>> 4397ba790c29d6ed04f86e85c4a07bce5303f4ac
       cacheGroups: {
         styles: {
           // путь/имя
           name: "css/styles",
-<<<<<<< HEAD
->>>>>>> 4397ba790c29d6ed04f86e85c4a07bce5303f4ac
-=======
->>>>>>> 4397ba790c29d6ed04f86e85c4a07bce5303f4ac
           // убирает доп файл , хз что за js
           // type: "css/mini-extract",
           // For webpack@4
@@ -91,18 +82,18 @@ const optimization = () => {
 };
 
 // ! 2.0.35 перименовка файлов в зависимости от режима. более сложное для Prod для кэш и
-<<<<<<< HEAD
-<<<<<<< HEAD
+
+
 // const filename = (ext) => (isDev ? `[name].${ext}` : `[name].[hash].${ext}`);
 // переписал чтоб передаваемый ext создавал парку с таким же именем
 const filename = (ext) =>
   isDev ? `${ext}/[name].${ext}` : `${ext}/[name].[hash].${ext}`;
-=======
+
 const filename = (ext) => (isDev ? `[name].${ext}` : `[name].bundl.${ext}`); // [hash]
->>>>>>> 4397ba790c29d6ed04f86e85c4a07bce5303f4ac
-=======
+
+
 const filename = (ext) => (isDev ? `[name].${ext}` : `[name].bundl.${ext}`); // [hash]
->>>>>>> 4397ba790c29d6ed04f86e85c4a07bce5303f4ac
+
 
 // ! 2.0.36 убираем дубли loader в css, scss, less
 const cssLoaders = (extra) => {
@@ -185,14 +176,14 @@ const babelOptions = (preset) => {
 // ! 2.0.8 js компил на этапе сборки, раб на платф node js(доступны эл. из него). как правило export объ. который явл. объ. конфигурации для webpack
 module.exports = {
   // ! 2.0.18 укажем где исходники
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
+
+
+
   // ! 2.0.42 проба вернуть server
->>>>>>> 4397ba790c29d6ed04f86e85c4a07bce5303f4ac
-=======
+
+
   // ! 2.0.42 проба вернуть server
->>>>>>> 4397ba790c29d6ed04f86e85c4a07bce5303f4ac
+
   // context: path.resolve(__dirname, "src"),
   // сбор в режиме разработки
   mode: "development",
@@ -203,8 +194,8 @@ module.exports = {
     // main: "./index.js",
     // ! 2.0.37.2 подкл. babel polyfill. от ошибки в браузер(сбор main и polyfill)
     // main: ["@babel/polyfill", "./index.js"],
-<<<<<<< HEAD
-<<<<<<< HEAD
+
+
     // analytics: "./analytics.js",
     // ! 2.0.38.2 typescript подкл. файл
     // analyticsTS: "./analytics.ts",
@@ -215,9 +206,9 @@ module.exports = {
     main: PATHS.src,
     // app: PATHS.src,
     app: `${PATHS.src}js/indexReact.jsx`,
-=======
-=======
->>>>>>> 4397ba790c29d6ed04f86e85c4a07bce5303f4ac
+
+
+
     // ! 2.0.40 проба 2 файла html
     // ! 2.0.42 проба вернуть server
     // ??? не раб - добавл много веса при build  // "@babel/polyfill",
@@ -232,10 +223,10 @@ module.exports = {
     // ! 2.0.42 проба вернуть server
     main: ["./src/js/index.js"],
     appic: ["@babel/polyfill","./src/js/indexReact.jsx"], // "@babel/polyfill",
-<<<<<<< HEAD
->>>>>>> 4397ba790c29d6ed04f86e85c4a07bce5303f4ac
-=======
->>>>>>> 4397ba790c29d6ed04f86e85c4a07bce5303f4ac
+
+
+
+
   },
   // куда выводить
   output: {
@@ -243,33 +234,33 @@ module.exports = {
     // ! 2.0.13 добав уникальность(патерн)[name]. есть много патернов
     // filename: "[name].bundle.js",
     // ! 2.0.35 переименовка. в fn() передаём ext(js)
-<<<<<<< HEAD
-<<<<<<< HEAD
+
+
     filename: filename("js"),
     // ! 2.0.41 пути в константу
     path: PATHS.dist,
     // склад в static/js/[name].js синтакс ES6
     // filename: `${PATHS.static}js/[name].js`,
     // в видео (QF3EcxymIcc) ~23:00 есть про publicPath(публичн) и contentBase(где откр webpack - dist)
-=======
-=======
->>>>>>> 4397ba790c29d6ed04f86e85c4a07bce5303f4ac
+
+
+
     // filename: filename("js"),
     // ! 2.0.41 новые пути
     filename: "[name].js",
     // ! 2.0.42 проба вернуть server
     // filename: filename("js"),
-<<<<<<< HEAD
->>>>>>> 4397ba790c29d6ed04f86e85c4a07bce5303f4ac
-=======
->>>>>>> 4397ba790c29d6ed04f86e85c4a07bce5303f4ac
+
+
+
+
   },
   plugins: [
     //   plugins: plugins(),
     // ! 2.0.15 html выгруж, подкл css, js
     new HTMLWebpackPlugin({
-<<<<<<< HEAD
-<<<<<<< HEAD
+
+
       // template: "./src/index.html",
       minify: {
         collapseWhitespace: isProd,
@@ -278,9 +269,9 @@ module.exports = {
       // ! 2.0.41 пути в константу
       filename: `${PATHS.dist}index.html`,
       template: `${PATHS.src}index.html`,
-=======
-=======
->>>>>>> 4397ba790c29d6ed04f86e85c4a07bce5303f4ac
+
+
+
       // ! 2.0.42 проба вернуть server
       filename: "index.html",
       // template: "./src/html/NoReact/indexNoReact.html",
@@ -311,16 +302,16 @@ module.exports = {
       // chunks: ["noReact/noReact", "analytics"],
       // ! 2.0.42 проба вернуть server
       // chunks: ["js/noReact", "analytics", main],
-<<<<<<< HEAD
->>>>>>> 4397ba790c29d6ed04f86e85c4a07bce5303f4ac
-=======
->>>>>>> 4397ba790c29d6ed04f86e85c4a07bce5303f4ac
+
+
+
+
     }),
     // ! 2.0.42 проба вернуть server
     // ! 2.0.40 проба 2 файла html
     new HTMLWebpackPlugin({
-<<<<<<< HEAD
-<<<<<<< HEAD
+
+
       // filename: "indexReact.html",
       // template: "./src/indexReact.html",
       minify: {
@@ -332,9 +323,9 @@ module.exports = {
       filename: `${PATHS.dist}html/indexReact.html`,
       template: `${PATHS.src}html/indexReact.html`,
     }),
-=======
-=======
->>>>>>> 4397ba790c29d6ed04f86e85c4a07bce5303f4ac
+
+
+
       filename: "./html/indexReact.html",
       template: "./src/html/indexReact.html",
       // ??? не раб так путь
@@ -354,25 +345,25 @@ module.exports = {
       chunks: ["js/noReact", "js/app"],
     }),
     // ! 2.0.42 проба вернуть server
-<<<<<<< HEAD
->>>>>>> 4397ba790c29d6ed04f86e85c4a07bce5303f4ac
-=======
->>>>>>> 4397ba790c29d6ed04f86e85c4a07bce5303f4ac
+
+
+
+
     // ! 2.0.31 css в отдельн файлы
     new MiniCssExtractPlugin({
       // filename: "style.[name].bundle.css",
       // ! 2.0.35  переименовка. в fn() передаём ext(css)
-<<<<<<< HEAD
-<<<<<<< HEAD
+
+
       filename: filename("css"),
       // ! 2.0.41 пути в константу
       // filename: `${PATHS}css/[name].css`,
       // filename: `${PATHS.dist}css/[name].css`,
       // filename: `${PATHS.dist}/css/[name].css`,
       // filename: `${PATHS.dist}css/React.css`,
-=======
-=======
->>>>>>> 4397ba790c29d6ed04f86e85c4a07bce5303f4ac
+
+
+
       // filename: filename("css"),
       // ! 2.0.41 новые пути
       // filename: "styles/[name].css", // styles/путь из entry/имя из entry.css
@@ -384,10 +375,10 @@ module.exports = {
       // ! 2.0.43 CSS пробы с док webpack
       // filename: ({ chunk }) => `${chunk.name.replace("/js/", "styles/css/")}.css`, // ??? не видно изменений
       filename: "[name].css",
-<<<<<<< HEAD
->>>>>>> 4397ba790c29d6ed04f86e85c4a07bce5303f4ac
-=======
->>>>>>> 4397ba790c29d6ed04f86e85c4a07bce5303f4ac
+
+
+
+
     }),
     // ! 2.0.17 очистка ввыводной папки
     new CleanWebpackPlugin(),
@@ -399,8 +390,8 @@ module.exports = {
           from: path.resolve(__dirname, "./src/favicon.ico"),
           to: path.resolve(__dirname, "dist"),
         },
-<<<<<<< HEAD
-<<<<<<< HEAD
+
+
         // ! 2.0.42 копир img
         // ??? не раб - зачем е/и в rules.options можно указ путь
         // ??? оробовать https://webpack.js.org/guides/asset-modules/#root
@@ -412,18 +403,18 @@ module.exports = {
           from: `${PATHS.src}fonts`,
           to: `${PATHS.dist}fonts`,
         },
-=======
-=======
->>>>>>> 4397ba790c29d6ed04f86e85c4a07bce5303f4ac
+
+
+
         // {
         //   // от куда и куда копир(файлы, папки)
         //   from: path.resolve(__dirname, "./src/izo/webpack-logo.png"),
         //   to: path.resolve(__dirname, "dist/izo"),
         // },
-<<<<<<< HEAD
->>>>>>> 4397ba790c29d6ed04f86e85c4a07bce5303f4ac
-=======
->>>>>>> 4397ba790c29d6ed04f86e85c4a07bce5303f4ac
+
+
+
+
       ],
     }),
   ],
@@ -596,11 +587,11 @@ module.exports = {
   // ! 2.0.28 доп настр
   // ! 2.0.33.3 ч/з fn() возращ. сгенерированый объ.
   optimization: optimization(),
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-=======
->>>>>>> 4397ba790c29d6ed04f86e85c4a07bce5303f4ac
+
+
+
+
+
   // ! 2.0.43 CSS пробы - один файл css
   // optimization: {
   //   splitChunks: {
@@ -616,10 +607,10 @@ module.exports = {
   //     },
   //   },
   // },
-<<<<<<< HEAD
->>>>>>> 4397ba790c29d6ed04f86e85c4a07bce5303f4ac
-=======
->>>>>>> 4397ba790c29d6ed04f86e85c4a07bce5303f4ac
+
+
+
+
   // {
   // ! 2.0.28 выгружать библ(jQuery, ) в один файл из 2х не связаных файлов
   // splitChunks: {
@@ -634,8 +625,8 @@ module.exports = {
     // указ где искать
     contentBase: "./dist",
     // порт для запуска
-<<<<<<< HEAD
-<<<<<<< HEAD
+
+
     port: 8081, // 8080 // 4200,
     // ! 2.0.32.1 только в разраб
     hot: isDev,
@@ -645,9 +636,9 @@ module.exports = {
   // ??? проверить https://webpack.js.org/configuration/devtool/#root
   devtool: isDev ? "source-map" : "eval",
   // devtool: "eval-source-map", 
-=======
-=======
->>>>>>> 4397ba790c29d6ed04f86e85c4a07bce5303f4ac
+
+
+
     port: 4200,
     // port: 8080,
     // ! 2.0.32.1 только в разраб
@@ -657,5 +648,5 @@ module.exports = {
   // devtool: isDev ? "source-map" : "",
   // devtool: "eval-source-map", // ??? прибавляет очень много веса при npm build
   // }
->>>>>>> 4397ba790c29d6ed04f86e85c4a07bce5303f4ac
+
 };

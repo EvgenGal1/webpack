@@ -246,11 +246,11 @@
           // найдёт в src/js/indexReact.jsx. синтаксис ES6
           app: `${PATHS.src}js/indexReact.jsx`,
       },
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-=======
->>>>>>> 4397ba790c29d6ed04f86e85c4a07bce5303f4ac
+
+
+
+
+
       // показ. исходный код из самих файлов в консоле при разраб (idDev)
       // devtool: isDev ? 'source-map' : '',
         // devtool: "eval-source-map", 
@@ -259,7 +259,7 @@
           // после запуска npm run build(start, ) появится app.js.map (мини версия при source-map)
           // source-map технология позволяет посмотреть в браузере какие файлы были подкл. к выходному файлу 
         // }
->>>>>>> 4397ba790c29d6ed04f86e85c4a07bce5303f4ac
+
       // точка вывода
       output: { 
         // стандарт
