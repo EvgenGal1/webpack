@@ -9,7 +9,7 @@ $$npm i normalize.css
 
 
 /* ! 2.0.23 подкл. шрифты */
-@import "./fonts.css";
+@import "roboto.css";
 body {
   font-family: 'Roboto', sans-serif;
 }
@@ -27,47 +27,12 @@ h1 {
 }
 
 /* ! 2.0.22 подкл. картинки */
-.imgBox{
-display: flex;
-align-items: center;
-justify-content: center;
-}
-.imgBox > div {
-  background-color: rgb(146, 146, 146);
-  /* padding: 2px; */
-  margin: 2px;
-  text-align: center;
-}
 .logo {
-:Тесты/test 2.0/src/css/styles.css
-<<<<<<< HEAD:Тесты/test 2.0/src/css/styles.css
-  height: 200px;
-  width: 200px;
-  margin: 0 auto;
-}
-.logo img{
-  width: 100%
-}
-.logo1 , .logo2 {
-
   /* background-image: url("../izo/webpack-logo.png"); */
-:Тесты/test 2.0/src/styles/styles.css
-
-  /* background-image: url("../izo/webpack-logo.png"); */
-:Тесты/test 2.0/src/styles/styles.css
   background-size: cover;
   height: 200px;
   width: 200px;
   margin: 0 auto;
-}
-.logo1 img, .logo2 img{
-  width: 100%
-}
-.logo1 {
-  background-image: url("../assets/webpack-logo.png");
-}
-.logo2 {
-  background-image: url("../img/webpack-logo.png");
 }
 
 .code {

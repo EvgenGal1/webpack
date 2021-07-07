@@ -94,6 +94,7 @@ const filename = (ext) => (isDev ? `[name].${ext}` : `[name].bundl.${ext}`); // 
 
 const filename = (ext) => (isDev ? `[name].${ext}` : `[name].bundl.${ext}`); // [hash]
 
+const filename = (ext) => (isDev ? `[name].${ext}` : `[name].bundl.${ext}`); // [hash]
 
 // ! 2.0.36 убираем дубли loader в css, scss, less
 const cssLoaders = (extra) => {
@@ -184,6 +185,7 @@ module.exports = {
 
   // ! 2.0.42 проба вернуть server
 
+  // ! 2.0.42 проба вернуть server
   // context: path.resolve(__dirname, "src"),
   // сбор в режиме разработки
   mode: "development",
@@ -349,6 +351,21 @@ module.exports = {
 
 
 
+      minify: {
+        collapseWhitespace: isProd,
+      },
+      chunks: ["appic"],
+    }),
+    // ! 2.0.41 проба 3 файла html
+    new HTMLWebpackPlugin({
+      filename: "./html/point/indexPoint.html",
+      template: "./src/html/point/indexPoint.html",
+      minify: {
+        collapseWhitespace: isProd,
+      },
+      chunks: ["js/noReact", "js/app"],
+    }),
+    // ! 2.0.42 проба вернуть server
     // ! 2.0.31 css в отдельн файлы
     new MiniCssExtractPlugin({
       // filename: "style.[name].bundle.css",
