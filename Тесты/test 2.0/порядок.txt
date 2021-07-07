@@ -129,50 +129,53 @@
     const isDev = process.env.NODE_ENV === 'development'
     const isProd = !isDev
 
+    // перименовка файлов в зависимости от режима. более сложное для Prod для кэша
+    // const filename = (ext) => (isDev ? `[name].${ext}` : `[name].[hash].${ext}`);
+    // дополнил. при передаче ext, созд. идентич. папку и формат. ЛУЧШЕЕ для css, js
+    isDev ? `${ext}/[name].${ext}` : `${ext}/[name].[hash].${ext}`;
+
     // fn для передачи объ. в optimization с проверкой на Prod
     const optimization = () => {
       // объ. конфиг по умолчанию
       const config = {
-        // выгружать библ(jQuery, ) в один файл из 2х не связаных файлов
         splitChunks: {
-          chunks: "all",
+          // объедин/разъедин доп библ js (jQ, React). в один файл из 2х не связаных файлов
+          chunks: "all", // async
         },
-        // CSS в один файл. 
-        // ??? не раб - пока 2 файла грузит с предупрездением + созд. styles.js
-        splitChunks: {
+      };
+      // е/и prod(true) в minimize добавл. cssmini а css объединяет в один файл
+      if (isProd) {
+        (config.minimizer = [
+          // с видео
+          // cssmini вывод
+          new OptimizeCssAssetWebpackPlugin(),
+          new TerserWebpackPlugin(),
+          // с webpack документации
+          // ??? не раб - прибавляет очень много веса, хоть и mini
+          // new CssMinimizerPlugin(),
+        ]),
+        // CSS в один файл
+        // ??? не раб - пока 2 файла грузит с предупреждением + созд. styles.js
+        (config.splitChunks = {
+          // объедин/разъедин доп библ js (jQ, React)
+          chunks: "all", // async
           cacheGroups: {
             styles: {
               // путь/имя
-              name: "css/styles",
+              name: "styles",
               // убирает доп файл , хз что за js
-              // type: "css/mini-extract",
+              type: "css/mini-extract",
               // For webpack@4
               // test: /\.css$/,
               chunks: "all",
               enforce: true,
             },
           },
-        },
-      };
-      // е/и prod(true) в minimize добавл. cssmini
-      if (isProd) {
-        config.minimizer = [
-          // с видео минимиз. css 
-          new OptimizeCssAssetWebpackPlugin(),
-          new TerserWebpackPlugin(),
-          // с webpack документации 
-          // ??? не раб - прибавляет очень много веса, хоть и minimiz
-          // new CssMinimizerPlugin(),
-        ];
+        });
       }
       // возращ по умолчан
       return config;
     };
-
-    // перименовка файлов в зависимости от режима. более сложное для Prod для кэша
-    // const filename = (ext) => (isDev ? `[name].${ext}` : `[name].[hash].${ext}`);
-    // дополнил. при передаче ext, созд. идентич. папку и формат. ЛУЧШЕЕ для css, js
-    isDev ? `${ext}/[name].${ext}` : `${ext}/[name].[hash].${ext}`;
 
     // убираем дубли loader в css, scss, less
     const cssLoaders = (extra) => {
@@ -246,20 +249,6 @@
           // найдёт в src/js/indexReact.jsx. синтаксис ES6
           app: `${PATHS.src}js/indexReact.jsx`,
       },
-
-
-
-
-
-      // показ. исходный код из самих файлов в консоле при разраб (idDev)
-      // devtool: isDev ? 'source-map' : '',
-        // devtool: "eval-source-map", 
-        // пояснения {
-          // eval - мини/строка, source-map - как есть + копия в мини, eval-source-map - рекомендуется
-          // после запуска npm run build(start, ) появится app.js.map (мини версия при source-map)
-          // source-map технология позволяет посмотреть в браузере какие файлы были подкл. к выходному файлу 
-        // }
-
       // точка вывода
       output: { 
         // стандарт
@@ -270,6 +259,8 @@
         fn() + PATHS. ЛУЧШЕЕ!!!
           // с fn() создаст js/[name].js
           filename: filename("js"),
+          // склад в static/js/[name].js синтакс ES6
+          // filename: `${PATHS.static}js/[name].js`,
           // созд. в корн.папке/dist
           path: PATHS.dist,
       },
@@ -294,6 +285,7 @@
               collapseWhitespace: isProd,
             },
           }),
+          // второй файл html
           new HTMLWebpackPlugin({
             // стандарт
               // загрузка из src/html/
@@ -336,8 +328,8 @@
               {
                 // от куда и куда копир(файлы, папки)
                 // стандарт
-                  from: path.resolve(__dirname, "src/favicon.ico"),
-                  to: path.resolve(__dirname, "dist"),
+                  // from: path.resolve(__dirname, "src/favicon.ico"),
+                  // to: path.resolve(__dirname, "dist"),
                 // копир с PATHS
                   // всё из src/img в dist/img
                   {
@@ -505,9 +497,9 @@
                 //test: /\.s[ac]ss$/i,
                 // css, sass, scss
                 test: /\.(sa|sc|c)ss$/,
+                // с fn() cssLoaders без дублей. ЛУЧШЕЕ!!!
+                  use: cssLoaders("sass-loader"),
                 // без fn()
-                  // с fn() cssLoaders без дублей. ЛУЧШЕЕ!!!
-                    use: cssLoaders("sass-loader"),
                   // use: [
                     // 3. Создает узлы `MiniCss` из строк JS в файлы
                     // {
@@ -529,21 +521,21 @@
               {
                 // только less 
                 test: /\.less$/i,
-                // без fn()
-                  use: [
-                    // 3. Создает узлы `MiniCss` из строк JS в файлы
-                    {
-                      // прямо указ какой loader
-                      loader: MiniCssExtractPlugin.loader,
-                      options: {},
-                    },
-                    // 2. Переводит CSS в обычный JS
-                    "css-loader",
-                    // 1. Компилирует Less в CSS
-                    "less-loader",
-                  ],
                 // с fn() cssLoaders без дублей
                   use: cssLoaders("less-loader"),
+                // без fn()
+                  // use: [
+                    // 3. Создает узлы `MiniCss` из строк JS в файлы
+                    // {
+                      // прямо указ какой loader
+                      // loader: MiniCssExtractPlugin.loader,
+                      // options: {},
+                    // },
+                    // 2. Переводит CSS в обычный JS
+                    // "css-loader",
+                    // 1. Компилирует Less в CSS
+                    // "less-loader",
+                  // ],
               },
             // }
             // CSS разраб/прод{

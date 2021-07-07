@@ -5,18 +5,18 @@ $$npm i normalize.css
 нормализует базовый набор стилей под различ браузеры. Устан в prod.
 ~ указ что переходим в node_module
 */
-@import "~normalize.css";
-
+@import '~normalize.css';
 
 /* ! 2.0.23 подкл. шрифты */
-@import "roboto.css";
+@import './fonts.css';
 body {
   font-family: 'Roboto', sans-serif;
+  background-color: #ccc;
 }
 
 /* ! 2.0.18 стили */
 .container {
-  padding-top: 2rem;
+  padding: 1rem 0;
   max-width: 1000px;
   margin: 0 auto;
   /* padding-bottom: 2rem; */
@@ -27,15 +27,57 @@ h1 {
 }
 
 /* ! 2.0.22 подкл. картинки */
+.imgBox {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.imgBox > div {
+  background-color: rgb(146, 146, 146);
+  /* padding: 2px; */
+  margin: 2px;
+  text-align: center;
+}
 .logo {
-  /* background-image: url("../izo/webpack-logo.png"); */
+  height: 200px;
+  width: 200px;
+  margin: 0 auto;
+}
+.logo img {
+  width: 100%;
+}
+.logo1,
+.logo2 {
   background-size: cover;
   height: 200px;
   width: 200px;
   margin: 0 auto;
 }
+.logo1 img,
+.logo2 img {
+  width: 100%;
+}
+.logo1 {
+  background-image: url('../assets/webpack-logo.png');
+}
+.logo2 {
+  background-image: url('../img/webpack-logo.png');
+}
+
+.hed {
+  text-align: center;
+  padding: 5px;
+  margin: 5px auto;
+  color: #efff09;
+  background-color: #350101;
+}
+
+a {
+  display: block;
+  text-align: center;
+}
 
 .code {
   color: crimson;
   color: green;
-} 
+}
