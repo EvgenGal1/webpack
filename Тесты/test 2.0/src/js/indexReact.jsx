@@ -31,10 +31,10 @@ function prePost() {
 
 const App = () => (
   <div className="container">
-    <div className="imgBox">
+    <div className="img__box1">
       <div>
         <h3>html вёрстка</h3>
-        <div className="logo"><img src="../img/webpack-logo.png" alt="" /></div>
+        <div className="logo1"><img src="../img/webpack-logo.png" alt="" /></div>
       </div>
       <div>
         <h3>css вёрстка</h3>

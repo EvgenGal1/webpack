@@ -29,6 +29,16 @@ import "./css/styles.css";
 import "./css/scss.scss";
 // ! 2.0.34.2 для Less
 import "./css/less.less";
+// ! 2.0.45 картинки выгр по док webpack
+import mainImage1 from "./img/space1.jpg";
+import mainImage2 from "./img/immortal1.jpg";
+// import mainImage3 from "./img/anonim1.jpg";
+import mainImage3 from "./img/anonim1.jpg";
+// img.src = mainImage; // '/dist/151cfcfa1bd74779aadb.png'
+// $('.img3').css("background-image , './img/anonim1.jpg'");
+$(".img2").css("background-image", mainImage2); // не раб
+$(".img__box2").css("background-image", mainImage2); // не раб
+$(".img3").attr("src", mainImage3)
 
 // созд. объ. поста (класс доступен т.к. подкл. в html)
 // передаем title

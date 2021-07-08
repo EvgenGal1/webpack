@@ -295,10 +295,11 @@ module.exports = {
         // ! 2.0.42 копир img
         // ??? не раб - зачем е/и в rules.options можно указ путь
         // ??? оробовать https://webpack.js.org/guides/asset-modules/#root
-        {
-          from: `${PATHS.src}img`,
-          to: `${PATHS.dist}img`,
-        },
+        // ! 2.0.45 откл чтоб задать через rules
+        // {
+        //   from: `${PATHS.src}img`,
+        //   to: `${PATHS.dist}img`,
+        // },
         {
           from: `${PATHS.src}fonts`,
           to: `${PATHS.dist}fonts`,
@@ -372,23 +373,50 @@ module.exports = {
         // устан $$ npm i -D file-loader
         test: /\.(jpe?g|png|gif|svg)$/i,
         // use: ["file-loader"],
-        // ! 2.0.42 картинки выгр по др(QF3EcxymIcc)
-        // use не раб с option
-        loader: "file-loader",
-        // задаём имя
-        // ??? не раб - раб. только имя ../ раб, однако созд папку с файлом за dist
-        // такой же файл как из copy, но при уник имени созд ещё один
-        // ??? оробовать https://webpack.js.org/guides/asset-modules/#root
-        options: {
-          // без ничего только hash.png
-          // name: '[name].[ext]', // файл в dist
-          // name: '../[name].[ext]', // файл за dist
-          name: "img/[name][hash].[ext]", // файл в img/ с hash. созд отдельный файл от копир.
-          // name: '/img/[name].[ext]', // файл в img/
-          // name: './img/[name].[ext]', // файл в img/
-          // name: '../img/[name].[ext]', // парка с файлом за dist
-          // name:`${PATHS.dist}img/[name].[ext]` // не раб - созд. двойной путь до папки от корня
+        // ! 2.0.42 картинки выгр по другому(QF3EcxymIcc)
+        // // use не раб с option
+        // loader: "file-loader",
+        // options: {
+        //   name: "img/[name].[ext]",
+        //   // importLoaders: 1,
+        //   // minimize: true,
+        //   publicPath: '../',
+        // },
+        // // задаём имя
+        // // ??? не раб - раб. только имя ../ раб, однако созд папку с файлом за dist
+        // // такой же файл как из copy, но при уник имени созд ещё один
+        // options: {
+        //   // без ничего только hash.png
+        //   // name: '[name].[ext]', // файл в dist
+        //   // name: '../[name].[ext]', // файл за dist
+        //   name: "img/[name][hash].[ext]", // файл в img/ с hash. созд отдельный файл от копир.
+        //   // name: '/img/[name].[ext]', // файл в img/
+        //   // name: './img/[name].[ext]', // файл в img/
+        //   // name: '../img/[name].[ext]', // парка с файлом за dist
+        //   // name:`${PATHS.dist}img/[name].[ext]` // не раб - созд. двойной путь до папки от корня
+        // },
+        // ! 2.0.45 картинки выгр по док webpack(нов. WP5 метод)
+        // !!! https://webpack.js.org/guides/asset-modules/#root
+        type: "asset/resource", // не раб - asset, asset/source, asset/inline,
+        generator: {
+          filename: "img/[name][ext]",
+          publicPath: "../",
+          // publicPath: "auto",
+      //     parser: {
+      //    dataUrlCondition: {
+      //      maxSize: 4 * 1024 // 4kb
+      //    }
+      //  }
         },
+        // решается и старым методом
+        // loader: "file-loader",
+        // options: {
+        //   name: "img/[name].[ext]",
+        //   publicPath: '../',
+        // },
+        // ??? не раб - css ссылки раб(решает publicPath), НО JS путь ломает(раб если к браузере убрать - ../). 
+        // 1 картинка - html - всегда раб. 2 и 3 попеременно от вкл.  publicPath
+        // ?!?! при npm start РАБОТАЕТ!!! Пробовал без NODE_ENV(package) dev и build - не прошло
       },
       // ! 2.☺0.23 шрифты подкл.
       {
@@ -517,6 +545,6 @@ module.exports = {
   // показ в консоле исходный код файла. для разраб(isDev)
   // ??? не раб - при npm build прибавляет очень много веса объед. файлу js
   // ??? проверить https://webpack.js.org/configuration/devtool/#root
-  devtool: isDev ? "source-map" : "eval",
+  // devtool: isDev ? "source-map" : "eval",
   // devtool: "eval-source-map",
 };
