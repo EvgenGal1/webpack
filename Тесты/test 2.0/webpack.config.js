@@ -15,7 +15,8 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 // ! 2.0.33.2 cssmini вывод - по видео
 const OptimizeCssAssetWebpackPlugin = require("optimize-css-assets-webpack-plugin");
 const TerserWebpackPlugin = require("terser-webpack-plugin");
-// const {BundleAnalyzerPlugin} = require('webpack-bundle-analyzer')
+// ! 2.0.47 analyzer подк. plugin в fn()
+const {BundleAnalyzerPlugin} = require('webpack-bundle-analyzer')
 
 // ! 2.0.41 пути в константу(QF3EcxymIcc)(для удобной смены во всем сразу)
 const PATHS = {
@@ -138,34 +139,69 @@ const jsLoaders = () => {
   return user;
 };
 
-// const plugins = () => {
-//   const base = [
-//     new HTMLWebpackPlugin({
-//       template: "./index.html",
-//       minify: {
-//         collapseWhitespace: isProd,
-//       },
-//     }),
-//     new CleanWebpackPlugin(),
-//     new CopyWebpackPlugin({
-//       patterns: [
-//         {
-//           from: path.resolve(__dirname, "src/favicon.ico"),
-//           to: path.resolve(__dirname, "dist"),
-//         },
-//       ],
-//     }),
-//     new MiniCssExtractPlugin({
-//       filename: filename("css"),
-//     }),
-//   ];
+// ! 2.0.47 analyzer и plugin ч/з fn()
+const plugins = () => {
+  const base = [
+    // ! 2.0.15 html выгруж, подкл css, js
+    new HTMLWebpackPlugin({
+      // template: "./src/index.html",
+      minify: {
+        collapseWhitespace: isProd,
+      },
+      chunks: ["main"],
+      // ! 2.0.41 пути в константу
+      filename: `${PATHS.dist}index.html`,
+      template: `${PATHS.src}index.html`,
+    }),
+    // ! 2.0.40 проба 2 файла html
+    new HTMLWebpackPlugin({
+      // filename: "indexReact.html",
+      // template: "./src/indexReact.html",
+      minify: {
+        collapseWhitespace: isProd,
+      },
+      chunks: ["app"],
+      // ! 2.0.41 пути в константу
+      // filename: `${PATHS.static}html/indexReact.html`,
+      filename: `${PATHS.dist}html/indexReact.html`,
+      template: `${PATHS.src}html/indexReact.html`,
+    }),
+    // ! 2.0.31 css в отдельн файлы
+    new MiniCssExtractPlugin({
+      // filename: "style.[name].bundle.css",
+      // ! 2.0.35  переименовка. в fn() передаём ext, на выходе css/[name].css
+      filename: filename("css"),
+    }),
+    // ! 2.0.17 очистка ввыводной папки
+    new CleanWebpackPlugin(),
+    // ! 2.0.30 копир файлов в вывод
+    new CopyWebpackPlugin({
+      patterns: [
+        {
+          // от куда и куда копир(файлы, папки)
+          from: path.resolve(__dirname, "./src/favicon.ico"),
+          to: path.resolve(__dirname, "dist"),
+        },
+        // ! 2.0.45 откл чтоб задать через rules
+        // {
+        //   from: `${PATHS.src}img`,
+        //   to: `${PATHS.dist}img`,
+        // },
+        {
+          from: `${PATHS.src}fonts`,
+          to: `${PATHS.dist}fonts`,
+        },
+      ],
+    }),
+  ];
 
-//   if (isProd) {
-//     base.push(new BundleAnalyzerPlugin());
-//   }
+  // ! 2.0.47 analyzer подк. е/и Prod
+  if (isProd) {
+    base.push(new BundleAnalyzerPlugin());
+  }
 
-//   return base;
-// };
+  return base;
+};
 
 // ! 2.0.8 js компил на этапе сборки, раб на платф node js(доступны эл. из него). как правило export объ. который явл. объ. конфигурации для webpack
 module.exports = {
@@ -216,97 +252,99 @@ module.exports = {
     // filename: `${PATHS.static}js/[name].js`,
     // в видео (QF3EcxymIcc) ~23:00 есть про publicPath(публичн) и contentBase(где откр webpack - dist)
   },
-  plugins: [
-    //   plugins: plugins(),
-    // ! 2.0.15 html выгруж, подкл css, js
-    new HTMLWebpackPlugin({
-      // template: "./src/index.html",
-      minify: {
-        collapseWhitespace: isProd,
-      },
-      chunks: ["main"],
-      // ! 2.0.41 пути в константу
-      filename: `${PATHS.dist}index.html`,
-      template: `${PATHS.src}index.html`,
-    }),
-    // ! 2.0.40 проба 2 файла html
-    new HTMLWebpackPlugin({
-      // filename: "indexReact.html",
-      // template: "./src/indexReact.html",
-      minify: {
-        collapseWhitespace: isProd,
-      },
-      chunks: ["app"],
-      // ! 2.0.41 пути в константу
-      // filename: `${PATHS.static}html/indexReact.html`,
-      filename: `${PATHS.dist}html/indexReact.html`,
-      template: `${PATHS.src}html/indexReact.html`,
-    }),
-    // ! 2.0.40.1 проба 3+ файла html
-    // new HTMLWebpackPlugin({
-    //   filename: "./html/point/indexPoint.html",
-    //   template: "./src/html/point/indexPoint.html",
-    //   minify: {
-    //     collapseWhitespace: isProd,
-    //   },
-    //   chunks: ["js/noReact", "js/app"],
-    // }),
-    // new HTMLWebpackPlugin({
-    //   filename: "./html/NoReact/indexNoReact.html",
-    //   template: "./src/html/NoReact/indexNoReact.html",
-    //   // template: "./index.html",
-    //   minify: {
-    //     collapseWhitespace: isProd,
-    //   },
-    //   // chunks:['js/main','analytics']
-    //   // chunks: ["noReact/noReact", "analytics"],
-    //   // chunks: ["js/noReact", "analytics", main],
-    // }),
-    // ! 2.0.31 css в отдельн файлы
-    new MiniCssExtractPlugin({
-      // filename: "style.[name].bundle.css",
-      // ! 2.0.35  переименовка. в fn() передаём ext, на выходе css/[name].css
-      filename: filename("css"),
-      // ! 2.0.41 пути в константу
-      // filename: `${PATHS}css/[name].css`,
-      // filename: `${PATHS.dist}css/[name].css`,
-      // filename: `${PATHS.dist}/css/[name].css`,
-      // filename: `${PATHS.dist}css/React.css`,
-      // ! 2.0.41 новые пути
-      // filename: "styles/[name].css", // styles/путь из entry/имя из entry.css
-      // filename: "styles.[name].css",// styles.путь из entry/имя из entry.css
-      // filename: "filename.css" // ??? не раб - неск. созд. инфу с одинак. именами filename.css (фрагм. прилож. и js / noReact)
-      // filename: "styles.css" // ??? не раб - несколько отправ. инфу в одно имя файла styles.css (фрагм. прилож. и js / noReact)
-      // filename: filename("css"), // путь из entry/имя из entry.css - вместе с js
-      // filename: "styles/.css", // ??? не раб - несколько перед. инфу в файлы с одинак стилями / .css (фрагм. прилож. и js / noReact)
-      // ! 2.0.43 CSS пробы с док webpack
-      // filename: ({ chunk }) => `${chunk.name.replace("/js/", "styles/css/")}.css`, // ??? не видно изменений
-    }),
-    // ! 2.0.17 очистка ввыводной папки
-    new CleanWebpackPlugin(),
-    // ! 2.0.30 копир файлов в вывод
-    new CopyWebpackPlugin({
-      patterns: [
-        {
-          // от куда и куда копир(файлы, папки)
-          from: path.resolve(__dirname, "./src/favicon.ico"),
-          to: path.resolve(__dirname, "dist"),
-        },
-        // ! 2.0.42 копир img
-        // ??? не раб - зачем е/и в rules.options можно указ путь
-        // ??? оробовать https://webpack.js.org/guides/asset-modules/#root
-        // ! 2.0.45 откл чтоб задать через rules
-        // {
-        //   from: `${PATHS.src}img`,
-        //   to: `${PATHS.dist}img`,
-        // },
-        {
-          from: `${PATHS.src}fonts`,
-          to: `${PATHS.dist}fonts`,
-        },
-      ],
-    }),
-  ],
+  // plugins доп. узкие настр. ()
+  // ! 2.0.47 analyzer подк. plugin в fn() изначальное в комит 
+    plugins: plugins(),
+  // plugins: [
+  //   // ! 2.0.15 html выгруж, подкл css, js
+  //   new HTMLWebpackPlugin({
+  //     // template: "./src/index.html",
+  //     minify: {
+  //       collapseWhitespace: isProd,
+  //     },
+  //     chunks: ["main"],
+  //     // ! 2.0.41 пути в константу
+  //     filename: `${PATHS.dist}index.html`,
+  //     template: `${PATHS.src}index.html`,
+  //   }),
+  //   // ! 2.0.40 проба 2 файла html
+  //   new HTMLWebpackPlugin({
+  //     // filename: "indexReact.html",
+  //     // template: "./src/indexReact.html",
+  //     minify: {
+  //       collapseWhitespace: isProd,
+  //     },
+  //     chunks: ["app"],
+  //     // ! 2.0.41 пути в константу
+  //     // filename: `${PATHS.static}html/indexReact.html`,
+  //     filename: `${PATHS.dist}html/indexReact.html`,
+  //     template: `${PATHS.src}html/indexReact.html`,
+  //   }),
+  //   // ! 2.0.40.1 проба 3+ файла html
+  //   // new HTMLWebpackPlugin({
+  //   //   filename: "./html/point/indexPoint.html",
+  //   //   template: "./src/html/point/indexPoint.html",
+  //   //   minify: {
+  //   //     collapseWhitespace: isProd,
+  //   //   },
+  //   //   chunks: ["js/noReact", "js/app"],
+  //   // }),
+  //   // new HTMLWebpackPlugin({
+  //   //   filename: "./html/NoReact/indexNoReact.html",
+  //   //   template: "./src/html/NoReact/indexNoReact.html",
+  //   //   // template: "./index.html",
+  //   //   minify: {
+  //   //     collapseWhitespace: isProd,
+  //   //   },
+  //   //   // chunks:['js/main','analytics']
+  //   //   // chunks: ["noReact/noReact", "analytics"],
+  //   //   // chunks: ["js/noReact", "analytics", main],
+  //   // }),
+  //   // ! 2.0.31 css в отдельн файлы
+  //   new MiniCssExtractPlugin({
+  //     // filename: "style.[name].bundle.css",
+  //     // ! 2.0.35  переименовка. в fn() передаём ext, на выходе css/[name].css
+  //     filename: filename("css"),
+  //     // ! 2.0.41 пути в константу
+  //     // filename: `${PATHS}css/[name].css`,
+  //     // filename: `${PATHS.dist}css/[name].css`,
+  //     // filename: `${PATHS.dist}/css/[name].css`,
+  //     // filename: `${PATHS.dist}css/React.css`,
+  //     // ! 2.0.41 новые пути
+  //     // filename: "styles/[name].css", // styles/путь из entry/имя из entry.css
+  //     // filename: "styles.[name].css",// styles.путь из entry/имя из entry.css
+  //     // filename: "filename.css" // ??? не раб - неск. созд. инфу с одинак. именами filename.css (фрагм. прилож. и js / noReact)
+  //     // filename: "styles.css" // ??? не раб - несколько отправ. инфу в одно имя файла styles.css (фрагм. прилож. и js / noReact)
+  //     // filename: filename("css"), // путь из entry/имя из entry.css - вместе с js
+  //     // filename: "styles/.css", // ??? не раб - несколько перед. инфу в файлы с одинак стилями / .css (фрагм. прилож. и js / noReact)
+  //     // ! 2.0.43 CSS пробы с док webpack
+  //     // filename: ({ chunk }) => `${chunk.name.replace("/js/", "styles/css/")}.css`, // ??? не видно изменений
+  //   }),
+  //   // ! 2.0.17 очистка ввыводной папки
+  //   new CleanWebpackPlugin(),
+  //   // ! 2.0.30 копир файлов в вывод
+  //   new CopyWebpackPlugin({
+  //     patterns: [
+  //       {
+  //         // от куда и куда копир(файлы, папки)
+  //         from: path.resolve(__dirname, "./src/favicon.ico"),
+  //         to: path.resolve(__dirname, "dist"),
+  //       },
+  //       // ! 2.0.42 копир img
+  //       // ??? не раб - зачем е/и в rules.options можно указ путь
+  //       // ??? оробовать https://webpack.js.org/guides/asset-modules/#root
+  //       // ! 2.0.45 откл чтоб задать через rules
+  //       // {
+  //       //   from: `${PATHS.src}img`,
+  //       //   to: `${PATHS.dist}img`,
+  //       // },
+  //       {
+  //         from: `${PATHS.src}fonts`,
+  //         to: `${PATHS.dist}fonts`,
+  //       },
+  //     ],
+  //   }),
+  // ],
   // ! 2.0.20 подкл модули и css
   module: {
     rules: [
@@ -545,6 +583,6 @@ module.exports = {
   // показ в консоле исходный код файла. для разраб(isDev)
   // ??? не раб - при npm build прибавляет очень много веса объед. файлу js
   // ??? проверить https://webpack.js.org/configuration/devtool/#root
-  // devtool: isDev ? "source-map" : "eval",
+  devtool: isDev ? "source-map" : "eval",
   // devtool: "eval-source-map",
 };

@@ -5,6 +5,7 @@
   // - комментарий(напротив)
   ## - код(между)(можно копир сразу)
   ++ - содать/прописать(файл, папку) или автомат добавит
+  !! - ссылки к истчнику
 1.1 $$ npm init (npm init -y) - инициализация. ++ настр. в команд строке + 1 файл
   ++ настр. в ком.стр.
     // имя приложения/пакета (от назв. папки)
@@ -19,8 +20,8 @@
     keywords: 
     author: EvGen Gal
     license: (ISC)
-	+++ создаёться файл package.json - описание проекта(конфиг,пакет,отдельная прога) и все установленные зависимости(др. пакеты)
-1.2 $$ npm install webpack ($$ npm i -D webpack webpack-cli webpack-dev-server) - сборка проекта + 2 файла
+	+++ создаёться файл package.json - описание проекта(конфиг,пакет,отдельная прога) и все установленные зависимости(др. пакеты) с именами и версиями
+1.2 $$ npm install webpack ($$ npm i -D webpack webpack-cli webpack-dev-server) - сборка проекта ++ 2 файла
   объясн. команд {
     // npm run - начало команды
     // ctrl + с - остановка процесса (watch/server)
@@ -29,7 +30,7 @@
     // webpack - модульный сборщик (упаковка, компиликтовка и организация ресурсов для проекта)
     // webpack-cli - инструмент для запуска webpack из командной строки
     // webpack-dev-server - локальный `сервер разработки веб-пакет` с живой перезагрузкой
-    // --save - вкл пакет в раздел dependencies. упразднён с webpack 5
+    // -S --save - вкл пакет в раздел dependencies. упразднён с webpack 5
     // -D, --save-dev: вкл пакет в раздел devDependencies
   }
 	+++ создаётся папка node_modules - пакеты, установленные вручную, и их зависимости.
@@ -46,7 +47,7 @@
     // NODE_ENV=development систем. перем. делаем разраб. 
     // ??? не раб с webpack-dev-server
     // NODE_ENV=production систем. перем. делаем произв.
-    // режим разработки (npm run dev)
+    // режим разработки ($$ npm run dev)
     "dev": "cross-env NODE_ENV=development webpack --mode development",
     // реконвертация кода (обновление изменений не выходя из процесса, следит за изменением файлов)
     "watch": "cross-env NODE_ENV=development webpack --mode development -watch",
@@ -55,6 +56,7 @@
     // режим производства, мини сборка
     "build": "cross-env NODE_ENV=production webpack --mode production",
     // webpack-dev-server так же как webpack собирает файлы из вывода, но складывает в опер память. поэтому при server нет доступа к выводной папке, для быстрого обновл
+    // analyzer выводим в отдельный файл. analyzer - визуал размер выходных файлов веб-пакета в локал сервер
     // "stats": "webpack --json > stats.json && webpack-bundle-analyzer stats.json"
   }
   // основной файл это index.js. е/и не хотим случайно публиковать, пишем private
@@ -65,7 +67,92 @@
   // ??? не раб с dev-server
   // "browserslist": "> 0.25%, not dead",
   !!! https://habr.com/ru/company/ruvds/blog/423703/ настройки package.json и package-lock.json
-1.4 ++ Создать в корне проекта webpack.config.js - настройка webpack
+1.4 ++ основные команды ++ доп. библиотеки
+  // команды
+    // копир и вызов по порядку, без `$$`
+    // часто используемые
+      // инициализация
+      $$ npm init
+      // установка(+сервер)
+      $$ npm i -D webpack webpack-cli webpack-dev-server
+      // html, css(+sass) css в 1, файл, очистка, копир., бабел(+env,react), eslint(ошб+чтен), 
+      $$ npm i -D html-webpack-plugin style-loader css-loader sass-loader node-sass sass mini-css-extract-plugin file-loader clean-webpack-plugin copy-webpack-plugin babel-loader @babel/core @babel/preset-env @babel/preset-react eslint eslint-loader babel-eslint
+      
+      // jQ, React, кросбраузерн css
+      $$ npm i -S jquery react react-dom normalize.css 
+
+      // доп. fn() js, babel ошб. console
+      $$ npm i lodash @babel/polyfill 
+      // plg lodash(чтен. lodash), analyzer(визуал код), cross-env(сист.перем.), babel ошб. console
+      $$ npm i -D babel-plugin-lodash webpack-bundle-analyzer cross-env @babel/plugin-proposal-class-properties
+    // редко + не понятно
+      // ts, less, xml, csv(+зависим)
+      $$ npm i -D @babel/preset-typescript less-loader xml-loader csv-loader papaparse
+
+      $$ npm install @babel/plugin-proposal-class-propertiesnpm install @babel/plugin-proposal-class-properties // babel, для обработки синтаксиса, пока не доступтного JS
+      $$ npm install prop-types // Для контроля типов передаваемых в компонент propsов можно использовать стороннюю библиотеку PropTypes.
+      $$ npm install material-ui // библиотека от Google, которая позволяет создавать приложения в стиле Google Material Design с использованием компонентов React.
+  // библ, настр, стили
+    // jQuery - библ. JS > html
+      // устан. пакета на Prod
+      $$ npm i -S jquery
+      // подкл в .js файл
+      ## import * as $ from "jquery";
+      ## import $ from "jquery";
+    // normalize - единые стили для кросбраузерн
+      // устан. пакета на Prod
+      $$ npm i normalize.css 
+      // подкл в .css первым. указ. ~ переход в node_module
+      ## @import '~normalize.css';
+      // или подкл. в .html до css
+      ## <link rel="stylesheet" type="text/css" href="css/normalize.css" />
+    // cross-env - опред. системы(windows, ) и задаёт систем. перемен.(разраб/прод). 
+      // устан. в Dev
+      // $$ npm i -D cross-env
+      // NODE_ENV=development систем. перем. делаем разраб. ??? не раб с webpack-dev-server
+      // NODE_ENV=production систем. перем. делаем произв.
+      // прописать в package.json 
+      ## "dev": "cross-env NODE_ENV=development webpack --mode development",
+      ## "build": "cross-env NODE_ENV=production webpack --mode production",
+    // lodash - биб JS, чтоб писать компакт. и простой в обслуживании JS код.
+      !! https://lodash.com/
+      // устан. пакета на Prod
+      $$ npm i lodash
+      // устан. обаботчика пакета на Dev
+      $$ npm i -D babel-plugin-lodash
+      // подкл. в любой .js файл. использ. при динамическом import. 
+      ## import _ from "lodash";
+      ## import { add } from "lodash/fp";
+      // пример. 
+      ##
+      var array = [1];
+      var other = _.concat(array, 2, [3], [[4]]);
+      console.log(other); // => [1, 2, 3, [4]]
+      console.log(array); // => [1]
+      console.log("Lodash", _.random(0, 43, true));  // => Lodash от 0 до 43
+      ##
+    // analyzer - визуал размер выходных файлов веб-пакета в локал сервер
+      !! https://www.npmjs.com/package/webpack-bundle-analyzer
+      $$ npm i -D webpack-bundle-analyzer  
+      // подк. плагин в webpack.config.js
+      ## const {BundleAnalyzerPlugin} = require('webpack-bundle-analyzer')
+      // пропис fn() с plugins и analyzer(Prod)
+      ##
+      const plugins = () => {
+        const base = [
+          new HTMLWebpackPlugin({.....})
+          new CleanWebpackPlugin({.....})
+        ]
+        // подк. е/и Prod
+        if (isProd) {
+          base.push(new BundleAnalyzerPlugin());
+        }
+        return base;
+      };
+      ##
+      // вызов fn() в plugin. закомитев [] в plugins:
+      ## plugins: plugins(), // [ ..... ]
+1.5 ++ Создать в корне проекта webpack.config.js - настройка webpack
   мини база
     ##
       const path = require("path");
@@ -114,6 +201,8 @@
       // cssmini вывод - по видео
       const OptimizeCssAssetWebpackPlugin = require('optimize-css-assets-webpack-plugin')
       const TerserWebpackPlugin = require('terser-webpack-plugin')
+      // analyzer подк. визуал размер кода
+      const {BundleAnalyzerPlugin} = require('webpack-bundle-analyzer')
 
       // пути в константу(QF3EcxymIcc)(для удобной смены во всем сразу)
       // PATHS.src(dist) - ярлык. './src/'(./dist/) - изменяемая переменая
@@ -231,6 +320,50 @@
         return user;
       };
 
+      // analyzer(визуал размер кода) и plugin ч/з fn()
+        // описание plugin в plugins:стандарт + описание
+        const plugins = () => {
+          const base = [
+            new HTMLWebpackPlugin({
+              minify: {
+                collapseWhitespace: isProd,
+              },
+              chunks: ["main"],
+              filename: `${PATHS.dist}index.html`,
+              template: `${PATHS.src}index.html`,
+            }),
+            new HTMLWebpackPlugin({
+              minify: {
+                collapseWhitespace: isProd,
+              },
+              chunks: ["app"],
+              filename: `${PATHS.dist}html/indexReact.html`,
+              template: `${PATHS.src}html/indexReact.html`,
+            }),
+            new MiniCssExtractPlugin({
+              filename: filename("css"),
+            }),
+            new CleanWebpackPlugin(),
+            new CopyWebpackPlugin({
+              patterns: [
+                {
+                  from: path.resolve(__dirname, "./src/favicon.ico"),
+                  to: path.resolve(__dirname, "dist"),
+                },
+                {
+                  from: `${PATHS.src}fonts`,
+                  to: `${PATHS.dist}fonts`,
+                },
+              ],
+            }),
+          ];
+          // analyzer подк. е/и Prod
+          if (isProd) {
+            base.push(new BundleAnalyzerPlugin());
+          }
+          return base;
+        };
+
       // экспорт настроек плагинов объ., из док.(config) 
       module.exports = {
         // укажем где исходники. путает в fn(), PATHS, наборе имени
@@ -279,86 +412,96 @@
             path: PATHS.dist,
         },
         // доп. узкие настр.
-        plugins: [ 
-          // html плагин {
-            // $$ npm i -D html-webpack-plugin
-            new HTMLWebpackPlugin({
-              // стандарт
-                // загрузка из src
-                // template: "./src/index.html",
-                // выгрузка по умолч. в корн.папку(dist)
-              // с PATHS. ЛУЧШЕЕ!!!
-                // выгрузка - dist/index.html
-                filename: `${PATHS.dist}index.html`,
-                // загрузка - src/index.html
-                template: `${PATHS.src}index.html`,
-              // добавл. `куски` кода js, css из entry
-              chunks: ['main'],
-              // мини выгрузка в режиме Prod
-              minify: {
-                collapseWhitespace: isProd,
-              },
-            }),
-            // второй файл html
-            new HTMLWebpackPlugin({
-              // стандарт
-                // загрузка из src/html/
-                // template: "./src/html/indexReact.html",
-                // выгрузка /html/NoReact/
-                // filename: "./html/React/indexReact.html",
-              // с PATHS. ЛУЧШЕЕ!!!
-                // выгрузка - dist/html/indexReact.html
-                filename: `${PATHS.dist}html/indexReact.html`,
-                // загрузка - src/html/indexReact.html
-                template: `${PATHS.src}html/indexReact.html`,
-              // добавл. `куски` кода js, css из entry
-              chunks: ['app', 'analytics'],
-              // мини выгрузка в режиме Prod
-              minify: {
-                collapseWhitespace: isProd,
-              },
-            }),
-          // }
-          // css + mini {
-            new MiniCssExtractPlugin({
-              // $$ npm i -D mini-css-extract-plugin
-              // [name] присвоит имя из entry, можно прописать имя
-              // filename: '[name].css',
-              // с fn() создаст css/[name].css ЛУЧШЕЕ!!
-              filename: filename("css"),
-              // для произв. раздел. на отдел. `куски`(асинхр. загр., )
-              // chunkFilename: '[id].css',
-            }),
-          // }
-          // очистка выводной папки {
-            // $$ npm i -D clean-webpack-plugin
-            new CleanWebpackPlugin(),
-          // }
-          // копир файлов {
-            // копир файлов(папок) из корня(src) в вывод
-            // $$ npm i -D copy-webpack-plugin
-            new CopyWebpackPlugin({
-              patterns: [
-                {
-                  // от куда и куда копир(файлы, папки)
-                  // стандарт
-                    // from: path.resolve(__dirname, "src/favicon.ico"),
-                    // to: path.resolve(__dirname, "dist"),
-                  // копир с PATHS
-                    // всё из src/img в dist/img
-                    {
-                      from: `${PATHS.src}img`,
-                      to: `${PATHS.dist}img`,
-                    },
-                    {
-                      from: `${PATHS.src}fonts`,
-                      to: `${PATHS.dist}fonts`,
-                    },
-                },
-              ],
-            }),
-          // }
-        ],
+        plugins:
+          // стандарт + описание
+            // [ 
+            //   // html плагин {
+            //     // html выгрузка и авто подкл css, js
+            //     // $$ npm i -D html-webpack-plugin
+            //     new HTMLWebpackPlugin({
+            //       // стандарт
+            //        // загрузка из src
+            //        // template: "./src/index.html",
+            //        // выгрузка по умолч. в корн.папку(dist)
+            //       // с PATHS. ЛУЧШЕЕ!!!
+            //         // выгрузка - dist/index.html
+            //         filename: `${PATHS.dist}index.html`,
+            //         // загрузка - src/index.html
+            //         template: `${PATHS.src}index.html`,
+            //       // добавл. `куски` кода js, css из entry
+            //       chunks: ['main'],
+            //       // мини выгрузка в режиме Prod
+            //       minify: {
+            //         collapseWhitespace: isProd,
+            //       },
+            //     }),
+            //     // второй файл html
+            //     new HTMLWebpackPlugin({
+            //       // стандарт
+            //        // загрузка из src/html/
+            //        // template: "./src/html/indexReact.html",
+            //        // выгрузка /html/NoReact/
+            //        // filename: "./html/React/indexReact.html",
+            //       // с PATHS. ЛУЧШЕЕ!!!
+            //         // выгрузка - dist/html/indexReact.html
+            //         filename: `${PATHS.dist}html/indexReact.html`,
+            //         // загрузка - src/html/indexReact.html
+            //         template: `${PATHS.src}html/indexReact.html`,
+            //       // добавл. `куски` кода js, css из entry
+            //       chunks: ['app', 'analytics'],
+            //       // мини выгрузка в режиме Prod
+            //       minify: {
+            //         collapseWhitespace: isProd,
+            //       },
+            //     }),
+            //   // }
+            //   // css + mini {
+            //     // css в отдельные файлы
+            //     // $$ npm i -D mini-css-extract-plugin
+            //     new MiniCssExtractPlugin({
+            //       // [name] присвоит имя из entry, можно прописать имя
+            //       // filename: '[name].css',
+            //       // с fn() создаст css/[name].css ЛУЧШЕЕ!!
+            //       filename: filename("css"),
+            //       // для произв. раздел. на отдел. `куски`(асинхр. загр., )
+            //       // chunkFilename: '[id].css',
+            //     }),
+            //   // }
+            //   // очистка выводной папки {
+            //     // $$ npm i -D clean-webpack-plugin
+            //     new CleanWebpackPlugin(),
+            //   // }
+            //   // копир файлов {
+            //     // копир файлов(папок) из корня(src) в вывод
+            //     // $$ npm i -D copy-webpack-plugin
+            //     new CopyWebpackPlugin({
+            //       patterns: [
+            //         {
+            //           // от куда и куда копир(файлы, папки)
+            //           // стандарт
+            //             // from: path.resolve(__dirname, "src/favicon.ico"),
+            //             // to: path.resolve(__dirname, "dist"),
+            //           // копир с PATHS
+            //             // всё из src/img в dist/img
+            //             // откл чтоб задать через module.rules
+            //             // {
+            //             //   from: `${PATHS.src}img`,
+            //             //   to: `${PATHS.dist}img`,
+            //             // },
+            //             {
+            //               from: `${PATHS.src}fonts`,
+            //               to: `${PATHS.dist}fonts`,
+            //             },
+            //         },
+            //       ],
+            //     }),
+            //   // }
+            // ],
+          // analyzer для Prod ч/з fn()plugins
+            // визуал размер выходных файлов веб-пакета в локал сервер Prod
+            // $$ npm i -D webpack-bundle-analyzer  
+            plugins()
+          // ! е/и не нужен analyzer - раскомит `стандарт + описание` всё с [] один раз и закомит вызов fn()`plugins()` в analyzer для Prod
         // конфигурация модулей(загрузчиков)
         module: { 
           // `правила` для модулей (настройка, параметры парсера и т. д.)
@@ -374,7 +517,7 @@
               // устан. babel 
               // $$ npm install -D babel-loader @babel/core @babel/preset-env 
               // устан. полифил от ошибки "Uncaught ReferenceError: regeneratorRuntime is not defined" в браузере
-              // $$ npm i -D @babel/polyfill
+              // $$ npm i -S @babel/polyfill
               // подкл. в entry: вместе с index.js как отдельн. библ.
               // entry:{main: ["@babel/polyfill","./index.js"]}
               // устан плагин чтоб не было ошибок в консоли
@@ -415,8 +558,8 @@
                     // устан. пакет, loader и babel
                     // $$ npm i -D eslint eslint-loader babel-eslint
                     // ++ созд. и настр. файл .eslintrc
-                    // настройку файлы вырез/копир и раскомитеть
-                      ## 
+                    // настройку файлы вырез/копир и раскомитеть м/у ##
+                      // ## 
                         // {
                         //   // явно указыв с чем работаем(babel-eslint)
                         //   "parser": "babel-eslint",
@@ -438,23 +581,21 @@
                         //     "eslint:recommended"
                         //   ]
                         // }
-                      ##
+                      // ##
                     // пример только для js
-                    ##
                       // loader для объ.? use для массивов? через fn()
                       use: jsLoaders(),
-                    ##
                 }
               // JSX 
                 {
                   // устан react и react-dom
                   // $$ npm install react react-dom
                   // подкл в файл .JSX
-                  // import React from 'react'
-                  // import { render } from 'react-dom'
+                  // ## import React from 'react'
+                  // ## import { render } from 'react-dom'
                   // babel react устан и настр
                   // $$ npm i -D @babel/preset-react
-                  // entry: {main3:"./fail3.jsx"}
+                  // ~## entry: {main3:"./fail3.jsx"}
                   // для js и/или jsx. синтаксис регулярных выражений
                   test: /\.jsx?$/i, // есть такой test: /\.(js|jsx)$/,
                   // исключ. папка node_modules
@@ -699,19 +840,35 @@
   ориг. дог. {
     !!! https://webpack.js.org/configuration/
   }
-1.5 ++ Создать в корне папку src(любое имя и путь) и файл index.js(любое имя) в ней.
-1.6 $$ npm run build // запуск сборки в Prod
-	++ Появляеться static/build/app.js. - сбор всего JS кода в один файл
+
+
+!!! Прописать как будет всё выгдядить, что ещё создать, структуру, может код
+  // пример с док WP
+  |- package.json
+  |- webpack.config.js
+  |- /dist
+  |- /src
+    |- index.js
+  |- print.js
+  |- /node_modules
+
+1.6 ++ Создать в корне папку src(любое имя и путь) и файл index.js(любое имя) в ней.
+
+
+1.7 $$ npm run // dev/build/server - запуск сборки в Dev/Prod/браузер
+	++ Появляеться dist/js/app.js. - сбор всего JS кода в один файл
   доп. пояснения
     // Содержимое файла app.js автоматически минимизируется. 
-    // Хранит все модули добавл. в сборку(index.jsx), ч/з importы
+    // Хранит все модули добавл. в сборку(index.js), ч/з importы
     // содерж. каждого файла в отдельной fn() eval. записывается как строка, помещёная в fn() eval
     // eval - нативная fn() в JS которая исполняет код из строки. 
     // eval не рекоменд. использ., только для быстрого исполнения браузер. движ.
     // в шапке технический код webpack для эмуляции модулей внутри браузера
     // модуль - изолир. часть системы со своими перемен., классами, fn(), и т.д.
     // каждый файл - модуль, и никаких конфликтов м/у ними не будет
-1.7 ++ Создать в корне файл index.html и подкл. app.js
+
+
+1.8 ++ Создать в корне файл index.html и подкл. app.js
   код html
     ##
       <!DOCTYPE html>

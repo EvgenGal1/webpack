@@ -12,7 +12,7 @@ import WebpackLogo from '../img/webpack-logo.png'
 // ! 2.0.38.1 react подкл к файлу
 import React from 'react'
 import { render } from 'react-dom'
-// import './babel'
+import './babel'
 import '../css/styles.css'
 import '../css/scss.scss'
 import '../css/less.less'
