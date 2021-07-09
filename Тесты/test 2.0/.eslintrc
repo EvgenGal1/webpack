@@ -4,20 +4,43 @@
   // явно указыв с чем работаем 
   // уснан $$ npm i -D babel-eslint
   "parser": "babel-eslint",
+  // расширение
+  "extends": [
+    // наследуемся: рекондуется
+    "eslint:recommended"
+  ],
   // правила
   "rules": {
     // вкл прав. как предупрежд. чтоб пересобирался. error - не даст собратся проекту
     "no-unused-vars": "warn"
+    // ! 2.0.48 исправл. от ошибок. эти хз на что ??? не раб. !!!Добавляют ошб.
+    // "semi": [
+    //   "warn",
+    //   "never"
+    // ],
+    // "quotes": [
+    //   "warn",
+    //   "single"
+    // ],
+    // "no-console": [
+    //   "off"
+    // ]
   },
   "env": {
     // чтоб понимал промися
     "es6": true,
     // чтоб понимал консоли. указ где работаем
-    "browser": true
+    "browser": true,
+    // ! 2.0.48 исправл. от ошибок. node начал читать webpack без ошибок - Strings must use singlequote.eslintquotes
+    "node": true
+    // ! 2.0.48 исправл. от ошибок. эти хз на что ??? не раб
+    // "amd": true
   },
-  // расширение
-  "extends": [
-    // наследуемся: рекондуется
-    "eslint:recommended"
-  ]
+  // ! 2.0.48 исправл. от ошибок. эти хз на ??? что не раб
+  "globals": {
+    // "$": true,
+    // "process": true,
+  // ! 2.0.48 исправл. от ошибок - 'require' is not defined.eslintno-undef
+    "require": true
+  }
 }
