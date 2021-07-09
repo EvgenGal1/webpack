@@ -1,8 +1,20 @@
 {
-  "name": "webpacktemplate",
+  "name": "test-3.0",
   "version": "1.0.0",
-  "description": "My template",
-  "main": "index.js",
+  "description": "test 3 > test 3.0",
+  "private": "true",
+  "author": "EvGen Gal <ZBst.1@ya.ru>",
+  "license": "MIT",
+  "keywords": [
+    "test 3.0",
+    "webpack",
+    "webpack4",
+    "merge",
+    "bable",
+    "bable7",
+    "scss",
+    "vue?"
+  ],
   "scripts": {
     "dev": "webpack-dev-server --open --config ./build/webpack.dev.conf.js",
     "build": "webpack --config ./build/webpack.build.conf.js"
@@ -11,48 +23,32 @@
     "> 1%",
     "last 3 version"
   ],
-  "author": "https://github.com/vedees",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/vedees/webpack-template.git"
-  },
-  "bugs": {
-    "url": "https://github.com/vedees/webpack-template/issues"
-  },
-  "keywords": [
-    "webpack",
-    "webpack4",
-    "merge",
-    "bable",
-    "bable7",
-    "scss",
-    "vue"
-  ],
-  "license": "MIT",
   "dependencies": {
     "vue": "^2.6.11"
   },
   "devDependencies": {
-    "@babel/core": "^7.10.5",
-    "@babel/preset-env": "^7.10.4",
-    "autoprefixer": "^9.8.5",
-    "babel-loader": "^8.1.0",
-    "copy-webpack-plugin": "^6.0.3",
-    "css-loader": "^4.1.1",
-    "cssnano": "^4.1.10",
-    "file-loader": "^6.0.0",
-    "html-webpack-plugin": "^4.3.0",
+    "@babel/core": "^7.14.6",
+    "@babel/preset-env": "^7.14.7",
+    "autoprefixer": "^9.8.6",
+    "babel-loader": "^8.2.2",
+    "clean-webpack-plugin": "^4.0.0-alpha.0",
+    "copy-webpack-plugin": "^6.4.1",
+    "css-loader": "^4.3.0",
+    "cssnano": "^4.1.11",
+    "file-loader": "^6.2.0",
+    "html-webpack-plugin": "^4.5.2",
     "mini-css-extract-plugin": "^0.9.0",
     "node-sass": "^4.14.1",
     "postcss-loader": "^3.0.0",
-    "sass-loader": "^9.0.2",
-    "style-loader": "^1.2.1",
+    "sass": "^1.35.2",
+    "sass-loader": "^9.0.3",
+    "style-loader": "^1.3.0",
     "vue-loader": "^15.9.3",
     "vue-style-loader": "^4.1.2",
     "vue-template-compiler": "^2.6.11",
-    "webpack": "^4.44.1",
+    "webpack": "^4.46.0",
     "webpack-cli": "^3.3.12",
-    "webpack-dev-server": "^3.11.0",
-    "webpack-merge": "^5.0.9"
+    "webpack-dev-server": "^3.11.2",
+    "webpack-merge": "^5.8.0"
   }
 }

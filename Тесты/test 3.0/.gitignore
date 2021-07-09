@@ -1,24 +1,24 @@
-# # Default
-# .gulp
-# .idea
-# .vscode
+# Default
+.gulp
+.idea
+.vscode
 
-# # Node
-# node_modules
+# Node
+node_modules
 
-# # Dist & tests
-# test
-# dist
+# Dist & tests
+test
+dist
 
-# # Logs:
-# *.log
-# npm-debug.log*
-# yarn-debug.log*
-# yarn-error.log*
+# Logs:
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 
-# # Special
-# Thumbs.db
-# Desktop.ini
-# .DS_Store*
-# ehthumbs.db
-# Icon?
+# Special
+Thumbs.db
+Desktop.ini
+.DS_Store*
+ehthumbs.db
+Icon?
