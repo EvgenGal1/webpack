@@ -1,12 +1,14 @@
 1.Урок........................................................................................
 
-1.0 $$ node -v и $$ npm -v - Проверить есть ли на компьютере node.js и npm. Yarn альтернатива NPM(от Травника)
+1.0 $$ node -v и $$ npm -v - Проверить есть ли на компьютере node.js и npm. 
+  Yarn альтернатива NPM(от Травника)
+  !! - ссылки к истчнику
 	$$ - вызов команды в терминале
   // - комментарий(напротив)
   ## - код(между)(можно копир сразу)
-  ++ - содать/прописать(файл, папку) или автомат добавит
-  !! - ссылки к истчнику
-1.1 $$ npm init (npm init -y) - инициализация. ++ настр. в команд строке + 1 файл
+  ++ - содать/прописать(файл, папку) 
+  +++ - автомат добавит
+1.1 $$ npm init (npm init -y) - инициализация ++ настр. в команд строке +++ 1 файл
   ++ настр. в ком.стр.
     // имя приложения/пакета (от назв. папки)
     name: webpack  
@@ -20,11 +22,13 @@
     keywords: 
     author: EvGen Gal
     license: (ISC)
-	+++ создаёться файл package.json - описание проекта(конфиг,пакет,отдельная прога) и все установленные зависимости(др. пакеты) с именами и версиями
-1.2 $$ npm install webpack ($$ npm i -D webpack webpack-cli webpack-dev-server) - сборка проекта ++ 2 файла
+	++ создаёться файл package.json - описание проекта(конфиг,пакет,отдельная прога) и все установленные зависимости(др. пакеты) с именами и версиями
+1.2 $$ npm install webpack - сборка проекта ++ наст пакетных зависимостей +++ 2 файла
   объясн. команд {
+    // ^ - значок автоматически обновляет версию. Могут быть конфликты из-за разных версий webpack, webpack-cli и webpack-dev-server. В прошлый раз помог Травник - переустановили их без ^. Перед этим полностью удалили node_modules
     // npm run - начало команды
     // ctrl + с - остановка процесса (watch/server)
+    // @ в команде перед пакетом (@babel) устан последней версии
     // dependencies — npm-пакеты, `зависимости` приложения для production
     // devDependencies — npm-пакеты, для разработке проекта, но не при его реальной работе
     // webpack - модульный сборщик (упаковка, компиликтовка и организация ресурсов для проекта)
@@ -33,14 +37,6 @@
     // -S --save - вкл пакет в раздел dependencies. упразднён с webpack 5
     // -D, --save-dev: вкл пакет в раздел devDependencies
   }
-	+++ создаётся папка node_modules - пакеты, установленные вручную, и их зависимости.
-  +++ создаётся файл package-lock.json
-1.3 ++ настр. файла пакетных зависимостей package.json
-  // ^ - значок автоматически обновляет версию. Могут быть конфликты из-за разных версий webpack, webpack-cli и webpack-dev-server. В прошлый раз помог Травник - переустановили их без ^. Перед этим полностью удалили node_modules
-  // dependencies — npm-пакеты, `зависимости` приложения для production
-  // devDependencies — npm-пакеты, для разработке проекта, но не при его реальной работе
-  // npm run - начало команды
-  // ctrl + с - остановка процесса (watch/server)
   "scripts"{
     // "...": "./node_modules/.bin/webpack" или "webpack" - под сокращ именем ... , запуск. бинарный файл в опред. дериктории(webpack)
     // cross-env пакет опред какая система(windows, ) и корректно задаёт системную переменную(разраб/прод). // $$ npm i -D cross-env
@@ -59,35 +55,91 @@
     "stats": "webpack --json > stats.json && webpack-bundle-analyzer stats.json"
     // analyzer выводим в отдельный файл. analyzer - визуал размер выходных файлов веб-пакета в локал сервер
   }
-  // основной файл это index.js. е/и не хотим случайно публиковать, пишем private
+  // основной файл это index.js. е/и не хотим случайно публиковать, пишем 'private'
   "main": "index.js"(webpack.config.js),
   // приватный не публикуемый проект
   "private":"true",
-  // оптимизировать для браузеров которые не мертвы и >25%
+  // оптимизировать для браузеров которые не мертвы и >25% || >1%
   // ??? не раб с dev-server
   // "browserslist": "> 0.25%, not dead",
+  // второй вариант
+  // "browserslist":["> 1%","last 3 version"],
   !!! https://habr.com/ru/company/ruvds/blog/423703/ настройки package.json и package-lock.json
-1.4 ++ основные команды ++ доп. библиотеки
+  +++ создаётся папка node_modules - пакеты, установленные вручную, и их зависимости.
+  +++ создаётся файл package-lock.json
+1.3 ++ основные команды ++ доп. библиотеки
   // команды
     // копир и вызов по порядку, без `$$`
     // часто используемые
       // инициализация
+
       $$ npm init
       // установка(+сервер)
       $$ npm i -D webpack webpack-cli webpack-dev-server
       // html, css(+sass) css в 1, файл, очистка, копир., бабел(+env,react), eslint(ошб+чтен), 
       $$ npm i -D html-webpack-plugin style-loader css-loader sass-loader node-sass sass mini-css-extract-plugin file-loader clean-webpack-plugin copy-webpack-plugin babel-loader @babel/core @babel/preset-env @babel/preset-react eslint eslint-loader babel-eslint
 
-$$ npm i -D webpack webpack-cli webpack-dev-server html-webpack-plugin style-loader css-loader sass-loader node-sass sass mini-css-extract-plugin file-loader clean-webpack-plugin copy-webpack-plugin babel-loader @babel/core @babel/preset-env autoprefixer cssnano postcss-loader webpack-merge
-
-
       // jQ, React, кросбраузерн css
       $$ npm i -S jquery react react-dom normalize.css 
+
+      // расписать
+      autoprefixer cssnano postcss-loader webpack-merge
+      
+      // расписать и встроить объясн в отделный отдел
+      @import "./utils/libs.scss"; // добавл библ()
+      @import "./utils/vars"; // основ переменые
+      @import "./utils/mixins"; // миксины(fn()сокращ кода)
+      @import "./utils/fonts";
+      @import 'utils/reset'; // обнул стили
+
+      // postcss pluginы
+        ##
+        {
+          loader: "postcss-loader",
+          options: {
+            // исходные карты
+            sourceMap: true,
+            // указ где искать
+            postcssOptions: {
+              config: path.resolve(__dirname, "./src/js/postcss.config.js"),
+            },
+          },
+        },
+        ##
+        packege.json
+        "browserslist": ["> 1%","last 3 version"],
+        postcss.config.js
+        ##
+        module.exports = {
+          plugins: [
+            // префиксы добав для брауеров
+            require('autoprefixer'),
+            // сжатия и компановка кода
+            require('cssnano')({
+              preset: [
+                'default',
+                {
+                  // коммит убираем
+                  discardComments: {
+                    removeAll: true
+                  }
+                }
+              ]
+            })
+          ]
+        }
+        ##
+
+
+      // не нужно
+      $$ npm i -D webpack webpack-cli webpack-dev-server html-webpack-plugin style-loader css-loader sass-loader node-sass sass mini-css-extract-plugin file-loader clean-webpack-plugin copy-webpack-plugin babel-loader @babel/core @babel/preset-env autoprefixer cssnano postcss-loader webpack-merge
 
       // доп. fn() js, babel ошб. console
       $$ npm i lodash @babel/polyfill 
       // plg lodash(чтен. lodash), analyzer(визуал код), cross-env(сист.перем.), babel ошб. console
+
       $$ npm i -D babel-plugin-lodash webpack-bundle-analyzer cross-env @babel/plugin-proposal-class-properties
+
     // редко + не понятно
       // ts, less, xml, csv(+зависим)
       $$ npm i -D @babel/preset-typescript less-loader xml-loader csv-loader papaparse
@@ -95,6 +147,7 @@ $$ npm i -D webpack webpack-cli webpack-dev-server html-webpack-plugin style-loa
       $$ npm install @babel/plugin-proposal-class-propertiesnpm install @babel/plugin-proposal-class-properties // babel, для обработки синтаксиса, пока не доступтного JS
       $$ npm install prop-types // Для контроля типов передаваемых в компонент propsов можно использовать стороннюю библиотеку PropTypes.
       $$ npm install material-ui // библиотека от Google, которая позволяет создавать приложения в стиле Google Material Design с использованием компонентов React.
+
   // библ, настр, стили
     // jQuery - библ. JS > html
       // устан. пакета на Prod
@@ -102,10 +155,10 @@ $$ npm i -D webpack webpack-cli webpack-dev-server html-webpack-plugin style-loa
       // подкл в .js файл
       ## import * as $ from "jquery";
       ## import $ from "jquery";
-    // normalize - единые стили для кросбраузерн
+    // normalize - единые обнул. стили для кросбраузерн
       // устан. пакета на Prod
       $$ npm i normalize.css 
-      // подкл в .css первым. указ. ~ переход в node_module
+      // подкл в .css/scss ?первым. указ. ~ переход в node_module
       ## @import '~normalize.css';
       // или подкл. в .html до css
       ## <link rel="stylesheet" type="text/css" href="css/normalize.css" />
@@ -826,7 +879,9 @@ $$ npm i -D webpack webpack-cli webpack-dev-server html-webpack-plugin style-loa
           // порт для запуска. рекоменд 8081, реже 8080
           port: 8081, // 8080 // 4200,
           // только в разраб
-          hot: isDev
+          hot: isDev,
+          // показ ошб. на экране а не в консоле
+          overlay: true,
         },
         // показ в консоле исходный код файла. для разраб(isDev)
         // ??? не раб - при npm build прибавляет очень много веса объед. файлу js

@@ -1,0 +1,52 @@
+{
+  "name": "test-3.00",
+  "version": "1.0.0",
+  "description": "test 3 > test 3.0",
+  "private": "true",
+  "author": "EvGen Gal <ZBst.1@ya.ru>",
+  "license": "MIT",
+  "keywords": [
+    "test 3.0",
+    "webpack",
+    "webpack4",
+    "merge",
+    "bable",
+    "bable7",
+    "scss",
+    "vue?"
+  ],
+  "browserslist": [
+    "> 1%",
+    "last 3 version"
+  ],
+  "scripts": {
+    "dev": "webpack --mode development",
+    "start": "webpack serve --mode development --open",
+    "build": "webpack --mode production",
+    "dev2": "webpack-dev-server --open --config ./build/webpack.dev.conf.js",
+    "build2": "webpack --config ./build/webpack.build.conf.js"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.14.6",
+    "@babel/preset-env": "^7.14.7",
+    "autoprefixer": "^10.3.0",
+    "babel-loader": "^8.2.2",
+    "css-loader": "^5.2.6",
+    "cssnano": "^5.0.6",
+    "mini-css-extract-plugin": "^2.1.0",
+    "node-sass": "^6.0.1",
+    "path": "^0.12.7",
+    "postcss-loader": "^6.1.1",
+    "sass": "^1.35.2",
+    "sass-loader": "^12.1.0",
+    "sass-migrator": "^1.5.1",
+    "style-loader": "^3.0.0",
+    "webpack": "^5.44.0",
+    "webpack-cli": "^4.7.2",
+    "webpack-dev-server": "^3.11.2"
+  },
+  "dependencies": {
+    "normalize.css": "^8.0.1",
+    "vue": "^2.6.14"
+  }
+}

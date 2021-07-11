@@ -1,22 +1,57 @@
-@import 'utils/libs';
-@import 'utils/vars';
-@import 'utils/mixins';
-@import 'utils/fonts';
-@import 'utils/reset';
+// 2 видео
+@import "./utils/libs.scss"; // добавл библ()
+@import "./utils/vars"; // основ переменые
+@import "./utils/mixins"; // миксины(fn()сокращ кода)
+@import "./utils/fonts";
+@import 'utils/reset'; // обнул стили
+
+.wrapper {
+  // display: flex;
+  // align-items: center;
+
+  h1 {
+    color: red;
+    // ??? не раб - вроде. в браузере и в Styles не видно изменений. в Computed измен показывает
+    font-size: rem(20);
+  }
+}
+// .rtv {
+//   @include size(100px, 80px);
+//   // @include placeholder {
+//   //   color: green;
+//   // }
+// }
+// .rtv {
+//   // @include placeholder(100px)
+//   @include placeholder {
+//     color: green;
+//     width: 12px;
+//   }
+// }
+// ! законченое
 
 html {
-  line-height: $mainLineHeight;
-  font-size: $mainFontSize;
   color: $mainFontColor;
+  font-size: $mainFontSize;
+  line-height: $mainLineHeight;
   height: 100%;
   @media screen and (max-width: $desktopWidth) {
+    font-size: 17px;
+  }
+  @media screen and (max-width: $smDesktopWidth) {
     font-size: 16px;
   }
   @media screen and (max-width: $tableWidth) {
     font-size: 15px;
   }
-  @media screen and (max-width: $phoneWidth) {
+  @media screen and (max-width: $smTableWidth) {
     font-size: 14px;
+  }
+  @media screen and (max-width: $phoneWidth) {
+    font-size: 13px;
+  }
+  @media screen and (max-width: $smPhoneWidth) {
+    font-size: 12px;
   }
 }
 
@@ -102,5 +137,5 @@ section,
   }
 }
 
-// Modules:
-// example: @import "modules/my-module.scss";
+// // Modules:
+// // example: @import "modules/my-module.scss";

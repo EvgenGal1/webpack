@@ -1,0 +1,136 @@
+/* Mixins:
+  ========================================================================== */
+
+// px в rem. перемен. $mainFontSize из vars.scss делит на переданые px превращ в rem и адаптирует под экран с помощью @media из main.scss(font-size: rem(20);)
+@function rem($pixels, $context: $mainFontSize) {
+  @if (unitless($pixels)) {
+    $pixels: $pixels * 1px;
+  }
+  @if (unitless($context)) {
+    $context: $context * 1px;
+  }
+  @return $pixels / $context * 1rem;
+  // @return math.div($pixels, $context * 1rem);
+  // @return math.div($pixels, $context);
+}
+
+// размер в одну строку(@include size(80px, 50px);)
+@mixin size($width, $height: $width) {
+  width: $width;
+  height: $height;
+}
+
+// помощник-заполнитель
+@mixin placeholder {
+  ::-webkit-input-placeholder {
+    @content;
+  }
+  :-moz-placeholder {
+    @content;
+  }
+  ::-moz-placeholder {
+    @content;
+  }
+  :-ms-input-placeholder {
+    @content;
+  }
+}
+// доп. не понял зачем
+// @mixin optional-at-root($sel) {
+//   @at-root #{if(not &, $sel, selector-append(&, $sel))} {
+//     @content;
+//   }
+// }
+// @mixin placeholder {
+//   @include optional-at-ro("::-webkit-input-placeholder") {
+//     @content;
+//   }
+// }
+
+// Помощники шрифтов:
+// Подробнее: https://github.com/vedees/webpack-template/blob/master/README.md#add-fonts
+
+// По умолчанию шаблон поддерживает только шрифты современного формата
+// Без svg. Только: .woff, .woffs
+// Если вам нужны svg-строки комментариев и раскомментирует «Шрифты поддерживают шрифты всех форматов»
+
+//Применение:
+//1. Поместите ваш шрифт в `src / assets / fonts / FOLDERNAME / FONTNAME`
+// ПОДПИСАТЬСЯ: Необходимые файлы
+// Пример: форматы .woff, .woffs
+// 2. Зайдите на fonts.scss
+// 3. Используйте mixon
+//  Пример: @include font-face ("OpenSans", "../fonts/OpenSans/opensans");
+
+// Обязательные параметры: @family, @family
+// Второстепенные параметры: @weight, @style, @pipeline
+
+// Пример базы:
+//  @include font-face ("OpenSans", "../fonts/OpenSans/opensans");
+// Пример ситуации:
+//  @include font-face ("OpenSans", "../fonts/OpenSans/opensansItalic", 400, курсив);
+
+// По умолчанию: для шрифтов современного формата
+// Необходимые файлы: .woff, .woffs
+
+@mixin font-face(
+  $font-family,
+  $file-path,
+  $weight: normal,
+  $style: normal,
+  $asset-pipeline: false
+) {
+  @font-face {
+    font-family: $font-family;
+    font-weight: $weight;
+    font-style: $style;
+
+    src: url("#{$file-path}.woff") format("woff"),
+      url("#{$file-path}.woff2") format("woff2");
+  }
+}
+
+// Для шрифтов современного формата + .svg
+// Необходимые файлы: .woff, .woffs, .svg
+
+// @mixin font-face(
+//   $font-family,
+//   $file-path,
+//   $weight: normal,
+//   $style: normal,
+//   $asset-pipeline: false
+// ) {
+//   @font-face {
+//     font-family: $font-family;
+//     font-weight: $weight;
+//     font-style: $style;
+//     src: url("#{$file-path}.eot?#iefix") format("embedded-opentype"),
+//       url("#{$file-path}.woff") format("woff"),
+//       url("#{$file-path}.woff2") format("woff2"),
+//       url("#{$file-path}.svg") format("svg"),
+//       url("#{$file-path}.ttf") format("truetype");
+//   }
+// }
+
+// Для шрифтов современного формата + .svg
+// Необходимые файлы: eot. .woff, .woffs, .svg, .ttf.
+
+// @mixin font-face(
+//   $font-family,
+//   $file-path,
+//   $weight: normal,
+//   $style: normal,
+//   $asset-pipeline: false
+// ) {
+//   @font-face {
+//     font-family: $font-family;
+//     font-weight: $weight;
+//     font-style: $style;
+//     src: url("#{$file-path}.eot?#iefix") format("embedded-opentype"),
+//       url("#{$file-path}.eot") format("eot"),
+//       url("#{$file-path}.woff") format("woff"),
+//       url("#{$file-path}.woff2") format("woff2"),
+//       url("#{$file-path}.svg") format("svg"),
+//       url("#{$file-path}.ttf") format("truetype");
+//   }
+// }

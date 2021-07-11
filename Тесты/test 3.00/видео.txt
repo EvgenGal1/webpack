@@ -1,0 +1,24 @@
+{
+  "name": "test-3.0",
+  "version": "1.0.0",
+  "description": "test 3 > test 3.0",
+  "private": "true",
+  "author": "EvGen Gal <ZBst.1@ya.ru>",
+  "license": "MIT",
+  "keywords": [
+    "test 3.0",
+    "webpack",
+    "webpack4",
+    "merge",
+    "bable",
+    "bable7",
+    "scss",
+    "vue?"
+  ],
+  "scripts": {
+    "dev0": "webpack-dev-server --open --mode development",
+    "dev": "webpack serve --open --mode development",
+    "build": "webpack --mode poruction",
+    "dev2": "webpack-dev-server --open --config ./build/webpack.dev.conf.js",
+    "build2": "webpack --config ./build/webpack.build.conf.js"
+  },

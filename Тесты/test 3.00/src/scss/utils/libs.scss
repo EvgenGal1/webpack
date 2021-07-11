@@ -1,0 +1,11 @@
+/* Libs:
+  https://github.com/vedees/webpack-template/blob/master/README.md#import-only-sass-or-css-libs
+  ========================================================================== */
+// Пример библиотеки Sass(без формата):
+// @import '../../node_modules/spinners/stylesheets/spinners';
+// Пример библиотеки CSS(с форматом):
+// @import '../../node_modules/flickity/dist/flickity.css';
+// нормалайз
+// @import '~normalize.css';
+// ??? не раб - альтер варик
+// @import "../../../node_modules/normalize.css/normalize.css";
