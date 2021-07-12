@@ -82,8 +82,16 @@
       // jQ, React, кросбраузерн css
       $$ npm i -S jquery react react-dom normalize.css 
 
+
+      // !!!прописать - autoprefixer cssnano postcss utils/ . дораб @function rem
+
       // расписать
       autoprefixer cssnano postcss-loader webpack-merge
+
+      // комент из видео2
+      postcss.config.js правильнее положить в корень, на уровне с остальными конфигами.
+      В таком случае он сам определяется, его не нужно подключать в webpack.config.js. В src кладут то что нужно для прода, а не для разработки
+      cssnano можно без опций подключать, так как удаление коментов по умолчанию работает
       
       // расписать и встроить объясн в отделный отдел
       @import "./utils/libs.scss"; // добавл библ()
