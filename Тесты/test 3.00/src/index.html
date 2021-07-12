@@ -4,7 +4,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <link rel="stylesheet" href="/dist/app.css">
+    <!-- ошб в consol уберется если закомитеть не нужную ссылку  - Refused to apply style from -->
+    <!-- <link rel="stylesheet" href="/dist/app.css" /> -->
     <title>Webpack Template</title>
   </head>
   <body>
@@ -12,10 +13,26 @@
       <h1>test 3.00</h1>
       <div class="rtv">текст</div>
       <p>текст2</p>
+      <!-- <h1>текст3</h1> -->
+      <section id="main">
+        <div class="wrapper__example">
+          <div class="container">
+            <!-- не ставить картинки ч/з css. сложно доставать beckend, сложно менять. лучше ч/з html-img или html-style-background-image -->
+            <h1>test 3.03</h1>
+          </div>
+        </div>
+      </section>
+      <section id="main">
+        <div class="wrapper__example--second">
+          <div class="container">
+            <img src="./assets/img/logo.png" alt="" />
+          </div>
+        </div>
+      </section>
       <!-- ! законченое -->
       <!-- <div id="app">
         <header></header>
-
+        
         <div class="content-wrapper">
           // expamle section (remove me)
           <section id="promo" style="text-align:center;">
@@ -33,6 +50,7 @@
       <!-- end #app wrapper -->
     </div>
     <!-- end main wrapper -->
-    <script src="/dist/app.js"></script>
+    <!-- ошб в consol уберется если закомитеть не нужную ссылку - Refused to apply style from -->
+    <!-- <script src="/dist/app.js"></script> -->
   </body>
 </html>

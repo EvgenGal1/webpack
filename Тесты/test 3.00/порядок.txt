@@ -88,6 +88,10 @@
       // расписать
       autoprefixer cssnano postcss-loader webpack-merge
 
+      npm i webpack-merge --save-dev
+
+      Webpack-merge нужен чтобы отделять билд и дев разработку. делается через несколько файлов webpack.[name].conf.js base(база),build(конфиг. прод),dev(конфиг. разраб). альтернатива ENV(NODE_ENV=production||development системная переменная)
+
       // комент из видео2
       postcss.config.js правильнее положить в корень, на уровне с остальными конфигами.
       В таком случае он сам определяется, его не нужно подключать в webpack.config.js. В src кладут то что нужно для прода, а не для разработки

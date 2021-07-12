@@ -3,10 +3,10 @@
 @import "./utils/vars"; // основ переменые
 @import "./utils/mixins"; // миксины(fn()сокращ кода)
 @import "./utils/fonts";
-@import 'utils/reset'; // обнул стили
+@import "./utils/reset"; // обнул стили
 
-.wrapper {
-  // display: flex;
+.wrapper__example {
+  display: flex;
   // align-items: center;
 
   h1 {
@@ -14,6 +14,11 @@
     // ??? не раб - вроде. в браузере и в Styles не видно изменений. в Computed измен показывает
     font-size: rem(20);
   }
+}
+#main {
+  // не ставить картинки ч/з css. сложно доставать beckend, сложно менять. лучше ч/з html-img или html-style-background-image
+  background: url("../assets/img/logo.png");
+  width: 100%;
 }
 // .rtv {
 //   @include size(100px, 80px);
