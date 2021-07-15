@@ -14,8 +14,8 @@ import './scss/main.scss'
 // import 'vue'
 // import Vue from 'vue' // для взамодействия from (Vue.ese())
 window.Vue = require('vue') // более прав
-
-
+// 4 видео
+Vue.component('example-component', require('./js/components/Example.vue').default)
 
 // ! законченое
 // JS
