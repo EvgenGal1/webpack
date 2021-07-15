@@ -4,6 +4,8 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
+// 4.5 видео. посещаем в объект чтоб использ другие плагины из vue-loader
+const { VueLoaderPlugin } = require("vue-loader");
 // 3 видео
 const PATHS = {
   src: path.join(__dirname, "../src"),
@@ -37,14 +39,26 @@ module.exports = {
         exclude: "/node_modules/",
         loader: "babel-loader",
       },
+      // 4.4 видео. vue обраб ч/з vue-loader
+      {
+        test: /\.vue$/,
+        loader: "vue-loader",
+        options: {
+          // для использ внутри vue - scss
+          loader: {
+            scss: "vue-style-loader!css-loader!sass-loader",
+          },
+        },
+      },
       {
         test: /\.(png|jpg|gif|svg)$/,
         loader: "file-loader",
-        options: { 
+        options: {
           // без доп из test 2.0 не раб
-          name: "img/[name].[ext]", 
+          name: "img/[name].[ext]",
           // без доп из test 2.0 не раб
-          publicPath: "../" },
+          publicPath: "../",
+        },
       },
       {
         test: /\.css$/,
@@ -100,6 +114,8 @@ module.exports = {
     ],
   },
   plugins: [
+    // 4.6 видео
+    new VueLoaderPlugin(),
     new MiniCssExtractPlugin({
       filename: `${PATHS.assets}css/[name].css`,
     }),
@@ -122,6 +138,12 @@ module.exports = {
     }),
     new CleanWebpackPlugin(),
   ],
+  // 4.8 видео. сокращ для пути
+  resolve: {
+    alias: {
+      vue$: "vue/dist/vue.js",
+    },
+  },
   // 3 видео. 3 WP.conf файла для разделен Prod/Dev
   // devServer: {
   //   overlay: true,

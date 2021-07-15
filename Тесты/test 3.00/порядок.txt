@@ -156,6 +156,13 @@
       // ts, less, xml, csv(+зависим)
       $$ npm i -D @babel/preset-typescript less-loader xml-loader csv-loader papaparse
 
+      // 4 видео(LXkSIqqgyPI) 4.15 плагин/библ vuex(для хранен любых данных)
+      npm i vue vuex --save
+      // читает vue, scss в vue, `шаблоны`
+      npm i vue-loader vue-style-loader vue-template-compiler --save-dev
+      // требует vue-loader, компилер для шаблонов
+      npm i @vue/compiler-sfc
+
       $$ npm install @babel/plugin-proposal-class-propertiesnpm install @babel/plugin-proposal-class-properties // babel, для обработки синтаксиса, пока не доступтного JS
       $$ npm install prop-types // Для контроля типов передаваемых в компонент propsов можно использовать стороннюю библиотеку PropTypes.
       $$ npm install material-ui // библиотека от Google, которая позволяет создавать приложения в стиле Google Material Design с использованием компонентов React.

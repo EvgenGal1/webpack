@@ -9,9 +9,12 @@
   @if (unitless($context)) {
     $context: $context * 1px;
   }
-  @return $pixels / $context * 1rem;
+  // ??? не раб - устар метод. переписать на math.div
+  // ! переписал - не проверял
+  // @return math.div(($pixels, $context) * 1rem);
+  // @return $pixels / $context * 1rem;
   // @return math.div($pixels, $context * 1rem);
-  // @return math.div($pixels, $context);
+  @return math($pixels, $context * 1);
 }
 
 // размер в одну строку(@include size(80px, 50px);)
